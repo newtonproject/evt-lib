@@ -19,7 +19,7 @@ $ npm install @newton-protocol/evt-lib
 ### Usage
 
 ```solidity
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPLv3
 pragma solidity ^0.8.3;
 
 import "@newton-protocol/evt-lib/evt-base/EVT.sol";
