@@ -19,7 +19,7 @@
     "contracts"
   ],
   "author": "Newton Community <newton-community@newtonproject.org>",
-  "license": "GPL-3.0",
+  "license": "GPLv3",
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0"
   }
