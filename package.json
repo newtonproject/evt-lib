@@ -1,0 +1,22 @@
+{
+  "name": "@newton-protocol/evt-lib",
+  "version": "0.1.1",
+  "description": "Library for EVT development",
+  "files": [
+    "**/*.sol"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "evt",
+    "newton",
+    "solidity",
+    "contracts"
+  ],
+  "author": "Newton Community <newton-community@newtonproject.org>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0"
+  }
+}
