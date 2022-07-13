@@ -31,4 +31,4 @@ contract MyToken is EVT {
 ```
 
 ## License
-EVT is released under the GPL-3.0 License.
+EVT is released under the GPLv3 License.
