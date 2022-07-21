@@ -10,41 +10,41 @@ library EVTMetadata {
 
     struct IPFSFile {
 
-        /// CID is the content identifier for this IPFS file.
-        ///
-        /// Ref: https://docs.ipfs.io/concepts/content-addressing/
-        ///
+        // CID is the content identifier for this IPFS file.
+        //
+        // Ref: https://docs.ipfs.io/concepts/content-addressing/
+        //
         string cid;
 
-        /// Path is an optional path to the file resource in an IPFS directory.
-        ///
-        /// This field is only needed if the file is inside a directory.
-        ///
-        /// Ref: https://docs.ipfs.io/concepts/file-systems/
-        ///
+        // Path is an optional path to the file resource in an IPFS directory.
+        //
+        // This field is only needed if the file is inside a directory.
+        //
+        // Ref: https://docs.ipfs.io/concepts/file-systems/
+        //
         string path;
     }
 
-    /// For EVT Display
+    // For EVT Display
     struct Display {
-        /// The name of the object. 
-        ///
-        /// This field will be displayed in lists and therefore should
-        /// be short an concise.
-        ///
+        // The name of the object. 
+        //
+        // This field will be displayed in lists and therefore should
+        // be short an concise.
+        //
         string name;
     
-        /// A written description of the object. 
-        ///
-        /// This field will be displayed in a detailed view of the object,
-        /// so can be more verbose (e.g. a paragraph instead of a single line).
-        ///
+        // A written description of the object. 
+        //
+        // This field will be displayed in a detailed view of the object,
+        // so can be more verbose (e.g. a paragraph instead of a single line).
+        //
         string description;
     
-        /// A small thumbnail representation of the object.
+        // A small thumbnail representation of the object.
         IPFSFile thumbnail;
 
-        /// legal license of the object.
+        // legal license of the object.
         string license;
 
         string from;
