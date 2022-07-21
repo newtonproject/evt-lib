@@ -93,7 +93,6 @@ contract HelloEVT is ERC165, EVT, IEVTMetadata, Ownable {
         bytes32 propertyId = getPropertyId(propertyName);
         require(!_properties[propertyId].has_, "Repeated property!");
         _properties[propertyId].has_ = true;
-        
     }
 
     function setProperty(uint256 tokenId, string memory propertyName, string memory propertyValue) public virtual payable {
