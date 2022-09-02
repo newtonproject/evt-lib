@@ -2,37 +2,48 @@
 pragma solidity ^0.8.3;
 
 interface IEVTEncryption {
+    /**
+     * @dev Emitted when register `encryptedKeyID` encryptedKey for `tokenId` token.
+     */
+    event EncryptedKeyRegistered(uint256 indexed tokenId, bytes32 encryptedKeyID);
+    
+    /**
+     * @dev Emitted when add `tokenId` token permission to `licensee`.
+     */
+    event PermissionAdded(uint256 indexed tokenId, bytes32 encryptedKeyID, address indexed licensee);
 
     /**
-     * @dev encrypt `tokenId`
-     * encryptedKeyID = bytes32(keccak256('encryptedKey');
+     * @dev Emitted when remove `tokenId` token permission from `licensee`.
+     */
+    event PermissionRemoved(uint256 indexed tokenId, bytes32 encryptedKeyID, address indexed licensee);
+
+    /**
+     * @dev registerEncryptedKey to `tokenId` token
      * Requirements:
      *
      * - `tokenId` token must exist and be owned by `from`.
      *
      */
-    function encrypt(uint256 tokenId, bytes32 encryptedKeyID, bytes memory encryptedKeyValue) external payable;
+    function registerEncryptedKey(uint256 tokenId, bytes32 encryptedKeyID) external payable;
 	
     /**
-     * @dev Returns the results - bool
-     * expiredTime is the limit dateTime for one permission
+     * @dev Add `tokenId` token Permission to `licensee` width `encryptedKeyID`
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     * - `encryptedKeyID` must exist and must registered.
+     */
+    function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external payable;
+	
+    /**
+     * @dev Remove `tokenId` token Permission to `licensee` width `encryptedKeyID`
      *
      * Requirements:
      *
      * - `tokenId` must exist.
      * - `encryptedKeyID` must exist.
      */
-    function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address owner, uint256 expiredTime) external payable returns(bool);
-	
-    /**
-     * @dev Returns the results - bool
-     *
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     * - `encryptedKeyID` must exist.
-     */
-    function removePermission(uint256 tokenId, bytes32 encryptedKeyID, address owner) external returns (bool);
+    function removePermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external;
 
     /**
      * @dev Returns the results - bool
@@ -42,15 +53,5 @@ interface IEVTEncryption {
      * - `tokenId` must exist.
      * - `encryptedKeyID` must exist.
      */
-    function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address owner) external view returns (bool);
-
-    /**
-     * @dev Returns encryptedKeyValue - bytes
-     *
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     * - `encryptedKeyID` must exist.
-     */
-    function getEncryptedKeyValue(uint256 tokenId, bytes32 encryptedKeyID) external view returns (bytes memory);
+    function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external view returns (bool);
 }

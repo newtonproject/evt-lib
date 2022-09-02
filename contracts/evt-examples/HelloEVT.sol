@@ -103,7 +103,7 @@ contract HelloEVT is ERC165, EVT, IEVTMetadata, Ownable {
     }
 
     function getDynamicPropertiesArray(uint256 tokenId) public view virtual returns(string[] memory properties) {
-        (bytes32[] memory ids, bytes[] memory values) = EVTVariable.getProperties(tokenId);
+        (bytes32[] memory ids, bytes[] memory values) = EVTVariable.getDynamicProperties(tokenId);
         require(ids.length == values.length, "length error");
         properties = new string[](ids.length);
         for (uint256 i = 0; i < ids.length; i++) {

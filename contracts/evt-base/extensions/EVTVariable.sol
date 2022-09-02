@@ -25,23 +25,29 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return interfaceId == type(IEVTVariable).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function setDynamicProperty(uint256 tokenId, bytes32 propertyId, bytes memory propertyValue) public virtual override payable {
+    function addDynamicProperty(bytes32 propertyId) public payable virtual override {
+        require(!_propertieIds.contains(propertyId), "EVTVariable: propertyId exist");
         _propertieIds.add(propertyId);
+
+        emit DynamicPropertyAdded(propertyId);
+    }
+
+    function setDynamicProperty(uint256 tokenId, bytes32 propertyId, bytes memory propertyValue) public virtual override payable {
+        require(supportsProperty(propertyId), "EVTVariable: invalid propertyId");
         _properties[tokenId][propertyId] = propertyValue;
 
         emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
     }
 
     function setDynamicProperties(uint256 tokenId, bytes memory message) public virtual override payable {
-        require(false, "NOT IMPLEMENTED!");
-        // TODO:
+        // Todo
     }
     
-	function getProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (bytes memory) {
+	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (bytes memory) {
         return _properties[tokenId][propertyId];
     }
 
-    function getProperties(uint256 tokenId) public view virtual override returns(bytes32[] memory ids, bytes[] memory properties) {
+    function getDynamicProperties(uint256 tokenId) public view virtual override returns(bytes32[] memory ids, bytes[] memory properties) {
         uint256 len = _propertieIds.length();
         ids = new bytes32[](len);
         properties = new bytes[](len);

@@ -1,6 +1,6 @@
 # EVT-LIB
 
-Full spec: [NRC-53](https://neps.newtonproject.org/neps/nep-53/)
+Full spec: [https://neps.newtonproject.org/neps/nep-53/](https://neps.newtonproject.org/neps/nep-53/)
 
 **Library for EVT development.**
 
@@ -19,9 +19,10 @@ $ npm install @newton-protocol/evt-lib
 ### Usage
 
 #### Use evt-base
+1. EVT
 ```solidity
 // SPDX-License-Identifier: GPLv3
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.4;
 
 import "@newton-protocol/evt-lib/contracts/evt-base/EVT.sol";
 
@@ -29,6 +30,28 @@ contract MyToken is EVT {
     constructor() EVT("MyToken", "MT0") {
     }
 }
+```
+2. EVTA
+```solidity
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.4;
+
+import "@newton-protocol/evt-lib/contracts/evt-base/EVTA.sol";
+
+contract MyEVTA is EVTA {
+    constructor() EVTA("SimpleEVTA", "EVTA") {}
+
+    function safeMint(address to, uint256 quantity) public {
+        _safeMint(to, quantity);
+    }
+}
+
+```
+
+#### Extensions
+- EVTGlobalVariable
+```solidity
+import "@newton-protocol/evt-lib/contracts/evt-base/extensions/EVTGlobalVariable.sol";
 ```
 
 #### Run evt-examples

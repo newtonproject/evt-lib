@@ -1,6 +1,6 @@
 {
   "name": "@newton-protocol/evt-lib",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Library for EVT development",
   "files": [
     "**/*.sol",
@@ -21,7 +21,7 @@
   "author": "Newton Community <newton-community@newtonproject.org>",
   "license": "GPLv3",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.6.0"
+    "@openzeppelin/contracts": "^4.7.3"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
