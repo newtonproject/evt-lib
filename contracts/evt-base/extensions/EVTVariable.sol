@@ -12,11 +12,18 @@ import "../interfaces/IEVTVariable.sol";
 abstract contract EVTVariable is ERC165, IEVTVariable {
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
-    // List of propertie ids
-    EnumerableSet.Bytes32Set private _propertieIds;
+    // evt constructor propertyIds
+    EnumerableSet.Bytes32Set private _allPropertyIds;
 
-    // Mapping tokenId ==> propertieId ==> propertieValue
-    mapping(uint256 => mapping(bytes32 => bytes)) private _properties;
+    mapping(uint256 => EnumerableSet.Bytes32Set) private _propertyIds;
+
+    struct Value {
+        string trait_type;
+        string value;
+    }
+
+    // Mapping tokenId ==> propertyId ==> propertie Id and value
+    mapping(uint256 => mapping(bytes32 => Value)) private _propertiesValue;
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -25,40 +32,49 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return interfaceId == type(IEVTVariable).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function addDynamicProperty(bytes32 propertyId) public payable virtual override {
-        require(!_propertieIds.contains(propertyId), "EVTVariable: propertyId exist");
-        _propertieIds.add(propertyId);
+    function addDynamicProperty(uint256 tokenId, bytes32 propertyName) public payable virtual override {
+        require(_allPropertyIds.contains(keccak256(abi.encode(propertyName))) && !propertyIds.contains(keccak256(abi.encode(propertyName))) , "EVTVariable: propertyId exist");
+        _propertyIds[tokenId].add(keccak256(abi.encode(propertyName)));
+        _propertiesValue[tokenId][propertyId].trait_type = propertyName;
 
         emit DynamicPropertyAdded(propertyId);
     }
 
     function setDynamicProperty(uint256 tokenId, bytes32 propertyId, bytes memory propertyValue) public virtual override payable {
         require(supportsProperty(propertyId), "EVTVariable: invalid propertyId");
-        _properties[tokenId][propertyId] = propertyValue;
+        _propertiesValue[tokenId][propertyId].value = propertyValue;
 
         emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
     }
 
-    function setDynamicProperties(uint256 tokenId, bytes memory message) public virtual override payable {
-        // Todo
+    function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, bytes[] memory propertyValues) public virtual override payable {
+        require(propertyIds.length == propertieValues.length, "length not equal");
+        for(uint256 i = 0; i < propertyIds.length; i++) {
+            require(supportsProperty(propertyIds[i]), "EVTVariable: invalid propertyId");
+            _propertiesValue[tokenId][propertyIds[i]].value = propertyValues[i];
+
+            emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
+        }
     }
     
 	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (bytes memory) {
-        return _properties[tokenId][propertyId];
+        return _propertiesValue[tokenId][propertyId].value;
     }
 
+    // return dynamic properties ids and dynamic properties, id is the result of property id's hash
     function getDynamicProperties(uint256 tokenId) public view virtual override returns(bytes32[] memory ids, bytes[] memory properties) {
-        uint256 len = _propertieIds.length();
-        ids = new bytes32[](len);
-        properties = new bytes[](len);
+        uint256 len = _propertyIds[tokenId].length();
+        bytes32[] memory trait_type = new bytes32[](len);
+        bytes[] memory properties = new bytes[](len);
         for (uint256 i = 0; i < len; i++) {
-            bytes32 id = _propertieIds.at(i);
-            ids[i] = id;
-            properties[i] = _properties[tokenId][id];
+            bytes32 trait_name = _propertiesValue[tokenId][_propertyIds.at[i]].trait_type;
+            trait_type[i] = trait_name;
+            properties[i] = _propertiesValue[tokenId].value;
         }
+        return (trait_type, properties);
     }
 
 	function supportsProperty(bytes32 propertyId) public view virtual override returns (bool) {
-        return _propertieIds.contains(propertyId);
+        return _propertyIds.contains(propertyId);
     }
 }
