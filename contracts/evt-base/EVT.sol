@@ -41,10 +41,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
         return _from;
     }
 
-    // function external_urltokenId(uint256 tokenId) external view virtual override returns (string memory) {
-
-    // }
-
     function contractURI() public view virtual override returns (string memory) {
         require(_requireMinted(tokenId));
         string memory baseURI = _baseURI();   
@@ -150,10 +146,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
             }
             args = string(abi.encodePacked(args, ']}'));
 
-            // args = string(abi.encodePacked(args, '"', value, '"'));
-
-            // properties[i] = string(args);
-            // args = string(abi.encodePacked(args, '}'));
             permissions[i] = string(args);
         }
 
