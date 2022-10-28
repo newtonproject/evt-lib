@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "../interfaces/IEVTEncryption.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract EVTEncryption is ERC165, IEVTEncryption {
+contract EVTEncryption is ERC165, IEVTEncryption {
 
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
@@ -26,15 +26,15 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         return interfaceId == type(IEVTEncryption).interfaceId || super.supportsInterface(interfaceId);
     }
     
-    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override onlyOwner  {
+    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override {
         require(!_encryptionKeys.contains(encryptedKeyID), "encryptedKeyID exist");
         _encryptionKeys.add(encryptedKeyID);
 
-        emit EncryptedKeyRegistered(tokenId, encryptedKeyID);
+        emit EncryptedKeyRegistered(encryptedKeyID);
     }
 	
     function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public payable virtual override {
-        require(_requireMinted(tokenId) && _encryptionKeys.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        require(_encryptionKeys.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
         _authorize.add(licensee);
 
@@ -42,7 +42,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     }
 	
     function removePermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public virtual override {
-        require(_requireMinted(tokenId) && _encryptionKeys.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        require(_encryptionKeys.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
         _authorize.remove(licensee);
 
@@ -50,16 +50,16 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     }
 
     function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public view virtual override returns (bool) {
-        require(_requireMinted(tokenId) && _encryptionKeys.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        require(_encryptionKeys.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
         return _authorize.contains(licensee);
     }
 
-    function getPermissions(uint256 tokenId) public view virtual override returns (bytes32[] memory encryptionKeyIds, bytes[] memory license) {
-        require(_requireMinted(tokenId));
+    function getPermissions(uint256 tokenId) public view virtual returns (bytes32[] memory, address[][] memory) {
+        // require(_requireMinted(tokenId));
         uint256 len = _encryptionKeys.length();
-        bytes32[] memory encryptionKeyIds = new bytes32[len];
-        bytes[][] memory license = new bytes[][len];
+        bytes32[] memory encryptionKeyIds = new bytes32[](len);
+        address[][] memory license = new address[][](len);
         for(uint256 i = 0; i < len; i++) {
             encryptionKeyIds[i] = _encryptionKeys.at(i);
             license[i] = getPermissions(tokenId, encryptionKeyIds[i]);
@@ -67,10 +67,10 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         return (encryptionKeyIds, license);
     }
 
-    function getPermissions(uint256 tokenId, bytes32 encryptionKeyId) public view virtual override returns (bytes[] memory license) {
-        require(_requireMinted(tokenId));
-        EnumerableSet.AddressSet memory _permission = _permissions[tokenId][encryptionKeyId];
-        bytes[] memory license = new bytes[_permission.length()];
+    function getPermissions(uint256 tokenId, bytes32 encryptionKeyId) public view virtual returns (address[] memory) {
+        // require(_requireMinted(tokenId));
+        EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptionKeyId];
+        address[] memory license = new address[](_permission.length());
         for(uint256 i = 0; i < _permission.length(); i++) {
             license[i] = _permission.at(i);
         }

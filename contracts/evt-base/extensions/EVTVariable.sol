@@ -9,21 +9,25 @@ import "../interfaces/IEVTVariable.sol";
 /**
  * @dev This implements an optional extension of {EVT} that adds dynamic properties.
  */
-abstract contract EVTVariable is ERC165, IEVTVariable {
+contract EVTVariable is ERC165, IEVTVariable {
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
     // evt constructor propertyIds
-    EnumerableSet.Bytes32Set private _allPropertyIds;
+    EnumerableSet.Bytes32Set internal _allPropertyIds;
 
+    mapping(bytes32 => string) internal _propertyTypes;
+    string[] internal _allPropertyTypes;
+
+    // tokenId => propertyIds
     mapping(uint256 => EnumerableSet.Bytes32Set) private _propertyIds;
 
-    struct Value {
-        string trait_type;
+    struct Property {
+        string property_type;
         string value;
     }
 
     // Mapping tokenId ==> propertyId ==> propertie Id and value
-    mapping(uint256 => mapping(bytes32 => Value)) private _propertiesValue;
+    mapping(uint256 => mapping(bytes32 => Property)) private _propertiesValue;
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -32,49 +36,55 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return interfaceId == type(IEVTVariable).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function addDynamicProperty(uint256 tokenId, bytes32 propertyName) public payable virtual override {
-        require(_allPropertyIds.contains(keccak256(abi.encode(propertyName))) && !propertyIds.contains(keccak256(abi.encode(propertyName))) , "EVTVariable: propertyId exist");
-        _propertyIds[tokenId].add(keccak256(abi.encode(propertyName)));
-        _propertiesValue[tokenId][propertyId].trait_type = propertyName;
+    function addDynamicProperty(uint256 tokenId, bytes32 propertyId) public payable virtual override {
+        // require(_requireMinted(tokenId));
+        // bytes32 _propertyId = keccak256(abi.encode(propertyName));
+        require(supportsProperty(propertyId) && !_propertyIds[tokenId].contains(propertyId) , "EVTVariable: propertyId exist");
+        _propertyIds[tokenId].add(propertyId);
+        _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
 
         emit DynamicPropertyAdded(propertyId);
     }
 
-    function setDynamicProperty(uint256 tokenId, bytes32 propertyId, bytes memory propertyValue) public virtual override payable {
+    function setDynamicProperty(uint256 tokenId, bytes32 propertyId, string memory propertyValue) public virtual override payable {
+        // require(_requireMinted(tokenId));
         require(supportsProperty(propertyId), "EVTVariable: invalid propertyId");
         _propertiesValue[tokenId][propertyId].value = propertyValue;
 
         emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
     }
 
-    function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, bytes[] memory propertyValues) public virtual override payable {
-        require(propertyIds.length == propertieValues.length, "length not equal");
+    function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, string[] memory propertyValues) public virtual override payable {
+        // require(_requireMinted(tokenId));
+        require(propertyIds.length == propertyValues.length, "length not equal");
         for(uint256 i = 0; i < propertyIds.length; i++) {
             require(supportsProperty(propertyIds[i]), "EVTVariable: invalid propertyId");
             _propertiesValue[tokenId][propertyIds[i]].value = propertyValues[i];
 
-            emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
+            emit DynamicPropertyUpdated(tokenId, propertyIds[i], propertyValues[i]);
         }
     }
     
-	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (bytes memory) {
+	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (string memory) {
         return _propertiesValue[tokenId][propertyId].value;
     }
 
     // return dynamic properties ids and dynamic properties, id is the result of property id's hash
-    function getDynamicProperties(uint256 tokenId) public view virtual override returns(bytes32[] memory ids, bytes[] memory properties) {
+    function getDynamicProperties(uint256 tokenId) public view virtual override returns(string[] memory, string[] memory) {
+        // require(_requireMinted(tokenId));
         uint256 len = _propertyIds[tokenId].length();
-        bytes32[] memory trait_type = new bytes32[](len);
-        bytes[] memory properties = new bytes[](len);
+        string[] memory property_types = new string[](len);
+        string[] memory properties = new string[](len);
         for (uint256 i = 0; i < len; i++) {
-            bytes32 trait_name = _propertiesValue[tokenId][_propertyIds.at[i]].trait_type;
-            trait_type[i] = trait_name;
-            properties[i] = _propertiesValue[tokenId].value;
+            bytes32 propertyId = _propertyIds[tokenId].at(i);
+            string memory property_name = _propertiesValue[tokenId][propertyId].property_type;
+            property_types[i] = property_name;
+            properties[i] = _propertiesValue[tokenId][propertyId].value;
         }
-        return (trait_type, properties);
+        return (property_types, properties);
     }
 
 	function supportsProperty(bytes32 propertyId) public view virtual override returns (bool) {
-        return _propertyIds.contains(propertyId);
+        return _allPropertyIds.contains(propertyId);
     }
 }

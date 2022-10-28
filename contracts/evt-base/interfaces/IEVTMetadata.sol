@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.3;
 import "../IEVT.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
-interface IEVTMetadata is IEVT, NRC7Metadata {	
+interface IEVTMetadata is IEVT, IERC721Metadata {	
     /// @notice tags for a collection of EVTs in this contract
-    function from() external view returns (string memory);
+    function from() external view returns (address);
 
     /// @notice Returns the Uniform Resource Identifier (URI) for the specified EVT tokenId.
     /// @dev Throws if `_tokenId` is not a valid EVT. URIs are defined in RFC3986. 

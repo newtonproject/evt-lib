@@ -5,7 +5,7 @@ interface IEVTEncryption {
     /**
      * @dev Emitted when register `encryptedKeyID` encryptedKey for `tokenId` token.
      */
-    event EncryptedKeyRegistered(uint256 indexed tokenId, bytes32 encryptedKeyID);
+    event EncryptedKeyRegistered(bytes32 encryptedKeyID);
     
     /**
      * @dev Emitted when add `tokenId` token permission to `licensee`.
@@ -24,7 +24,7 @@ interface IEVTEncryption {
      * - `tokenId` token must exist and be owned by `from`.
      *
      */
-    function registerEncryptedKey(uint256 tokenId, bytes32 encryptedKeyID) external payable;
+    function registerEncryptedKey(bytes32 encryptedKeyID) external payable;
 	
     /**
      * @dev Add `tokenId` token Permission to `licensee` width `encryptedKeyID`
