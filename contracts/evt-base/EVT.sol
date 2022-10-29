@@ -15,7 +15,7 @@ import "./libraries/base64.sol";
 /**
  * @dev Implementation of Encrypted Variable Token Standard (NRC-).
  */
-contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
+contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
 
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
@@ -70,46 +70,45 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
     }
 
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, IEVTMetadata) returns (string memory) {
-        // require(_requireMinted(tokenId));
-        string memory baseURI = _baseURI();
+        // string memory baseURI = _baseURI();
         return
-            bytes(baseURI).length > 0
-                ? string(
+            // bytes(baseURI).length > 0
+            //     ? string(
+            //         abi.encodePacked(
+            //             "data:application/json;base64,",
+            //             Base64.encode(
+            //                 abi.encodePacked(
+            //                     baseURI,
+            //                     '{"properties":',
+            //                     getDynamicPropertiesAsString(tokenId),
+            //                     '},'
+            //                     '{"encryption":',
+            //                     getPermissionsAsString(tokenId),
+            //                     '}'
+            //                 )
+            //             )
+            //         )
+            //     )
+            //     // : "";
+            //     : string(
+                string(
                     abi.encodePacked(
                         "data:application/json;base64,",
                         Base64.encode(
                             abi.encodePacked(
-                                baseURI,
-                                '{"properties":"',
+                                '{"properties":',
                                 getDynamicPropertiesAsString(tokenId),
-                                '"},'
-                                '{"encryption":"',
+                                '},',
+                                '{"encryption":',
                                 getPermissionsAsString(tokenId),
-                                '"}'
+                                '}'
                             )
                         )
                     )
-                )
-                : "";
-                // : string(
-                //     abi.encodePacked(
-                //         "data:application/json;base64,",
-                //         Base64.encode(
-                //             abi.encodePacked(
-                //                 '{"properties":"',
-                //                 getDynamicPropertiesAsString(tokenId),
-                //                 '"},'
-                //                 '{"encryption":"',
-                //                 getPermissionsAsString(tokenId),
-                //                 '"}'
-                //             )
-                //         )
-                //     )
-                // );
+                );
     }
 
     function variableURI(uint256 tokenId) public view virtual override returns (string memory) {
-        // require(_requireMinted(tokenId));
         return 
             string(
                 abi.encodePacked(
@@ -128,7 +127,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
     }
 
     function encryptionURI(uint256 tokenId) public view virtual override returns (string memory) {
-        // require(_requireMinted(tokenId));
         // string memory baseURI = _baseURI();
         return
             string(
@@ -147,36 +145,62 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
             );
     }
 
-    function getPermissionsAsString(uint256 tokenId) public view virtual returns(string memory) {
+    function getPermissionsAsString(uint256 tokenId) public view virtual returns (string memory) {
+        _requireMinted(tokenId);
         string[] memory args = getPermissionsArray(tokenId);
-        return getStringData(args);
+        string memory res = getStringData(args);
+        return res;
     }
 
-    function getPermissionsArray(uint256 tokenId) public view virtual returns(string[] memory) {
-        // return permissions array
-        (bytes32[] memory encryptionKeyIds, address[][] memory license) = EVTEncryption.getPermissions(tokenId);
-        string[] memory permissions = new string[](encryptionKeyIds.length);
-        for (uint256 i = 0; i < encryptionKeyIds.length; i++) {
-            bytes32 encryptionKeyId = encryptionKeyIds[i];
-            string memory args = string(abi.encodePacked('{"encryptionKeyId":"',
-                                                            encryptionKeyId,
-                                                            '","license":'
-                                                            // '['    
-                                                        ));
-            string[] memory stringLicense;
-            for(uint256 j = 0; j < license[i].length; j++) {
+    // function getPermissions(uint256 tokenId, bytes32 encryptionKeyId) public view virtual returns (address[] memory) {
+    //     EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptionKeyId];
+    //     address[] memory license = new address[](_permission.length());
+    //     for(uint256 i = 0; i < _permission.length(); i++) {
+    //         license[i] = _permission.at(i);
+    //     }
+    //     return license;
+    // }
+
+    // function getPermissions(uint256 tokenId) public view virtual returns (bytes32[] memory, address[][] memory) {
+    //     uint256 len = _encryptionKeys.length();
+    //     bytes32[] memory encryptionKeyIds = new bytes32[](len);
+    //     address[][] memory license;
+    //     for(uint256 i = 0; i < len; i++) {
+    //         encryptionKeyIds[i] = _encryptionKeys.at(i);
+    //         license[i] = getPermissions(tokenId, encryptionKeyIds[i]);
+    //     }
+    //     return (encryptionKeyIds, license);
+    // }
+
+    function getPermissionsArray(uint256 tokenId) public view virtual returns (string[] memory) {
+        _requireMinted(tokenId);
+        // (bytes32[] memory encryptionKeyIds, address[][] memory license) = EVTEncryption.getPermissions(tokenId);
+        uint256 len = _tokenKeyIds[tokenId].length();
+        string[] memory permissions = new string[](len);
+        for (uint256 i = 0; i < len; i++) {
+            bytes32 encryptionKeyId = _tokenKeyIds[tokenId].at(i);
+            address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
+            string memory args = string(abi.encodePacked('{"encryptionKeyId":',
+                                                            toString(abi.encodePacked(encryptionKeyId)),
+                                                            // encryptionKeyId,
+                                                            ',"license":'
+                                                            // '[' 
+                                                          ));
+            string[] memory stringLicense = new string[](license.length);
+            for(uint256 j = 0; j < license.length; j++) {
                 // (string memory singleLicense) = abi.decode(license[i], (string));
                 
                 // args = string(abi.encodePacked(args, 
                 //                                 toString(abi.encodePacked(license[i][j])),
                 //                                 '",'
                 //                               ));
-                stringLicense[j] = toString(abi.encodePacked(license[i][j]));
+                stringLicense[j] = toString(abi.encodePacked(license[j]));
  
             }
             string memory data = getStringData(stringLicense);
             // args = string(abi.encodePacked(args, ']}'));
-            args = string(abi.encodePacked(args, data, '}'));
+            args = string(abi.encodePacked(args, '"', data, '"'));
+            args = string(abi.encodePacked(args, '}'));
 
             permissions[i] = args;
         }
@@ -184,19 +208,21 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
         return permissions;
     } 
 
-    function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns(string memory) {
+    function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns (string memory) {
+        _requireMinted(tokenId);
         string[] memory args = getDynamicPropertiesArray(tokenId);
         string memory res = getStringData(args);
         return res;
     }
 
-    function getDynamicPropertiesArray(uint256 tokenId) public view virtual returns(string[] memory) {
+    function getDynamicPropertiesArray(uint256 tokenId) public view virtual returns (string[] memory) {
+        _requireMinted(tokenId);
         (string[] memory trait_type, string[] memory values) = EVTVariable.getDynamicProperties(tokenId);
         require(trait_type.length == values.length, "length error");
         string[] memory properties = new string[](trait_type.length);
         for (uint256 i = 0; i < trait_type.length; i++) {
             string memory trait_name = trait_type[i];
-            string memory args = string(abi.encodePacked('{"property_type":"',
+            string memory args = string(abi.encodePacked('{"property_name":"',
                                                           trait_name,
                                                           '","value":'
                                                           ));
@@ -210,7 +236,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTVariable, EVTEncryption {
         return properties;
     }
 
-    function getStringData(string[] memory args) public pure returns (string memory) {
+    function getStringData(string[] memory args) internal pure returns (string memory) {
         string memory properties = '[';
         for (uint256 i = 0; i < args.length; i++) {
             if (i + 1 == args.length) {

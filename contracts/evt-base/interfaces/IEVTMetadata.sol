@@ -12,7 +12,7 @@ interface IEVTMetadata is IEVT, IERC721Metadata {
     ///  The URI may point to a JSON file or Base64 encode data that conforms to the
     ///  "NRC7 Metadata JSON Schema".
     /// @return The JSON formatted URI for the specified EVT tokenId
-    function tokenURI(uint256 _tokenId) external view returns (string memory);
+    function tokenURI(uint256 _tokenId) external view override returns (string memory);
 
     /// @notice Returns the Uniform Resource Identifier (URI) for the storefront-level metadata for your contract.
     /// @dev This function SHOULD return the URI for this contract in JSON format, starting with
