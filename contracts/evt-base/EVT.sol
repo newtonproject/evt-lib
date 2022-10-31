@@ -8,7 +8,7 @@ import "./IEVT.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
 import "./interfaces/IEVTMetadata.sol";
-import "./libraries/base64.sol";
+import "../libraries/base64.sol";
 // import "@openzeppelin/contracts/utils/Counters.sol";
 // import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
@@ -70,28 +70,28 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     }
 
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, IEVTMetadata) returns (string memory) {
-        // string memory baseURI = _baseURI();
+        string memory baseURI = _baseURI();
         return
-            // bytes(baseURI).length > 0
-            //     ? string(
-            //         abi.encodePacked(
-            //             "data:application/json;base64,",
-            //             Base64.encode(
-            //                 abi.encodePacked(
-            //                     baseURI,
-            //                     '{"properties":',
-            //                     getDynamicPropertiesAsString(tokenId),
-            //                     '},'
-            //                     '{"encryption":',
-            //                     getPermissionsAsString(tokenId),
-            //                     '}'
-            //                 )
-            //             )
-            //         )
-            //     )
-            //     // : "";
-            //     : string(
-                string(
+            bytes(baseURI).length > 0
+                ? string(
+                    abi.encodePacked(
+                        "data:application/json;base64,",
+                        Base64.encode(
+                            abi.encodePacked(
+                                baseURI,
+                                '{"properties":',
+                                getDynamicPropertiesAsString(tokenId),
+                                '},'
+                                '{"encryption":',
+                                getPermissionsAsString(tokenId),
+                                '}'
+                            )
+                        )
+                    )
+                )
+                // : "";
+                // : string(
+                : string(
                     abi.encodePacked(
                         "data:application/json;base64,",
                         Base64.encode(
@@ -125,7 +125,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                 )
             );
     }
-
+    
     function encryptionURI(uint256 tokenId) public view virtual override returns (string memory) {
         // string memory baseURI = _baseURI();
         return
@@ -199,7 +199,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
             }
             string memory data = getStringData(stringLicense);
             // args = string(abi.encodePacked(args, ']}'));
-            args = string(abi.encodePacked(args, '"', data, '"'));
+            args = string(abi.encodePacked(args, data));
             args = string(abi.encodePacked(args, '}'));
 
             permissions[i] = args;

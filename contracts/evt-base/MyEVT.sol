@@ -18,10 +18,6 @@ contract MyEVT is EVT {
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
     }
-
-    function getPropertyId(string memory propertyName) public view virtual returns (bytes32 propertyId) {
-        return keccak256(abi.encode(propertyName));
-    }
     
 }
 
