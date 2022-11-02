@@ -5,7 +5,6 @@ pragma solidity ^0.8.3;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "../interfaces/IEVTVariable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @dev This implements an optional extension of {EVT} that adds dynamic properties.
@@ -13,20 +12,25 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 abstract contract EVTVariable is ERC165, IEVTVariable {
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
-    // evt constructor propertyIds
-    EnumerableSet.Bytes32Set internal _allPropertyIds;
-
-    mapping(bytes32 => string) internal _propertyTypes;
-
-    // tokenId => propertyIds
-    mapping(uint256 => EnumerableSet.Bytes32Set) private _propertyIds;
-
-    string[] internal _allPropertyTypes;
-
     struct Property {
         string property_type;
         string value;
     }
+
+    // All property ids
+    EnumerableSet.Bytes32Set internal _allPropertyIds;
+
+    // All property types
+    string[] internal _allPropertyTypes;
+
+    // Mapping from property ID to property type
+    mapping(bytes32 => string) internal _propertyTypes;
+
+    // Mapping from token ID to property IDs
+    mapping(uint256 => EnumerableSet.Bytes32Set) private _propertyIds;
+
+    // Mapping from token ID to list of propertyId to Property
+    mapping(uint256 => mapping(bytes32 => Property)) private _propertiesValue;
 
     // Mapping tokenId ==> propertyId ==> propertie Id and value
     mapping(uint256 => mapping(bytes32 => Property)) private _propertiesValue;
@@ -38,17 +42,23 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return interfaceId == type(IEVTVariable).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function addDynamicProperty(bytes32 propertyId) public payable onlyOwner virtual override {
+    /**
+     * @dev See {IEVTVariable-addDynamicProperty}.
+     */
+    function addDynamicProperty(uint256 tokenId, bytes32 propertyId) public payable virtual override {
         // bytes32 _propertyId = keccak256(abi.encode(propertyName));
-        require(supportsProperty(propertyId), "EVTVariable: propertyId exist");
-        _allPropertyIds.add(propertyId);
+        require(supportsProperty(propertyId) && !_propertyIds[tokenId].contains(propertyId) , "EVTVariable: propertyId not exist");
+        _propertyIds[tokenId].add(propertyId);
+        _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
 
         emit DynamicPropertyAdded(propertyId);
     }
 
+    /**
+     * @dev See {IEVTVariable-setDynamicProperty}.
+     */
     function setDynamicProperty(uint256 tokenId, bytes32 propertyId, string memory propertyValue) public virtual override payable {
         require(supportsProperty(propertyId), "EVTVariable: invalid propertyId");
-        require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
         _propertyIds[tokenId].add(propertyId);
         _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
         _propertiesValue[tokenId][propertyId].value = propertyValue;
@@ -56,6 +66,9 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
     }
 
+    /**
+     * @dev See {IEVTVariable-setDynamicProperties}.
+     */
     function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, string[] memory propertyValues) public virtual override payable {
         require(propertyIds.length == propertyValues.length, "length not equal");
         for(uint256 i = 0; i < propertyIds.length; i++) {
@@ -67,11 +80,16 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         }
     }
     
+    /**
+     * @dev See {IEVTVariable-getDynamicProperty}.
+     */
 	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (string memory) {
         return _propertiesValue[tokenId][propertyId].value;
     }
 
-    // return dynamic properties ids and dynamic properties, id is the result of property id's hash
+    /**
+     * @dev See {IEVTVariable-getDynamicProperties}.
+     */
     function getDynamicProperties(uint256 tokenId) public view virtual override returns (string[] memory, string[] memory) {
         uint256 len = _propertyIds[tokenId].length();
         string[] memory property_types = new string[](len);
@@ -85,10 +103,9 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return (property_types, properties);
     }
 
-    function getAllSupportProperties() public view virtual override returns (string[] memory) {
-        return _allPropertyTypes;
-    }
-
+    /**
+     * @dev See {IEVTVariable-supportsProperty}.
+     */
 	function supportsProperty(bytes32 propertyId) public view virtual override returns (bool) {
         return _allPropertyIds.contains(propertyId);
     }
