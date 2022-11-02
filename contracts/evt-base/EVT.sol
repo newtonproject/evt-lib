@@ -9,6 +9,8 @@ import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
 import "./interfaces/IEVTMetadata.sol";
 import "../libraries/base64.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 // import "@openzeppelin/contracts/utils/Counters.sol";
 // import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
@@ -68,6 +70,12 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
             interfaceId == type(IEVTMetadata).interfaceId ||
             super.supportsInterface(interfaceId);
     }
+
+    function addDynamicProperty(string propertyName) public payable onlyOwner virtual override {
+        _allPropertyTypes.push(propertyName);
+        bytes32 propertyId = keccak256(abi.encode(propertyName));
+        EVTVariable.addDynamicProperty(propertyId);
+    }
    
     function contractURI() public view virtual override returns (string memory) {
         string memory baseURI = _baseURI();   
@@ -83,9 +91,8 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                 : "";
     }
 
-
-
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, IEVTMetadata) returns (string memory) {
+        string memory baseURI = _baseURI();   
         return
             bytes(baseURI).length > 0
                 ? string(
@@ -94,11 +101,11 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                         Base64.encode(
                             abi.encodePacked(
                                 '{"external_uri":',
-                                _baseURI(),
-                                '{"properties":',
+                                baseURI,
+                                ',"properties":',
                                 getDynamicPropertiesAsString(tokenId),
-                                '},'
-                                '{"encryption":',
+                                ','
+                                '"encryption":',
                                 getPermissionsAsString(tokenId),
                                 '}'
                             )
@@ -112,8 +119,8 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                             abi.encodePacked(
                                 '{"properties":',
                                 getDynamicPropertiesAsString(tokenId),
-                                '},',
-                                '{"encryption":',
+                                ',',
+                                '"encryption":',
                                 getPermissionsAsString(tokenId),
                                 '}'
                             )

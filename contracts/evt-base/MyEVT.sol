@@ -65,7 +65,7 @@ contract MyEVT is EVT {
         return keccak256(abi.encode(propertyName));
     }
 
-    function addDynamicProperty(uint256 tokenId, string memory propertyName) public onlyOwner {
+    function addDynamicProperty(uint256 tokenId, string memory propertyName) public {
         require(bytes(propertyName).length > 0, "Empty property!");
         bytes32 propertyId = getPropertyId(propertyName);
         EVTEncryption.addDynamicProperty(tokenId, propertyId);
