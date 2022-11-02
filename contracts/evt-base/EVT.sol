@@ -21,11 +21,19 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
 
     address private _from = address(this);
 
+    string private _external_uri;
+
     // using Counters for Counters.Counter;
 
     // Counters.Counter private _tokenIdCounter;
 
-    constructor(string memory name_, string memory symbol_, string[] memory properties) ERC721(name_, symbol_) {
+    constructor(
+        string memory name_, 
+        string memory symbol_, 
+        string[] memory properties,
+        string memory _newBaseURI
+    ) ERC721(name_, symbol_) {
+        setBaseURI(_newBaseURI);
         uint256 len = properties.length;
         for(uint256 i = 0; i < len; i++) {
             bytes32 propertyId = keccak256(abi.encode(properties[i]));
@@ -39,6 +47,14 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         return _from;
     }
     
+    function setBaseURI(string memory _newBaseURI) public onlyOwner {
+        _external_uri = _newBaseURI;
+    }
+
+    function _baseURI() public view virtual override returns (string memory) {
+        return _external_uri;
+    }
+
     /**
      * @dev See {IERC165-supportsInterface}
      * IEVTVariable   : 0x6af74b02
@@ -47,14 +63,12 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      * IEVTMetadata   : todo
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721, EVTVariable, EVTEncryption) returns (bool) {
-        
         return 
             interfaceId == type(IEVT).interfaceId ||
             interfaceId == type(IEVTMetadata).interfaceId ||
             super.supportsInterface(interfaceId);
     }
-
-
+   
     function contractURI() public view virtual override returns (string memory) {
         string memory baseURI = _baseURI();   
         return
@@ -69,8 +83,9 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                 : "";
     }
 
+
+
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, IEVTMetadata) returns (string memory) {
-        string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
                 ? string(
@@ -78,7 +93,8 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                         "data:application/json;base64,",
                         Base64.encode(
                             abi.encodePacked(
-                                baseURI,
+                                '{"external_uri":',
+                                _baseURI(),
                                 '{"properties":',
                                 getDynamicPropertiesAsString(tokenId),
                                 '},'
@@ -89,8 +105,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                         )
                     )
                 )
-                // : "";
-                // : string(
                 : string(
                     abi.encodePacked(
                         "data:application/json;base64,",
@@ -127,7 +141,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     }
     
     function encryptionURI(uint256 tokenId) public view virtual override returns (string memory) {
-        // string memory baseURI = _baseURI();
         return
             string(
                 abi.encodePacked(
@@ -182,23 +195,14 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
             address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
             string memory args = string(abi.encodePacked('{"encryptionKeyId":',
                                                             toString(abi.encodePacked(encryptionKeyId)),
-                                                            // encryptionKeyId,
                                                             ',"license":'
-                                                            // '[' 
                                                           ));
             string[] memory stringLicense = new string[](license.length);
             for(uint256 j = 0; j < license.length; j++) {
-                // (string memory singleLicense) = abi.decode(license[i], (string));
-                
-                // args = string(abi.encodePacked(args, 
-                //                                 toString(abi.encodePacked(license[i][j])),
-                //                                 '",'
-                //                               ));
                 stringLicense[j] = toString(abi.encodePacked(license[j]));
  
             }
             string memory data = getStringData(stringLicense);
-            // args = string(abi.encodePacked(args, ']}'));
             args = string(abi.encodePacked(args, data));
             args = string(abi.encodePacked(args, '}'));
 
@@ -226,8 +230,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
                                                           trait_name,
                                                           '","value":'
                                                           ));
-            
-                // (string memory value) = abi.decode(values[i], (string));
                 args = string(abi.encodePacked(args, '"', values[i], '"'));
 
                 args = string(abi.encodePacked(args, '}'));

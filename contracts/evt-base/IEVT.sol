@@ -6,5 +6,5 @@ import "./interfaces/IEVTVariable.sol";
 import "./interfaces/IEVTEncryption.sol";
 
 interface IEVT is IERC721, IEVTVariable, IEVTEncryption  {
- 
+    
 }
