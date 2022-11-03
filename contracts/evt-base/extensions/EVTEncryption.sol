@@ -31,12 +31,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-registerEncryptedKey}.
      */
-    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override {
-        require(!_encryptedKeyIDs.contains(encryptedKeyID), "encryptedKeyID exist");
-        _encryptedKeyIDs.add(encryptedKeyID);
-
-        emit EncryptedKeyRegistered(encryptedKeyID);
-    }
+    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override;
 	
     /**
      * @dev See {IEVTEncryption-registerEncryptedKey}.
@@ -81,7 +76,6 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         address[] memory licensee = new address[](_permission.length());
         for(uint256 i = 0; i < _permission.length(); i++) {
             licensee[i] = _permission.at(i);
-        
         }
         return licensee;
     }
