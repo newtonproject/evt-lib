@@ -84,7 +84,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     /**
      * @dev See {IEVTVariable-getDynamicProperty}.
      */
-	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (string memory) {
+    function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (string memory) {
         return _propertiesValue[tokenId][propertyId].value;
     }
 
@@ -114,7 +114,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     /**
      * @dev See {IEVTVariable-supportsProperty}.
      */
-	function supportsProperty(bytes32 propertyId) public view virtual override returns (bool) {
+    function supportsProperty(bytes32 propertyId) public view virtual override returns (bool) {
         return _allPropertyIds.contains(propertyId);
     }
 }
