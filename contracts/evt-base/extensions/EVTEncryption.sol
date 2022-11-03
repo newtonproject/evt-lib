@@ -1,4 +1,4 @@
-// SPDX-licensee-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity ^0.8.3;
 
@@ -71,17 +71,6 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
         return _authorize.contains(licensee);
     }
-
-    // function getPermissions(uint256 tokenId) public view virtual returns (bytes32[] memory, address[][] memory) {
-    //     uint256 len = _encryptedKeyIDs.length();
-    //     bytes32[] memory encryptionKeyIds = new bytes32[](len);
-    //     address[][] memory licensee;
-    //     for(uint256 i = 0; i < len; i++) {
-    //         encryptionKeyIds[i] = _encryptedKeyIDs.at(i);
-    //         licensee[i] = getPermissions(tokenId, encryptionKeyIds[i]);
-    //     }
-    //     return (encryptionKeyIds, licensee);
-    // }
 
     /**
      * @dev See {IEVTEncryption-getPermissions}.
