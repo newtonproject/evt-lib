@@ -25,6 +25,10 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
 
     string private _external_uri;
 
+    // using Counters for Counters.Counter;
+
+    // Counters.Counter private _tokenIdCounter;
+
     constructor(
         string memory name_, 
         string memory symbol_, 
@@ -82,16 +86,9 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     }
 
     /**
-     * @dev Add new property besides properties passed in constructor function 
-     * when Contract initiated.
-     *
-     * Requirements:
-     *
-     * - `msg.sender` must be the owner of the contract.
-     * - PropertyName must not be empty.
+     * @dev Add new property besides properties passed in constructor function when Contract initiated. 
      */
     function addDynamicProperty(string propertyName) public payable onlyOwner virtual override {
-        require(bytes(propertyName).length > 0, "Empty property!");
         _allPropertyTypes.push(propertyName);
         bytes32 propertyId = keccak256(abi.encode(propertyName));
         EVTVariable.addDynamicProperty(propertyId);
@@ -197,15 +194,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
             );
     }
 
-    /**
-     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
-     * 
-     * The result is a string in a JSON formatted array.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
     function getPermissionsAsString(uint256 tokenId) public view virtual returns (string memory) {
         _requireMinted(tokenId);
         string[] memory args = getPermissionsArray(tokenId);
@@ -213,15 +201,26 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         return res;
     }
 
-    /**
-     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
-     * 
-     * The result is a string array consist of Object in JSON format.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
+    // function getPermissions(uint256 tokenId, bytes32 encryptionKeyId) public view virtual returns (address[] memory) {
+    //     EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptionKeyId];
+    //     address[] memory license = new address[](_permission.length());
+    //     for(uint256 i = 0; i < _permission.length(); i++) {
+    //         license[i] = _permission.at(i);
+    //     }
+    //     return license;
+    // }
+
+    // function getPermissions(uint256 tokenId) public view virtual returns (bytes32[] memory, address[][] memory) {
+    //     uint256 len = _encryptionKeys.length();
+    //     bytes32[] memory encryptionKeyIds = new bytes32[](len);
+    //     address[][] memory license;
+    //     for(uint256 i = 0; i < len; i++) {
+    //         encryptionKeyIds[i] = _encryptionKeys.at(i);
+    //         license[i] = getPermissions(tokenId, encryptionKeyIds[i]);
+    //     }
+    //     return (encryptionKeyIds, license);
+    // }
+
     function getPermissionsArray(uint256 tokenId) public view virtual returns (string[] memory) {
         _requireMinted(tokenId);
         // (bytes32[] memory encryptionKeyIds, address[][] memory license) = EVTEncryption.getPermissions(tokenId);
@@ -249,15 +248,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         return permissions;
     } 
 
-    /**
-     * @dev Get tokenId's dynamic properties.
-     * 
-     * The result is a string in a JSON formatted array.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
     function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns (string memory) {
         _requireMinted(tokenId);
         string[] memory args = getDynamicPropertiesArray(tokenId);
@@ -265,15 +255,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         return res;
     }
 
-    /**
-     * @dev Get tokenId's dynamic properties.
-     * 
-     * The result is a string array consist of Object in JSON format.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
     function getDynamicPropertiesArray(uint256 tokenId) public view virtual returns (string[] memory) {
         _requireMinted(tokenId);
         (string[] memory trait_type, string[] memory values) = EVTVariable.getDynamicProperties(tokenId);
@@ -293,15 +274,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         return properties;
     }
 
-    /**
-     * @dev Transfer the string array to a string of JSON format.
-     * 
-     * @param args - String array consist of Object in JSON format.
-     *
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
     function getStringData(string[] memory args) internal pure returns (string memory) {
         string memory properties = '[';
         for (uint256 i = 0; i < args.length; i++) {
