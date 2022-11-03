@@ -24,7 +24,6 @@ interface IEVTVariable {
     
      /**
      * @dev Set the `propertyValue` by `tokenId` and `propertyId`.
-     * propertyId = bytes32(keccak256('propertyName')) 
      *
      * Requirements:
      *
@@ -33,6 +32,14 @@ interface IEVTVariable {
      */
 	function setDynamicProperty(uint256 tokenId, bytes32 propertyId, string memory propertyValue) external payable;
 	
+    /**
+     * @dev Set the `propertyValue` by `tokenId` and `propertyId` in quantity.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     * - `propertyId` must exist.
+     */
 	function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, string[] memory propertyValues) external payable;
 
     /**
@@ -45,7 +52,20 @@ interface IEVTVariable {
      */
 	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) external view returns (string memory propertyValue);
 
+    /**
+     * @dev Returns the properties of the `propertyId` token in quantity.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     * - `propertyId` must exist.
+     */
     function getDynamicProperties(uint256 tokenId) external view returns (string[] memory propertyIds, string[] memory propertyValues);
+
+    /**
+     * @dev Returns all supported properties.
+     */
+    function getAllSupportProperties() external view virtual override returns (string[] memory);
   
     /**
      * @dev Returns whether the `propertyId` exists.
