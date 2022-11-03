@@ -12,13 +12,13 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
-    // mapping from tokenId to list of encryptionKeyID => addressSet
+    // Mapping from tokenId to list of encryptionKeyID => addressSet
     mapping(uint256 => mapping(bytes32 => EnumerableSet.AddressSet)) internal _permissions;
 
-    // mapping from tokenId to list of encryptionKeyIDs
+    // Mapping from tokenId to list of encryptionKeyIDs
     mapping(uint256 => EnumerableSet.Bytes32Set) internal _tokenKeyIDs;
 
-    // all encryptionKeyIDs in this contract
+    // All encryptionKeyIDs in this contract
     EnumerableSet.Bytes32Set internal _encryptedKeyIDs;
 
     /**
@@ -28,6 +28,9 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         return interfaceId == type(IEVTEncryption).interfaceId || super.supportsInterface(interfaceId);
     }
     
+    /**
+     * @dev See {IEVTEncryption-registerEncryptedKey}.
+     */
     function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override {
         require(!_encryptedKeyIDs.contains(encryptedKeyID), "encryptedKeyID exist");
         _encryptedKeyIDs.add(encryptedKeyID);
@@ -35,16 +38,22 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         emit EncryptedKeyRegistered(encryptedKeyID);
     }
 	
-    function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address license) public payable virtual override {
+    /**
+     * @dev See {IEVTEncryption-registerEncryptedKey}.
+     */
+    function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public payable virtual override {
         require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        require(!_permissions[tokenId][encryptedKeyID].contains(license), "license have added");
+        require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        _authorize.add(license);
+        _authorize.add(licensee);
         _tokenKeyIDs[tokenId].add(encryptedKeyID);
 
-        emit PermissionAdded(tokenId, encryptedKeyID, license);
+        emit PermissionAdded(tokenId, encryptedKeyID, licensee);
     }
 	
+    /**
+     * @dev See {IEVTEncryption-removePermission}.
+     */
     function removePermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public virtual override {
         require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
@@ -54,31 +63,26 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
     }
 
+    /**
+     * @dev See {IEVTEncryption-hasPermission}.
+     */
     function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public view virtual override returns (bool) {
         require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
         return _authorize.contains(licensee);
     }
 
-    // function getPermissions(uint256 tokenId) public view virtual returns (bytes32[] memory, address[][] memory) {
-    //     uint256 len = _encryptedKeyIDs.length();
-    //     bytes32[] memory encryptionKeyIds = new bytes32[](len);
-    //     address[][] memory license;
-    //     for(uint256 i = 0; i < len; i++) {
-    //         encryptionKeyIds[i] = _encryptedKeyIDs.at(i);
-    //         license[i] = getPermissions(tokenId, encryptionKeyIds[i]);
-    //     }
-    //     return (encryptionKeyIds, license);
-    // }
-
+    /**
+     * @dev See {IEVTEncryption-getPermissions}.
+     */
     function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) public view virtual returns (address[] memory) {
        if(hasPermission(tokenId, encryptedKeyID, msg.sender)) {
             EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptedKeyID];
-            address[] memory license = new address[](_permission.length());
+            address[] memory licensee = new address[](_permission.length());
             for(uint256 i = 0; i < _permission.length(); i++) {
-                license[i] = _permission.at(i);
+                licensee[i] = _permission.at(i);
             }
-            return license;
+            return licensee;
        } else {
            return [];
        }

@@ -54,4 +54,14 @@ interface IEVTEncryption {
      * - `encryptedKeyID` must exist.
      */
     function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external view returns (bool);
+
+    /**
+     * @dev Returns the list of licensees
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     * - `encryptedKeyID` must exist.
+     */
+    function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) external view returns (address[] memory);
 }

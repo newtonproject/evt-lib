@@ -65,7 +65,7 @@ interface IEVTVariable {
     /**
      * @dev Returns all supported properties.
      */
-    function getAllSupportProperties() external view virtual override returns (string[] memory);
+    function getAllSupportProperties() external view returns (string[] memory);
   
     /**
      * @dev Returns whether the `propertyId` exists.
