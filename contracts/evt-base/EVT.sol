@@ -88,7 +88,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      * @dev Override _baseURI() in ERC721.sol and return the _external_uri 
      representing the base URI for all token IDs.
      */
-    function _baseURI() public view virtual override returns (string memory) {
+    function baseURI() public view virtual returns (string memory) {
         return _external_uri;
     }
 
@@ -96,12 +96,12 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      * @dev See {IEVTMetadata-contractURI}.
      */  
     function contractURI() public view virtual override returns (string memory) {
-        string memory baseURI = _baseURI();   
+        // string memory baseURI = _baseURI();   
         return
-            bytes(baseURI).length > 0
+            bytes(_external_uri).length > 0
                 ? string(
                     abi.encodePacked(
-                        baseURI,
+                        _external_uri,
                         "contract/",
                         Strings.toHexString(uint256(uint160(address(this))))
                     )
@@ -113,16 +113,16 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      * @dev See {IEVTMetadata-tokenURI}.
      */
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, IEVTMetadata) returns (string memory) {
-        string memory baseURI = _baseURI();   
+        // string memory baseURI = _baseURI();   
         return
-            bytes(baseURI).length > 0
+            bytes(_external_uri).length > 0
                 ? string(
                     abi.encodePacked(
                         "data:application/json;base64,",
                         Base64.encode(
                             abi.encodePacked(
                                 '{"external_uri":',
-                                baseURI,
+                                _external_uri,
                                 ',"properties":',
                                 getDynamicPropertiesAsString(tokenId),
                                 ','
@@ -199,7 +199,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     /**
      * @dev See {IEVT-addDynamicProperty}.
      */  
-    function addDynamicProperty(string propertyName) public payable virtual override {
+    function addDynamicProperty(string memory propertyName) public payable virtual override {
         require(bytes(propertyName).length > 0, "Empty property!");
         _allPropertyNames.push(propertyName);
         bytes32 propertyId = keccak256(abi.encode(propertyName));
@@ -209,7 +209,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     /**
      * @dev See {IEVT-getDynamicPropertiesAsString}.
      */
-    function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns (string memory) {
+    function getDynamicPropertiesAsString(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
         string[] memory args = _getDynamicPropertiesArray(tokenId);
         string memory res = _getStringData(args);
@@ -251,7 +251,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     /**
      * @dev See {IEVT-getPermissionsAsString}.
      */
-    function getPermissionsAsString(uint256 tokenId) public view virtual returns (string memory) {
+    function getPermissionsAsString(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
         string[] memory args = _getPermissionsArray(tokenId);
         string memory res = _getStringData(args);
