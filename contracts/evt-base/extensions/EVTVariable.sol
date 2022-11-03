@@ -43,7 +43,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
     function addDynamicProperty(bytes32 propertyId) public payable virtual override {
-        require(msg.sender == address(this), "Have no permission");
+        // require(msg.sender == , "Have no permission");
         require(supportsProperty(propertyId), "EVTVariable: propertyId not exist");
         _allPropertyIds.add(propertyId);
 
