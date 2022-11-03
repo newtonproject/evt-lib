@@ -29,25 +29,25 @@ contract MyEVT is EVT {
         _logo = logo_;
     }
 
+    function mint(address to) public {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _mint(to, tokenId);
+    }
+
     function safeMint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
     }
 
-    // /**
-    //  * @dev See {IERC721Metadata-name}.
-    //  */
-    // function name() public view virtual override returns (string memory) {
-    //     return _name;
-    // }
-
-    // /**
-    //  * @dev See {IERC721Metadata-symbol}.
-    //  */
-    // function symbol() public view virtual override returns (string memory) {
-    //     return _symbol;
-    // }
+    function safeMint(
+        address to,
+        uint256 tokenId,
+        bytes memory _data
+    ) public {
+        _safeMint(to, tokenId, _data);
+    }
 
     function logo() public view returns (string memory) {
         return _logo;
@@ -65,7 +65,7 @@ contract MyEVT is EVT {
         return keccak256(abi.encode(propertyName));
     }
 
-    function addDynamicProperty(uint256 tokenId, string memory propertyName) public {
+    function addDynamicProperty(uint256 tokenId, string memory propertyName) public onlyOwner {
         require(bytes(propertyName).length > 0, "Empty property!");
         bytes32 propertyId = getPropertyId(propertyName);
         EVTEncryption.addDynamicProperty(tokenId, propertyId);
@@ -78,17 +78,10 @@ contract MyEVT is EVT {
         EVTVariable.setDynamicProperty(tokenId, propertyId, propertyValue);
     }
 
-    // function _baseURI() public view virtual override returns (string memory) {
-    //     return _external_uri;
-    // }
-
     /**
      * See helloEVT.json
      */
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        // if (bytes(baseURI).length != 0) {
-        //     return string(abi.encodePacked(baseURI, Strings.toString(tokenId)));
-        // }
         string[20] memory args;
         args[0] = '{"name": "';
         args[1] = name();

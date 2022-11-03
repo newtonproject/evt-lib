@@ -11,16 +11,18 @@ import "../libraries/base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @dev Implementation of Encrypted Variable Token Standard (NRC-).
+ * @dev Implementation of https://neps.newtonproject.org/neps/nep-53/[NRC-53 EVT] Encrypted Variable Token Standard.
  */
 contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
-    using EnumerableSet for EnumerableSet.Bytes32Set;
 
-    // EVT contract address
-    address private _from = address(this);
+    using EnumerableSet for EnumerableSet.Bytes32Set;
 
     // Point to the EVT offchain data
     string private _external_uri;
+
+    // =============================================================
+    //                          CONSTRUCTOR
+    // =============================================================
 
     /**
      * @dev Initializes the contract by setting `name`、`symbol`、`properties` and `baseURI` to the token collection.
@@ -41,11 +43,33 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         }
     }
 
+    // =============================================================
+    //                            IERC165
+    // =============================================================
+
+    /**
+     * @dev See {IERC165-supportsInterface}
+     * IEVTVariable   : 0x6af74b02
+     * IEVTEncryption : 0xd28afde2
+     * IERC721        : 0x80ac58cd
+     * IEVTMetadata   : todo
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721, EVTVariable, EVTEncryption) returns (bool) {
+        return 
+            interfaceId == type(IEVT).interfaceId ||
+            interfaceId == type(IEVTMetadata).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+    
+    // =============================================================
+    //                        URI OPERATIONS
+    // =============================================================
+
     /**
      * @dev Return the Contract Address.
      */
     function from() external view override returns (address) {
-        return _from;
+        return address(this);
     }
     
     /**
@@ -65,36 +89,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      */
     function _baseURI() public view virtual override returns (string memory) {
         return _external_uri;
-    }
-
-    /**
-     * @dev See {IERC165-supportsInterface}
-     * IEVTVariable   : 0x6af74b02
-     * IEVTEncryption : 0xd28afde2
-     * IERC721        : 0x80ac58cd
-     * IEVTMetadata   : todo
-     */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC721, EVTVariable, EVTEncryption) returns (bool) {
-        return 
-            interfaceId == type(IEVT).interfaceId ||
-            interfaceId == type(IEVTMetadata).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
-
-    /**
-     * @dev Add new property besides properties passed in constructor function 
-     * when Contract initiated.
-     *
-     * Requirements:
-     *
-     * - `msg.sender` must be the owner of the contract.
-     * - PropertyName must not be empty.
-     */
-    function addDynamicProperty(string propertyName) public payable onlyOwner virtual override {
-        require(bytes(propertyName).length > 0, "Empty property!");
-        _allPropertyTypes.push(propertyName);
-        bytes32 propertyId = keccak256(abi.encode(propertyName));
-        EVTVariable.addDynamicProperty(propertyId);
     }
 
     /**
@@ -197,71 +191,27 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
             );
     }
 
+    // =============================================================
+    //                     Property OPERATIONS
+    // =============================================================
+
     /**
-     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
-     * 
-     * The result is a string in a JSON formatted array.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
-    function getPermissionsAsString(uint256 tokenId) public view virtual returns (string memory) {
-        _requireMinted(tokenId);
-        string[] memory args = getPermissionsArray(tokenId);
-        string memory res = getStringData(args);
-        return res;
+     * @dev See {IEVT-addDynamicProperty}.
+     */  
+    function addDynamicProperty(string propertyName) public payable onlyOwner virtual override {
+        require(bytes(propertyName).length > 0, "Empty property!");
+        _allPropertyTypes.push(propertyName);
+        bytes32 propertyId = keccak256(abi.encode(propertyName));
+        EVTVariable.addDynamicProperty(propertyId);
     }
 
     /**
-     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
-     * 
-     * The result is a string array consist of Object in JSON format.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
-    function getPermissionsArray(uint256 tokenId) public view virtual returns (string[] memory) {
-        _requireMinted(tokenId);
-        // (bytes32[] memory encryptionKeyIds, address[][] memory license) = EVTEncryption.getPermissions(tokenId);
-        uint256 len = _tokenKeyIds[tokenId].length();
-        string[] memory permissions = new string[](len);
-        for (uint256 i = 0; i < len; i++) {
-            bytes32 encryptionKeyId = _tokenKeyIds[tokenId].at(i);
-            address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
-            string memory args = string(abi.encodePacked('{"encryptionKeyId":',
-                                                            toString(abi.encodePacked(encryptionKeyId)),
-                                                            ',"license":'
-                                                          ));
-            string[] memory stringLicense = new string[](license.length);
-            for(uint256 j = 0; j < license.length; j++) {
-                stringLicense[j] = toString(abi.encodePacked(license[j]));
- 
-            }
-            string memory data = getStringData(stringLicense);
-            args = string(abi.encodePacked(args, data));
-            args = string(abi.encodePacked(args, '}'));
-
-            permissions[i] = args;
-        }
-
-        return permissions;
-    } 
-
-    /**
-     * @dev Get tokenId's dynamic properties.
-     * 
-     * The result is a string in a JSON formatted array.
-     * 
-     * Requirements:
-     *
-     * - `tokenId` must exist.
+     * @dev See {IEVT-getDynamicPropertiesAsString}.
      */
     function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns (string memory) {
         _requireMinted(tokenId);
-        string[] memory args = getDynamicPropertiesArray(tokenId);
-        string memory res = getStringData(args);
+        string[] memory args = _getDynamicPropertiesArray(tokenId);
+        string memory res = _getStringData(args);
         return res;
     }
 
@@ -274,7 +224,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      *
      * - `tokenId` must exist.
      */
-    function getDynamicPropertiesArray(uint256 tokenId) public view virtual returns (string[] memory) {
+    function _getDynamicPropertiesArray(uint256 tokenId) public view virtual returns (string[] memory) {
         _requireMinted(tokenId);
         (string[] memory trait_type, string[] memory values) = EVTVariable.getDynamicProperties(tokenId);
         require(trait_type.length == values.length, "length error");
@@ -293,6 +243,56 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         return properties;
     }
 
+    // =============================================================
+    //                   Encryption OPERATIONS
+    // =============================================================
+
+    /**
+     * @dev See {IEVT-getPermissionsAsString}.
+     */
+    function getPermissionsAsString(uint256 tokenId) public view virtual returns (string memory) {
+        _requireMinted(tokenId);
+        string[] memory args = _getPermissionsArray(tokenId);
+        string memory res = _getStringData(args);
+        return res;
+    }
+
+    /**
+     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
+     * 
+     * The result is a string array consist of Object in JSON format.
+     * 
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function _getPermissionsArray(uint256 tokenId) public view virtual returns (string[] memory) {
+        _requireMinted(tokenId);
+        // (bytes32[] memory encryptionKeyIds, address[][] memory license) = EVTEncryption.getPermissions(tokenId);
+        uint256 len = _tokenKeyIds[tokenId].length();
+        string[] memory permissions = new string[](len);
+        for (uint256 i = 0; i < len; i++) {
+            bytes32 encryptionKeyId = _tokenKeyIds[tokenId].at(i);
+            address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
+            string memory args = string(abi.encodePacked('{"encryptionKeyId":',
+                                                            toString(abi.encodePacked(encryptionKeyId)),
+                                                            ',"license":'
+                                                          ));
+            string[] memory stringLicense = new string[](license.length);
+            for(uint256 j = 0; j < license.length; j++) {
+                stringLicense[j] = toString(abi.encodePacked(license[j]));
+ 
+            }
+            string memory data = _getStringData(stringLicense);
+            args = string(abi.encodePacked(args, data));
+            args = string(abi.encodePacked(args, '}'));
+
+            permissions[i] = args;
+        }
+
+        return permissions;
+    } 
+
     /**
      * @dev Transfer the string array to a string of JSON format.
      * 
@@ -302,7 +302,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      *
      * - `tokenId` must exist.
      */
-    function getStringData(string[] memory args) internal pure returns (string memory) {
+    function _getStringData(string[] memory args) internal pure returns (string memory) {
         string memory properties = '[';
         for (uint256 i = 0; i < args.length; i++) {
             if (i + 1 == args.length) {
@@ -314,7 +314,14 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         properties = string(abi.encodePacked(properties, ']'));
         return properties;
     }
-
+    
+    // =============================================================
+    //                       OTHER OPERATIONS
+    // =============================================================
+    
+    /**
+     * @dev Converts a bytes data to its ASCII string decimal representation.
+     */
     function toString(bytes memory data) public pure returns(string memory) {
         bytes memory alphabet = "0123456789abcdef";
 
