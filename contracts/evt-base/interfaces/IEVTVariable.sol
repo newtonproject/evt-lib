@@ -20,7 +20,7 @@ interface IEVTVariable {
      *
      * - `propertyId` must exist.
      */
-    function addDynamicProperty(uint256 tokenId, bytes32 propertyId) external payable;
+    function addDynamicProperty(bytes32 propertyId) external payable;
     
      /**
      * @dev Set the `propertyValue` by `tokenId` and `propertyId`.

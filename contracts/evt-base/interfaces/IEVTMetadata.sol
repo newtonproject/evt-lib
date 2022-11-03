@@ -3,7 +3,7 @@ pragma solidity ^0.8.3;
 import "../IEVT.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
-interface IEVTMetadata is IEVT, IERC721Metadata {	
+interface IEVTMetadata is IERC721Metadata {	
     /// @notice tags for a collection of EVTs in this contract
     function from() external view returns (address);
 

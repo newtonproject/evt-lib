@@ -5,7 +5,6 @@ pragma solidity ^0.8.3;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "../interfaces/IEVTVariable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @dev This implements an optional extension of {EVT} that adds dynamic properties.
@@ -22,7 +21,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     EnumerableSet.Bytes32Set internal _allPropertyIds;
 
     // All property types
-    string[] internal _allPropertyTypes;
+    string[] internal _allPropertyNames;
 
     // Mapping from property ID to property type
     mapping(bytes32 => string) internal _propertyTypes;
@@ -31,9 +30,6 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     mapping(uint256 => EnumerableSet.Bytes32Set) private _propertyIds;
 
     // Mapping from token ID to list of propertyId to Property
-    mapping(uint256 => mapping(bytes32 => Property)) private _propertiesValue;
-
-    // Mapping tokenId ==> propertyId ==> propertie Id and value
     mapping(uint256 => mapping(bytes32 => Property)) private _propertiesValue;
 
     /**
@@ -46,8 +42,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     /**
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
-    function addDynamicProperty(bytes32 propertyId) public payable onlyOwner virtual override {
-        // bytes32 _propertyId = keccak256(abi.encode(propertyName));
+    function addDynamicProperty(bytes32 propertyId) public payable virtual override {
+        require(msg.sender == address(this), "Have no permission");
         require(supportsProperty(propertyId), "EVTVariable: propertyId not exist");
         _allPropertyIds.add(propertyId);
 
@@ -108,7 +104,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      * @dev See {IEVTVariable-getAllSupportProperties}.
      */
     function getAllSupportProperties() public view virtual override returns (string[] memory) {
-        return _allPropertyTypes;   
+        return _allPropertyNames;   
     }
 
     /**

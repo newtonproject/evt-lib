@@ -16,7 +16,7 @@ interface IEVT is IERC721, IEVTVariable, IEVTEncryption  {
      * - `msg.sender` must be the owner of the contract.
      * - PropertyName must not be empty.
      */
-    function addDynamicProperty(string propertyName) public payable;
+    function addDynamicProperty(string memory propertyName) external payable;
 
     /**
      * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
@@ -27,7 +27,7 @@ interface IEVT is IERC721, IEVTVariable, IEVTEncryption  {
      *
      * - `tokenId` must exist.
      */
-    function getPermissionsAsString(uint256 tokenId) public view returns (string memory);
+    function getPermissionsAsString(uint256 tokenId) external view returns (string memory);
 
     /**
      * @dev Get tokenId's dynamic properties.
@@ -38,5 +38,5 @@ interface IEVT is IERC721, IEVTVariable, IEVTEncryption  {
      *
      * - `tokenId` must exist.
      */
-    function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns (string memory);
+    function getDynamicPropertiesAsString(uint256 tokenId) external view returns (string memory);
 }

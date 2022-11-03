@@ -3,6 +3,7 @@ pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "./IEVT.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
@@ -37,7 +38,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
         uint256 len = properties.length;
         for(uint256 i = 0; i < len; i++) {
             bytes32 propertyId = keccak256(abi.encode(properties[i]));
-            _allPropertyTypes.push(properties[i]);
+            _allPropertyNames.push(properties[i]);
             _propertyTypes[propertyId] = properties[i];
             _allPropertyIds.add(propertyId);
         }
@@ -79,7 +80,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
      * 
      * - `msg.sender` must be the owner of the contract.
      */
-    function setBaseURI(string memory _newBaseURI) public onlyOwner {
+    function setBaseURI(string memory _newBaseURI) public {
         _external_uri = _newBaseURI;
     }
 
@@ -198,9 +199,9 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     /**
      * @dev See {IEVT-addDynamicProperty}.
      */  
-    function addDynamicProperty(string propertyName) public payable onlyOwner virtual override {
+    function addDynamicProperty(string propertyName) public payable virtual override {
         require(bytes(propertyName).length > 0, "Empty property!");
-        _allPropertyTypes.push(propertyName);
+        _allPropertyNames.push(propertyName);
         bytes32 propertyId = keccak256(abi.encode(propertyName));
         EVTVariable.addDynamicProperty(propertyId);
     }
@@ -269,10 +270,10 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable {
     function _getPermissionsArray(uint256 tokenId) public view virtual returns (string[] memory) {
         _requireMinted(tokenId);
         // (bytes32[] memory encryptionKeyIds, address[][] memory license) = EVTEncryption.getPermissions(tokenId);
-        uint256 len = _tokenKeyIds[tokenId].length();
+        uint256 len = _tokenKeyIDs[tokenId].length();
         string[] memory permissions = new string[](len);
         for (uint256 i = 0; i < len; i++) {
-            bytes32 encryptionKeyId = _tokenKeyIds[tokenId].at(i);
+            bytes32 encryptionKeyId = _tokenKeyIDs[tokenId].at(i);
             address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
             string memory args = string(abi.encodePacked('{"encryptionKeyId":',
                                                             toString(abi.encodePacked(encryptionKeyId)),

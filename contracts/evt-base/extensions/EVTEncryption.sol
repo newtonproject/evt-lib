@@ -75,17 +75,14 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-getPermissions}.
      */
-    function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) public view virtual returns (address[] memory) {
-       if(hasPermission(tokenId, encryptedKeyID, msg.sender)) {
-            EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptedKeyID];
-            address[] memory licensee = new address[](_permission.length());
-            for(uint256 i = 0; i < _permission.length(); i++) {
-                licensee[i] = _permission.at(i);
-            }
-            return licensee;
-       } else {
-           return [];
-       }
-       
+    function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) public view virtual override returns (address[] memory) {
+        require(hasPermission(tokenId, encryptedKeyID, msg.sender), "Have no permission");
+        EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptedKeyID];
+        address[] memory licensee = new address[](_permission.length());
+        for(uint256 i = 0; i < _permission.length(); i++) {
+            licensee[i] = _permission.at(i);
+        
+        }
+        return licensee;
     }
 }

@@ -4,10 +4,9 @@ pragma solidity ^0.8.3;
 import "./EVT.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../libraries/HexStrings.sol";
-import "../libraries/NewtonAddress.sol";
+// import "./libraries/HexStrings.sol";
+// import "./libraries/NewtonAddress.sol";
 import "../libraries/base64.sol";
 
 contract MyEVT is EVT {
@@ -27,6 +26,34 @@ contract MyEVT is EVT {
         string memory _newBaseURI
     ) EVT(name_, symbol_, properties, _newBaseURI) {
         _logo = logo_;
+    }
+
+    function logo() public view returns (string memory) {
+        return _logo;
+    }
+
+    function description() public view returns (string memory) {
+        return _description;
+    }
+
+    function setTax(uint256 _newTax) public returns (uint256) {
+        _tax = _newTax;
+        return _tax;
+    }
+
+    function getPropertyId(string memory propertyName) public view virtual returns (bytes32 propertyId) {
+        return keccak256(abi.encode(propertyName));
+    }
+
+    // function setDynamicProperty(uint256 tokenId, string memory propertyName) public onlyOwner {
+    //     require(bytes(propertyName).length > 0, "Empty property!");
+    //     bytes32 propertyId = getPropertyId(propertyName);
+    //     EVTEncryption.addDynamicProperty(tokenId, propertyId);
+    // }
+
+    function setDynamicProperty(uint256 tokenId, string memory propertyName, string memory propertyValue) public virtual payable {
+        bytes32 propertyId = getPropertyId(propertyName);
+        EVTVariable.setDynamicProperty(tokenId, propertyId, propertyValue);
     }
 
     function mint(address to) public {
@@ -49,35 +76,6 @@ contract MyEVT is EVT {
         _safeMint(to, tokenId, _data);
     }
 
-    function logo() public view returns (string memory) {
-        return _logo;
-    }
-
-    function description() public view returns (string memory) {
-        return _description;
-    }
-
-    function setTax(uint256 _newTax) public onlyOwner returns (uint256) {
-        _tax = _newTax;
-    }
-
-    function getPropertyId(string memory propertyName) public view virtual returns (bytes32 propertyId) {
-        return keccak256(abi.encode(propertyName));
-    }
-
-    function addDynamicProperty(uint256 tokenId, string memory propertyName) public onlyOwner {
-        require(bytes(propertyName).length > 0, "Empty property!");
-        bytes32 propertyId = getPropertyId(propertyName);
-        EVTEncryption.addDynamicProperty(tokenId, propertyId);
-    }
-
-    function setProperty(uint256 tokenId, string memory propertyName, string memory propertyValue) public virtual override payable {
-        bytes32 propertyId = getPropertyId(propertyName);
-        // require(_properties[propertyId].has_, "None property!");
-        // _properties[propertyId].value_ = propertyName;
-        EVTVariable.setDynamicProperty(tokenId, propertyId, propertyValue);
-    }
-
     /**
      * See helloEVT.json
      */
@@ -92,7 +90,7 @@ contract MyEVT is EVT {
         args[6] = '", "logo": "';
         args[7] = string(abi.encodePacked(logo(), Strings.toString(tokenId)));
         args[8] = '", "from": "';
-        args[9] = toString(abi.encodePacked(from()));
+        args[9] = toString(abi.encodePacked(address(this)));
         args[10] = '", "tax": ';
         args[11] = Strings.toString(_tax);
         args[12] = ', "external_url": "';
@@ -109,7 +107,8 @@ contract MyEVT is EVT {
 
         string memory json = Base64.encode(bytes(arg));
         
-        return string(abi.encodePacked(baseExtension, json));
+        return string(abi.encodePacked("data:application/json;base64,", json));
+
     }
     
 }
