@@ -5,6 +5,7 @@ pragma solidity ^0.8.3;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "../interfaces/IEVTVariable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @dev This implements an optional extension of {EVT} that adds dynamic properties.
@@ -45,11 +46,10 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     /**
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
-    function addDynamicProperty(uint256 tokenId, bytes32 propertyId) public payable virtual override {
+    function addDynamicProperty(bytes32 propertyId) public payable onlyOwner virtual override {
         // bytes32 _propertyId = keccak256(abi.encode(propertyName));
-        require(supportsProperty(propertyId) && !_propertyIds[tokenId].contains(propertyId) , "EVTVariable: propertyId not exist");
-        _propertyIds[tokenId].add(propertyId);
-        _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
+        require(supportsProperty(propertyId), "EVTVariable: propertyId not exist");
+        _allPropertyIds.add(propertyId);
 
         emit DynamicPropertyAdded(propertyId);
     }
@@ -59,6 +59,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      */
     function setDynamicProperty(uint256 tokenId, bytes32 propertyId, string memory propertyValue) public virtual override payable {
         require(supportsProperty(propertyId), "EVTVariable: invalid propertyId");
+        require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
         _propertyIds[tokenId].add(propertyId);
         _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
         _propertiesValue[tokenId][propertyId].value = propertyValue;
@@ -101,6 +102,13 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
             properties[i] = _propertiesValue[tokenId][propertyId].value;
         }
         return (property_types, properties);
+    }
+
+    /**
+     * @dev See {IEVTVariable-getAllSupportProperties}.
+     */
+    function getAllSupportProperties() public view virtual override returns (string[] memory) {
+        return _allPropertyTypes;   
     }
 
     /**
