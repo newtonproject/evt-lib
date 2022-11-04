@@ -48,12 +48,12 @@ contract MyEVT is EVT {
     }
 
     function setDynamicProperty(
-        uint256 tokenId, 
+        uint256 tokenId,
         string memory propertyName, 
         string memory propertyValue
     ) public virtual payable {
         bytes32 propertyId = getPropertyId(propertyName);
-        setDynamicProperty(tokenId, propertyId, propertyValue);
+        EVT.setDynamicProperty(tokenId, propertyId, propertyValue);
     }
 
     function mint(address to) public {

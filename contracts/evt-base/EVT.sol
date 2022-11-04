@@ -209,6 +209,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         require(bytes(propertyName).length > 0, "Empty property!");
         _allPropertyNames.push(propertyName);
         bytes32 propertyId = keccak256(abi.encode(propertyName));
+        _propertyTypes[propertyId] = propertyName;
         EVTVariable.addDynamicProperty(propertyId);
     }
 
@@ -217,7 +218,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */
     function setDynamicProperty(
         uint256 tokenId, 
-        bytes32 propertyId, 
+        bytes32 propertyId,
         string memory propertyValue
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
