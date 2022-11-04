@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.3;
 
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-import "../interfaces/IEVTEncryption.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../interfaces/IEVTEncryption.sol";
 
 abstract contract EVTEncryption is ERC165, IEVTEncryption {
 
@@ -31,37 +31,54 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-registerEncryptedKey}.
      */
-    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override;
+    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override {
+        require(!_encryptedKeyIDs.contains(encryptedKeyID), "encryptedKeyID exist");
+        _encryptedKeyIDs.add(encryptedKeyID);
+
+        emit EncryptedKeyRegistered(encryptedKeyID);
+    }
 	
     /**
      * @dev See {IEVTEncryption-registerEncryptedKey}.
      */
-    function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public payable virtual override {
-        require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
-        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        _authorize.add(licensee);
-        _tokenKeyIDs[tokenId].add(encryptedKeyID);
+    function addPermission(
+        uint256 tokenId, 
+        bytes32 encryptedKeyID, 
+        address licensee
+    ) public payable virtual override {
+        // require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        // require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
+        // EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
+        // _authorize.add(licensee);
+        // _tokenKeyIDs[tokenId].add(encryptedKeyID);
 
-        emit PermissionAdded(tokenId, encryptedKeyID, licensee);
+        // emit PermissionAdded(tokenId, encryptedKeyID, licensee);
     }
 	
     /**
      * @dev See {IEVTEncryption-removePermission}.
      */
-    function removePermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public virtual override {
-        require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        _authorize.remove(licensee);
-        _tokenKeyIDs[tokenId].remove(encryptedKeyID);
+    function removePermission(
+        uint256 tokenId, 
+        bytes32 encryptedKeyID, 
+        address licensee
+    ) public virtual override {
+        // require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        // EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
+        // _authorize.remove(licensee);
+        // _tokenKeyIDs[tokenId].remove(encryptedKeyID);
 
-        emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
+        // emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
     }
 
     /**
      * @dev See {IEVTEncryption-hasPermission}.
      */
-    function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) public view virtual override returns (bool) {
+    function hasPermission(
+        uint256 tokenId, 
+        bytes32 encryptedKeyID, 
+        address licensee
+    ) public view virtual override returns (bool) {
         require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
         EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
         return _authorize.contains(licensee);
@@ -70,8 +87,11 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-getPermissions}.
      */
-    function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) public view virtual override returns (address[] memory) {
-        require(hasPermission(tokenId, encryptedKeyID, msg.sender), "Have no permission");
+    function getPermissions(
+        uint256 tokenId, 
+        bytes32 encryptedKeyID
+    ) public view virtual override returns (address[] memory) {
+        // require(hasPermission(tokenId, encryptedKeyID, msg.sender), "Have no permission");
         EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptedKeyID];
         address[] memory licensee = new address[](_permission.length());
         for(uint256 i = 0; i < _permission.length(); i++) {

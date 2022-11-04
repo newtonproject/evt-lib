@@ -3,7 +3,6 @@ pragma solidity ^0.8.3;
 
 import "./EVT.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 // import "./libraries/HexStrings.sol";
 // import "./libraries/NewtonAddress.sol";
@@ -16,12 +15,12 @@ contract MyEVT is EVT {
 
     Counters.Counter private _tokenIdCounter;
     string private _logo;
-    string private _description;
-    uint256 public _tax;
+    // string private _description;
+    uint256 private _tax;
 
     constructor(
-        string memory name_, 
-        string memory symbol_, 
+        string memory name_,
+        string memory symbol_,
         string memory logo_,
         string[] memory properties,
         string memory _newBaseURI
@@ -33,22 +32,28 @@ contract MyEVT is EVT {
         return _logo;
     }
 
-    function description() public view returns (string memory) {
-        return _description;
-    }
+    // function description() public view returns (string memory) {
+    //     return _description;
+    // }
 
-    function setTax(uint256 _newTax) public returns (uint256) {
+    function setTax(uint256 _newTax) public onlyOwner returns (uint256) {
         _tax = _newTax;
         return _tax;
     }
 
-    function getPropertyId(string memory propertyName) public view virtual returns (bytes32 propertyId) {
+    function getPropertyId(
+        string memory propertyName
+    ) public view virtual returns (bytes32 propertyId) {
         return keccak256(abi.encode(propertyName));
     }
 
-    function setDynamicProperty(uint256 tokenId, string memory propertyName, string memory propertyValue) public virtual payable {
+    function setDynamicProperty(
+        uint256 tokenId,
+        string memory propertyName, 
+        string memory propertyValue
+    ) public virtual payable {
         bytes32 propertyId = getPropertyId(propertyName);
-        EVTVariable.setDynamicProperty(tokenId, propertyId, propertyValue);
+        EVT.setDynamicProperty(tokenId, propertyId, propertyValue);
     }
 
     function mint(address to) public {
@@ -105,6 +110,4 @@ contract MyEVT is EVT {
     //     return string(abi.encodePacked("data:application/json;base64,", json));
 
     // }
-    
 }
-
