@@ -5,12 +5,12 @@ interface IEVTVariable {
     /**
      * @dev Emitted when dynamic property added.
      */
-    event DynamicPropertyAdded(bytes32 propertyId);
+    event DynamicPropertyAdded(string propertyName);
     
     /**
      * @dev Emitted when dynamic property updated.
      */
-    event DynamicPropertyUpdated(uint256 tokenId, bytes32 propertyId, string propertyValue);
+    event DynamicPropertyUpdated(uint256 tokenId, string propertyName, string propertyValue);
 
 
      /**
@@ -20,7 +20,7 @@ interface IEVTVariable {
      *
      * - `propertyId` must exist.
      */
-    function addDynamicProperty(bytes32 propertyId) external payable;
+    function addDynamicProperty(string memory propertyName) external payable;
     
      /**
      * @dev Set the `propertyValue` by `tokenId` and `propertyId`.
@@ -30,7 +30,7 @@ interface IEVTVariable {
      * - `tokenId` must exist.
      * - `propertyId` must exist.
      */
-	function setDynamicProperty(uint256 tokenId, bytes32 propertyId, string memory propertyValue) external payable;
+	function setDynamicProperty(uint256 tokenId, string memory propertyName, string memory propertyValue) external payable;
 	
     /**
      * @dev Set the `propertyValue` by `tokenId` and `propertyId` in quantity.
@@ -40,7 +40,7 @@ interface IEVTVariable {
      * - `tokenId` must exist.
      * - `propertyId` must exist.
      */
-	function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, string[] memory propertyValues) external payable;
+	function setDynamicProperties(uint256 tokenId, string[] memory propertyNames, string[] memory propertyValues) external payable;
 
     /**
      * @dev Returns the properties of the `propertyId` token.
@@ -50,7 +50,7 @@ interface IEVTVariable {
      * - `tokenId` must exist.
      * - `propertyId` must exist.
      */
-	function getDynamicProperty(uint256 tokenId, bytes32 propertyId) external view returns (string memory propertyValue);
+	function getDynamicPropertyValue(uint256 tokenId, string memory propertyName) external view returns (string memory propertyValue);
 
     /**
      * @dev Returns the properties of the `propertyId` token in quantity.
@@ -70,5 +70,5 @@ interface IEVTVariable {
     /**
      * @dev Returns whether the `propertyId` exists.
      */
-	function supportsProperty(bytes32 propertyId) external view returns (bool);
+	function supportsProperty(string memory propertyName) external view returns (bool);
 }
