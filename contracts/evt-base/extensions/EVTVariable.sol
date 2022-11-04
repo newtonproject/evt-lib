@@ -27,10 +27,10 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     mapping(bytes32 => string) internal _propertyTypes;
 
     // Mapping from token ID to property IDs
-    mapping(uint256 => EnumerableSet.Bytes32Set) private _propertyIds;
+    mapping(uint256 => EnumerableSet.Bytes32Set) internal _propertyIds;
 
     // Mapping from token ID to list of propertyId to Property
-    mapping(uint256 => mapping(bytes32 => Property)) private _propertiesValue;
+    mapping(uint256 => mapping(bytes32 => Property)) internal _propertiesValue;
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -43,8 +43,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
     function addDynamicProperty(bytes32 propertyId) public payable virtual override {
-        require(msg.sender == address(this), "Have no permission");
-        require(supportsProperty(propertyId), "EVTVariable: propertyId not exist");
+        // require(supportsProperty(propertyId), "EVTVariable: propertyId not exist");
         _allPropertyIds.add(propertyId);
 
         emit DynamicPropertyAdded(propertyId);
@@ -53,41 +52,50 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     /**
      * @dev See {IEVTVariable-setDynamicProperty}.
      */
-    function setDynamicProperty(uint256 tokenId, bytes32 propertyId, string memory propertyValue) public virtual override payable {
-        require(supportsProperty(propertyId), "EVTVariable: invalid propertyId");
-        require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        _propertyIds[tokenId].add(propertyId);
-        _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
-        _propertiesValue[tokenId][propertyId].value = propertyValue;
+    function setDynamicProperty(
+        uint256 tokenId, 
+        bytes32 propertyId, 
+        string memory propertyValue
+    ) public virtual override payable {
+        // require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
+        // // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
+        // _propertyIds[tokenId].add(propertyId);
+        // _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
+        // _propertiesValue[tokenId][propertyId].value = propertyValue;
 
-        emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
+        // emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
     }
 
     /**
      * @dev See {IEVTVariable-setDynamicProperties}.
      */
-    function setDynamicProperties(uint256 tokenId, bytes32[] memory propertyIds, string[] memory propertyValues) public virtual override payable {
-        require(propertyIds.length == propertyValues.length, "length not equal");
-        for(uint256 i = 0; i < propertyIds.length; i++) {
-            // require(supportsProperty(propertyIds[i]), "EVTVariable: invalid propertyId");
-            // _propertiesValue[tokenId][propertyIds[i]].value = propertyValues[i];
-            setDynamicProperty(tokenId, propertyIds[i], propertyValues[i]);
-
-            emit DynamicPropertyUpdated(tokenId, propertyIds[i], propertyValues[i]);
-        }
+    function setDynamicProperties(
+        uint256 tokenId, 
+        bytes32[] memory propertyIds, 
+        string[] memory propertyValues
+    ) public virtual override payable {
+        // require(propertyIds.length == propertyValues.length, "length not equal");
+        // for(uint256 i = 0; i < propertyIds.length; i++) {
+        //     setDynamicProperty(tokenId, propertyIds[i], propertyValues[i]);
+        // }
     }
     
     /**
      * @dev See {IEVTVariable-getDynamicProperty}.
      */
-    function getDynamicProperty(uint256 tokenId, bytes32 propertyId) public view virtual override returns (string memory) {
+    function getDynamicProperty(
+        uint256 tokenId, 
+        bytes32 propertyId
+    ) public view virtual override returns (string memory) {
         return _propertiesValue[tokenId][propertyId].value;
     }
 
     /**
      * @dev See {IEVTVariable-getDynamicProperties}.
      */
-    function getDynamicProperties(uint256 tokenId) public view virtual override returns (string[] memory, string[] memory) {
+    function getDynamicProperties(
+        uint256 tokenId
+    ) public view virtual override returns (string[] memory, string[] memory) {
         uint256 len = _propertyIds[tokenId].length();
         string[] memory property_types = new string[](len);
         string[] memory properties = new string[](len);
@@ -103,14 +111,17 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     /**
      * @dev See {IEVTVariable-getAllSupportProperties}.
      */
-    function getAllSupportProperties() public view virtual override returns (string[] memory) {
+    function getAllSupportProperties(
+    ) public view virtual override returns (string[] memory) {
         return _allPropertyNames;   
     }
 
     /**
      * @dev See {IEVTVariable-supportsProperty}.
      */
-    function supportsProperty(bytes32 propertyId) public view virtual override returns (bool) {
+    function supportsProperty(
+        bytes32 propertyId
+    ) public view virtual override returns (bool) {
         return _allPropertyIds.contains(propertyId);
     }
 }
