@@ -52,7 +52,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         // require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
         // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
         require(supportsProperty(property_name), "Not supported property!");
-        if(!isTokenHasProperty(tokenId, property_name) == true) {
+        if(!tokenHasProperty(tokenId, property_name) == true) {
             _propertyNames[tokenId].push(property_name);
         }
         // _properties[tokenId].name = property_name;
@@ -126,7 +126,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return res;
     }
 
-    function isTokenHasProperty(
+    function tokenHasProperty(
         uint256 tokenId, 
         string memory propertyName
     ) public view virtual returns (bool) {

@@ -41,20 +41,20 @@ contract MyEVT is EVT {
         return _tax;
     }
 
-    function getPropertyId(
-        string memory propertyName
-    ) public view virtual returns (bytes32 propertyId) {
-        return keccak256(abi.encode(propertyName));
-    }
+    // function getPropertyId(
+    //     string memory propertyName
+    // ) public view virtual returns (bytes32 propertyId) {
+    //     return keccak256(abi.encode(propertyName));
+    // }
 
-    function setDynamicProperty(
-        uint256 tokenId,
-        string memory propertyName, 
-        string memory propertyValue
-    ) public virtual payable {
-        bytes32 propertyId = getPropertyId(propertyName);
-        EVT.setDynamicProperty(tokenId, propertyId, propertyValue);
-    }
+    // function setDynamicProperty(
+    //     uint256 tokenId,
+    //     string memory propertyName, 
+    //     string memory propertyValue
+    // ) public virtual payable {
+    //     bytes32 propertyId = getPropertyId(propertyName);
+    //     EVT.setDynamicProperty(tokenId, propertyId, propertyValue);
+    // }
 
     function mint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
