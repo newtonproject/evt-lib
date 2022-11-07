@@ -208,10 +208,11 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         string memory propertyName
     ) public payable virtual onlyOwner override {
         require(bytes(propertyName).length > 0, "Empty property!");
-        _allPropertyNames.push(propertyName);
-        bytes32 propertyId = keccak256(abi.encode(propertyName));
-        _propertyTypes[propertyId] = propertyName;
-        EVTVariable.addDynamicProperty(propertyId);
+        require(supportProperty(propertyName), "Property already exists!");
+        // _allPropertyNames.push(propertyName);
+        // bytes32 propertyId = keccak256(abi.encode(propertyName));
+        // _propertyTypes[propertyId] = propertyName;
+        EVTVariable.addDynamicProperty(propertyName);
     }
 
     /**
@@ -219,18 +220,19 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */
     function setDynamicProperty(
         uint256 tokenId, 
-        bytes32 propertyId,
+        string propertyName,
         string memory propertyValue
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
         // EVTVariable.setDynamicProperty(tokenId, propertyId, propertyValue);
-        require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
+        require(supportsProperty(propertyName), "EVTVariable: Not supported propertyName");
+        EVTVariable.setDynamicProperty(tokenId, propertyName, propertyValue);
         // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        _propertyIds[tokenId].add(propertyId);
-        _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
-        _propertiesValue[tokenId][propertyId].value = propertyValue;
+        // _propertyIds[tokenId].add(propertyId);
+        // _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
+        // _propertiesValue[tokenId][propertyId].value = propertyValue;
 
-        emit DynamicPropertyUpdated(tokenId, propertyId, propertyValue);
+        // emit DynamicPropertyUpdated(tokenId, propertyName, propertyValue);
     }
 
     /**
@@ -238,14 +240,14 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */
     function setDynamicProperties(
         uint256 tokenId, 
-        bytes32[] memory propertyIds, 
+        string[] memory propertyNames, 
         string[] memory propertyValues
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
         // EVTVariable.setDynamicProperties(tokenId, propertyIds, propertyValues);
-        require(propertyIds.length == propertyValues.length, "length not equal");
-        for(uint256 i = 0; i < propertyIds.length; i++) {
-            setDynamicProperty(tokenId, propertyIds[i], propertyValues[i]);
+        require(propertyNames.length == propertyValues.length, "length not equal");
+        for(uint256 i = 0; i < propertyNames.length; i++) {
+            setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
         }
     }
 
@@ -274,11 +276,11 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         uint256 tokenId
     ) internal view virtual returns (string[] memory) {
         _requireMinted(tokenId);
-        (string[] memory trait_type, string[] memory values) = EVTVariable.getDynamicProperties(tokenId);
-        require(trait_type.length == values.length, "length error");
-        string[] memory properties = new string[](trait_type.length);
-        for (uint256 i = 0; i < trait_type.length; i++) {
-            string memory trait_name = trait_type[i];
+        (string[] memory property_names, string[] memory values) = EVTVariable.getDynamicProperties(tokenId);
+        require(property_names.length == values.length, "length error");
+        string[] memory properties = new string[](property_names.length);
+        for (uint256 i = 0; i < property_names.length; i++) {
+            string memory trait_name = property_names[i];
             string memory args = string(abi.encodePacked('{"property_name":"',
                                                           trait_name,
                                                           '","value":'
