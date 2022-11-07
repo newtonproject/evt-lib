@@ -300,15 +300,11 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
     function registerEncryptedKey(
         bytes32 encryptedKeyID
     ) public payable virtual override(IEVTEncryption, EVTEncryption) onlyOwner {
-        // registerEncryptedKey(encryptedKeyID);
-        require(!_encryptedKeyIDs.contains(encryptedKeyID), "encryptedKeyID exist");
-        _encryptedKeyIDs.add(encryptedKeyID);
-
-        emit EncryptedKeyRegistered(encryptedKeyID);
+        EVTEncryption.registerEncryptedKey(encryptedKeyID);
     }
 
     /**
-     * @dev See {IEVTEncryption-registerEncryptedKey}.
+     * @dev See {IEVTEncryption-addPermission}.
      */
     function addPermission(
         uint256 tokenId, 

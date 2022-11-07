@@ -39,7 +39,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     }
 	
     /**
-     * @dev See {IEVTEncryption-registerEncryptedKey}.
+     * @dev See {IEVTEncryption-addPermission}.
      */
     function addPermission(
         uint256 tokenId, 
