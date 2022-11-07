@@ -10,27 +10,14 @@ import "../interfaces/IEVTVariable.sol";
  * @dev This implements an optional extension of {EVT} that adds dynamic properties.
  */
 abstract contract EVTVariable is ERC165, IEVTVariable {
-    // using EnumerableSet for EnumerableSet.Bytes32Set;
-
-    struct Property {
-        string name;
-        string value;
-    }
-
     // All property types
     string[] internal _allPropertyNames;
-
-    // Mapping from property ID to property type
-    // mapping(bytes32 => string) internal _propertyTypes;
 
     // Mapping from token ID to property IDs
     mapping(uint256 => string[]) internal _propertyNames;
 
-    // Mapping from token ID to list of propertyId to Property
-    mapping(uint256 => Property) internal _properties;
-
-    // tokenId => propertyName => propertyValue
-    mapping(uint256 => mapping(string => string)) propertyValue;
+    // tokenId => propertyName => _propertyValue
+    mapping(uint256 => mapping(string => string)) internal _propertyValue;
 
     /**
      * @dev See {IERC165-supportsInterface}.
@@ -47,8 +34,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
     function addDynamicProperty(string memory propertyName) public payable virtual override {
-        // require(supportsProperty(propertyId), "EVTVariable: propertyId not exist");
-        // _allPropertyIds.add(propertyId);
+        require(bytes(propertyName).length > 0, "Empty property!");
+        require(!supportsProperty(propertyName), "PropertyName already exists!");
         _allPropertyNames.push(propertyName);
 
         emit DynamicPropertyAdded(propertyName);
@@ -59,18 +46,20 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      */
     function setDynamicProperty(
         uint256 tokenId, 
-        string memory property_Name, 
-        string memory property_Value
+        string memory property_name, 
+        string memory property_value
     ) public virtual override payable {
         // require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
         // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        require(supprtProperrt(property_Name), "Not supported property!");
-        _propertyNames[tokenId].push(property_Name);
-        _properties[tokenId].name = property_Name;
-        _properties[tokenId].value = property_Value;
-        propertyValue[tokenId][property_Name] = property_Value;
+        require(supportsProperty(property_name), "Not supported property!");
+        if(!isTokenHasProperty(tokenId, property_name) == true) {
+            _propertyNames[tokenId].push(property_name);
+        }
+        // _properties[tokenId].name = property_name;
+        // _properties[tokenId].value = property_value;
+        _propertyValue[tokenId][property_name] = property_value;
 
-        emit DynamicPropertyUpdated(tokenId, property_Name, property_Value);
+        emit DynamicPropertyUpdated(tokenId, property_name, property_value);
     }
 
     /**
@@ -94,7 +83,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         uint256 tokenId, 
         string memory propertyName
     ) public view virtual override returns (string memory) {
-        return propertyValue[tokenId][propertyName];
+        return _propertyValue[tokenId][propertyName];
     }
 
     /**
@@ -107,8 +96,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string[] memory property_names = new string[](len);
         string[] memory properties = new string[](len);
         for (uint256 i = 0; i < len; i++) {
-            property_names[i] = _properties[tokenId].name;
-            properties[i] = _properties[tokenId].value;
+            property_names[i] = _propertyNames[tokenId][i];
+            properties[i] = _propertyValue[tokenId][property_names[i]];
         }
         return (property_names, properties);
     }
@@ -130,6 +119,20 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         bool res = false;
         for(uint8 i = 0; i < _allPropertyNames.length; i++) {
             if(hashCompareString(propertyName, _allPropertyNames[i])) {
+                res = true;
+                break;
+            }
+        }
+        return res;
+    }
+
+    function isTokenHasProperty(
+        uint256 tokenId, 
+        string memory propertyName
+    ) public view virtual returns (bool) {
+        bool res = false;
+        for(uint8 i = 0; i < _propertyNames[tokenId].length; i++) {
+            if(hashCompareString(propertyName, _propertyNames[tokenId][i])) {
                 res = true;
                 break;
             }

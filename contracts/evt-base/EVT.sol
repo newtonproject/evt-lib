@@ -206,12 +206,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */  
     function addDynamicProperty(
         string memory propertyName
-    ) public payable virtual onlyOwner override {
-        require(bytes(propertyName).length > 0, "Empty property!");
-        require(supportProperty(propertyName), "Property already exists!");
-        // _allPropertyNames.push(propertyName);
-        // bytes32 propertyId = keccak256(abi.encode(propertyName));
-        // _propertyTypes[propertyId] = propertyName;
+    ) public payable virtual onlyOwner override(IEVTVariable, EVTVariable) {
         EVTVariable.addDynamicProperty(propertyName);
     }
 
@@ -220,19 +215,11 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */
     function setDynamicProperty(
         uint256 tokenId, 
-        string propertyName,
+        string memory propertyName,
         string memory propertyValue
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        // EVTVariable.setDynamicProperty(tokenId, propertyId, propertyValue);
-        require(supportsProperty(propertyName), "EVTVariable: Not supported propertyName");
         EVTVariable.setDynamicProperty(tokenId, propertyName, propertyValue);
-        // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        // _propertyIds[tokenId].add(propertyId);
-        // _propertiesValue[tokenId][propertyId].property_type = _propertyTypes[propertyId];
-        // _propertiesValue[tokenId][propertyId].value = propertyValue;
-
-        // emit DynamicPropertyUpdated(tokenId, propertyName, propertyValue);
     }
 
     /**
@@ -244,7 +231,6 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         string[] memory propertyValues
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        // EVTVariable.setDynamicProperties(tokenId, propertyIds, propertyValues);
         require(propertyNames.length == propertyValues.length, "length not equal");
         for(uint256 i = 0; i < propertyNames.length; i++) {
             setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
@@ -303,11 +289,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
     function registerEncryptedKey(
         bytes32 encryptedKeyID
     ) public payable virtual override(IEVTEncryption, EVTEncryption) onlyOwner {
-        // registerEncryptedKey(encryptedKeyID);
-        require(!_encryptedKeyIDs.contains(encryptedKeyID), "encryptedKeyID exist");
-        _encryptedKeyIDs.add(encryptedKeyID);
-
-        emit EncryptedKeyRegistered(encryptedKeyID);
+        EVTEncryption.registerEncryptedKey(encryptedKeyID);
     }
 
     /**
@@ -345,7 +327,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         _tokenKeyIDs[tokenId].remove(encryptedKeyID);
 
         emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
-    }        
+    }
 
     /**
      * @dev See {IEVT-getPermissionsAsString}.

@@ -60,7 +60,7 @@ interface IEVTVariable {
      * - `tokenId` must exist.
      * - `propertyId` must exist.
      */
-    function getDynamicProperties(uint256 tokenId) external view returns (string[] memory propertyIds, string[] memory propertyValues);
+    function getDynamicProperties(uint256 tokenId) external view returns (string[] memory propertyNames, string[] memory propertyValues);
 
     /**
      * @dev Returns all supported properties.
