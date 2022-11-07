@@ -64,13 +64,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     ) public virtual override payable {
         // require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
         // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        uint8 flag = 0;
-        for(uint8 i = 0; i < _allPropertyNames.length; i++) {
-            if(hashCompareString(property_Name, _allPropertyNames[i]))
-                flag = 1;
-        }
-        require(flag == 1, "Not supported property!");
-
+        require(supprtProperrt(property_Name), "Not supported property!");
         _propertyNames[tokenId].push(property_Name);
         _properties[tokenId].name = property_Name;
         _properties[tokenId].value = property_Value;
@@ -133,11 +127,13 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     function supportsProperty(
         string memory propertyName
     ) public view virtual override returns (bool) {
-        uint8 flag = 0;
+        bool res = false;
         for(uint8 i = 0; i < _allPropertyNames.length; i++) {
-            if(hashCompareString(propertyName, _allPropertyNames[i]))
-                flag = 1;
+            if(hashCompareString(propertyName, _allPropertyNames[i])) {
+                res = true;
+                break;
+            }
         }
-        return flag == 1 ? true : false;
+        return res;
     }
 }
