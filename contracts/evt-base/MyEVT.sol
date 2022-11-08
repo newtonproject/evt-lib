@@ -2,13 +2,9 @@
 pragma solidity ^0.8.3;
 
 import "./EVT.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
 import "../libraries/toString.sol";
-// import "./libraries/HexStrings.sol";
-// import "./libraries/NewtonAddress.sol";
-
-
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract MyEVT is EVT {
 
@@ -16,16 +12,17 @@ contract MyEVT is EVT {
 
     Counters.Counter private _tokenIdCounter;
     string private _logo;
-    // string private _description;
-    uint256 private _tax;
+    
+    uint256 public _tax;
 
     constructor(
         string memory name_,
         string memory symbol_,
         string memory logo_,
         string[] memory properties,
+        bytes32[] memory encryptedKeyIDs,
         string memory _newBaseURI
-    ) EVT(name_, symbol_, properties, _newBaseURI) {
+    ) EVT(name_, symbol_, properties, encryptedKeyIDs, _newBaseURI) {
         _logo = logo_;
     }
 
@@ -33,40 +30,23 @@ contract MyEVT is EVT {
         return _logo;
     }
 
-    // function description() public view returns (string memory) {
-    //     return _description;
-    // }
-
     function setTax(uint256 _newTax) public onlyOwner returns (uint256) {
         _tax = _newTax;
         return _tax;
     }
 
-    // function getPropertyId(
-    //     string memory propertyName
-    // ) public view virtual returns (bytes32 propertyId) {
-    //     return keccak256(abi.encode(propertyName));
-    // }
-
-    // function setDynamicProperty(
-    //     uint256 tokenId,
-    //     string memory propertyName, 
-    //     string memory propertyValue
-    // ) public virtual payable {
-    //     bytes32 propertyId = getPropertyId(propertyName);
-    //     EVT.setDynamicProperty(tokenId, propertyId, propertyValue);
-    // }
-
     function mint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _mint(to, tokenId);
+        addEncryptionKeyID(tokenId);
     }
 
     function safeMint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+        // addPermission
     }
 
     function safeMint(
