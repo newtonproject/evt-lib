@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 import "./IEVT.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
-import "../libraries/toString.sol";
+import "../libraries/GetString.sol";
 import "./interfaces/IEVTMetadata.sol";
 
 /**
@@ -25,7 +25,10 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
     // =============================================================
 
     /**
-     * @dev Initializes the contract by setting `name`、`symbol`、`properties` and `baseURI` to the token collection.
+     * @dev Initializes the contract by setting `name`、`symbol`、`properties`、`encryptedKeyIDs`
+     * and `baseURI` to the token collection.
+     * 
+     * For example, 
      */
     constructor(
         string memory name_,
@@ -83,7 +86,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
 
     /**
      * @dev Override _baseURI() in ERC721.sol and return the _external_uri 
-     representing the base URI for all token IDs.
+     * representing the base URI for all token IDs.
      */
     function _baseURI() internal view virtual override returns (string memory) {
         return _external_uri;
