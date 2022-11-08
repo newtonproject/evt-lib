@@ -46,7 +46,7 @@ contract MyEVT is EVT {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        // addPermission
+        addEncryptionKeyID(tokenId);
     }
 
     function safeMint(
@@ -55,40 +55,6 @@ contract MyEVT is EVT {
         bytes memory _data
     ) public {
         _safeMint(to, tokenId, _data);
+        addEncryptionKeyID(tokenId);
     }
-
-    // /**
-    //  * See helloEVT.json
-    //  */
-    // function tokenURI(uint256 tokenId) public view override returns (string memory) {
-    //     string[20] memory args;
-    //     args[0] = '{"name": "';
-    //     args[1] = name();
-    //     args[2] = ' # ';
-    //     args[3] = Strings.toString(tokenId);
-    //     args[4] = '", "description": "';
-    //     args[5] = description();
-    //     args[6] = '", "logo": "';
-    //     args[7] = string(abi.encodePacked(logo(), Strings.toString(tokenId)));
-    //     args[8] = '", "from": "';
-    //     args[9] =  GetString.toString(abi.encodePacked(address(this)));
-    //     args[10] = '", "tax": ';
-    //     args[11] = Strings.toString(_tax);
-    //     args[12] = ', "external_url": "';
-    //     args[13] = _baseURI();
-    //     args[14] = '", "properties": ';
-    //     args[15] = getDynamicPropertiesAsString(tokenId);
-    //     args[16] = '},';
-    //     args[17] = '{"encryption":';
-    //     args[18] = getPermissionsAsString(tokenId);
-    //     args[19] = '}';
-
-    //     string memory arg = string(abi.encodePacked(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]));
-    //     arg = string(abi.encodePacked(arg, args[9], args[10], args[11], args[12], args[13], args[14], args[15], args[16], args[17], args[18], args[19]));
-
-    //     string memory json = Base64.encode(bytes(arg));
-        
-    //     return string(abi.encodePacked("data:application/json;base64,", json));
-
-    // }
 }

@@ -32,7 +32,7 @@ interface IEVTEncryption {
     function registerEncryptedKey(bytes32 encryptedKeyID) external payable;
 
     /**
-     * @dev addPermission to `tokenId` token
+     * @dev Add all encryptionKeyIDs to `tokenId` token
      * Requirements:
      *
      * - `tokenId` token must exist.

@@ -13,7 +13,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
     // Mapping from tokenId to list of encryptionKeyID => addressSet
-    mapping(uint256 => mapping(bytes32 => EnumerableSet.AddressSet)) internal _permissions;
+    mapping(uint256 => mapping(bytes32 => EnumerableSet.AddressSet)) private _permissions;
 
     // Mapping from tokenId to list of encryptionKeyIDs
     mapping(uint256 => EnumerableSet.Bytes32Set) internal _tokenKeyIDs;
@@ -41,12 +41,12 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-addEncryptionKeyID}.
      */
-    function addEncryptionKeyID(uint256 tokenId) public virtual {
+    function addEncryptionKeyID(uint256 tokenId) public payable virtual override {
         for(uint i = 0; i < _encryptedKeyIDs.length(); i++) {
             bytes32 keyID = _encryptedKeyIDs.at(i);
             _tokenKeyIDs[tokenId].add(keyID);
 
-            emit EncryptionKeyIDAdded(tokenId);
+            emit EncryptionKeyIDAdded(tokenId, keyID);
         }       
     }
 
@@ -81,7 +81,6 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
 
         emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
     }
-
 
     /**
      * @dev See {IEVTEncryption-hasPermission}.

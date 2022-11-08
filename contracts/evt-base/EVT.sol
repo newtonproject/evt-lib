@@ -28,8 +28,8 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      * @dev Initializes the contract by setting `name`、`symbol`、`properties` and `baseURI` to the token collection.
      */
     constructor(
-        string memory name_, 
-        string memory symbol_, 
+        string memory name_,
+        string memory symbol_,
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
         string memory _newBaseURI
@@ -304,6 +304,9 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         EVTEncryption.removePermission(tokenId, encryptedKeyID, licensee);
     }
 
+    /**
+     * @dev See {IEVTEncryption-hasPermission}.
+     */
     function hasPermission(
         uint256 tokenId, 
         bytes32 encryptedKeyID,

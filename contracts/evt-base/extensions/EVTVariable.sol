@@ -26,14 +26,6 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return interfaceId == type(IEVTVariable).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function hashCompareString(string memory a, string memory b) internal pure returns (bool) {
-        if (bytes(a).length != bytes(b).length) {
-            return false;
-        } else {
-            return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
-        }
-    }
-
     /**
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
@@ -125,7 +117,10 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         }
         return res;
     }
-
+    
+    /**
+     * @dev If tokenId has the property.
+     */
     function hasProperty(
         uint256 tokenId, 
         string memory propertyName
@@ -138,5 +133,16 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
             }
         }
         return res;
+    }
+
+    /**
+     * @dev Return two strings is equal or not.
+     */
+    function hashCompareString(string memory a, string memory b) internal pure returns (bool) {
+        if (bytes(a).length != bytes(b).length) {
+            return false;
+        } else {
+            return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+        }
     }
 }
