@@ -107,4 +107,6 @@ describe("MyEvt", function () {
       await myEvtContract.hasPermission(tokenId, encryptedKeyID, errLicensee)
     ).to.equal(false);
   });
+
+  
 });
