@@ -10,10 +10,10 @@ import "../interfaces/IEVTVariable.sol";
  * @dev This implements an optional extension of {EVT} that adds dynamic properties.
  */
 abstract contract EVTVariable is ERC165, IEVTVariable {
-    // All property types
+    // All property Names
     string[] internal _allPropertyNames;
 
-    // Mapping from token ID to property IDs
+    // Mapping from token ID to property Names
     mapping(uint256 => string[]) internal _propertyNames;
 
     // tokenId => propertyName => _propertyValue

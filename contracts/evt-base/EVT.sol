@@ -39,11 +39,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         setBaseURI(_newBaseURI);
         uint256 len = properties.length;
         for(uint256 i = 0; i < len; i++) {
-            // bytes32 propertyId = keccak256(abi.encode(properties[i]));
             _allPropertyNames.push(properties[i]);
-
-            // _propertyTypes[propertyId] = properties[i];
-            // _allPropertyIds.add(propertyId);
         }
     }
 
@@ -235,6 +231,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         for(uint256 i = 0; i < propertyNames.length; i++) {
             setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
         }
+        EVTVariable.setDynamicProperties(tokenId, propertyNames, propertyValues);
     }
 
     /**
