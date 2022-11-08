@@ -6,8 +6,8 @@ import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
 import "./interfaces/IEVTMetadata.sol";
 import "../libraries/toString.sol";
-import "../libraries/base64.sol";
 import "../erc721a/ERC721A.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
@@ -362,7 +362,7 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
                                                             ',"license":'
                                                           ));
             string[] memory stringLicense = new string[](license.length);
-            for(uint256 j = 0; j < license.length; j++) {
+            for(uint256 j = 0; j < license.length; ++j) {
                 stringLicense[j] = GetString.toString(abi.encodePacked(license[j]));
             }
             string memory data = GetString.getStringData(stringLicense);

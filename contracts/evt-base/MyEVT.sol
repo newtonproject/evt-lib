@@ -3,11 +3,12 @@ pragma solidity ^0.8.3;
 
 import "./EVT.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
+import "../libraries/toString.sol";
 // import "./libraries/HexStrings.sol";
 // import "./libraries/NewtonAddress.sol";
-import "../libraries/base64.sol";
-import "../libraries/toString.sol";
+
+
 
 contract MyEVT is EVT {
 
