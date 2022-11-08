@@ -46,13 +46,13 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         bytes32 encryptedKeyID, 
         address licensee
     ) public payable virtual override {
-        // require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        // require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
-        // EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        // _authorize.add(licensee);
-        // _tokenKeyIDs[tokenId].add(encryptedKeyID);
+        require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
+        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
+        _authorize.add(licensee);
+        _tokenKeyIDs[tokenId].add(encryptedKeyID);
 
-        // emit PermissionAdded(tokenId, encryptedKeyID, licensee);
+        emit PermissionAdded(tokenId, encryptedKeyID, licensee);
     }
 	
     /**
@@ -63,12 +63,12 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         bytes32 encryptedKeyID, 
         address licensee
     ) public virtual override {
-        // require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        // EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        // _authorize.remove(licensee);
-        // _tokenKeyIDs[tokenId].remove(encryptedKeyID);
+        require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
+        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
+        _authorize.remove(licensee);
+        _tokenKeyIDs[tokenId].remove(encryptedKeyID);
 
-        // emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
+        emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
     }
 
     /**

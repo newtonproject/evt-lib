@@ -224,10 +224,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         string[] memory propertyValues
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        require(propertyNames.length == propertyValues.length, "length not equal");
-        for(uint256 i = 0; i < propertyNames.length; i++) {
-            setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
-        }
+        EVTVariable.setDynamicProperties(tokenId, propertyNames, propertyValues);
     }
 
     /**
@@ -293,13 +290,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         address licensee
     ) public payable virtual override(IEVTEncryption, EVTEncryption) {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        // EVTEncryption.addPermission(tokenId, encryptedKeyID, licensee);
-        require(_encryptedKeyIDs.contains(encryptedKeyID), "invalid encryptedKeyID");
-        require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
-        _permissions[tokenId][encryptedKeyID].add(licensee);
-        _tokenKeyIDs[tokenId].add(encryptedKeyID);
-
-        emit PermissionAdded(tokenId, encryptedKeyID, licensee);
+        EVTEncryption.addPermission(tokenId, encryptedKeyID, licensee);
     }
 
     /**
@@ -311,12 +302,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         address licensee
     ) public virtual override(IEVTEncryption, EVTEncryption) {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        // EVTEncryption.removePermission(tokenId, encryptedKeyID, licensee);
-        require(_encryptedKeyIDs.contains(encryptedKeyID), "invalid encryptedKeyID");
-        _permissions[tokenId][encryptedKeyID].remove(licensee);
-        _tokenKeyIDs[tokenId].remove(encryptedKeyID);
-
-        emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
+        EVTEncryption.removePermission(tokenId, encryptedKeyID, licensee);
     }
 
     /**

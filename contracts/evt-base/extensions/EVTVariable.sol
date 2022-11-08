@@ -38,8 +38,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
     function addDynamicProperty(string memory propertyName) public payable virtual override {
-        require(bytes(propertyName).length > 0, "Empty property");
-        require(!supportsProperty(propertyName), "PropertyName exist");
+        require(bytes(propertyName).length > 0, "Empty property!");
+        require(!supportsProperty(propertyName), "PropertyName already exists!");
         _allPropertyNames.push(propertyName);
 
         emit DynamicPropertyAdded(propertyName);
@@ -50,20 +50,16 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      */
     function setDynamicProperty(
         uint256 tokenId, 
-        string memory property_name, 
+        string memory propertyName, 
         string memory property_value
     ) public virtual override payable {
-        // require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
-        // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        require(supportsProperty(property_name), "Not supported property");
-        if(!tokenHasProperty(tokenId, property_name)) {
-            _propertyNames[tokenId].push(property_name);
+        require(supportsProperty(propertyName), "Not supported property!");
+        if(!hasProperty(tokenId, propertyName)) {
+            _propertyNames[tokenId].push(propertyName);
         }
-        // _properties[tokenId].name = property_name;
-        // _properties[tokenId].value = property_value;
-        _propertyValue[tokenId][property_name] = property_value;
+        _propertyValue[tokenId][propertyName] = property_value;
 
-        emit DynamicPropertyUpdated(tokenId, property_name, property_value);
+        emit DynamicPropertyUpdated(tokenId, propertyName, property_value);
     }
 
     /**
@@ -74,8 +70,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string[] memory propertyNames, 
         string[] memory propertyValues
     ) public virtual override payable {
-        require(propertyNames.length == propertyValues.length, "length err");
-        for(uint256 i = 0; i < propertyNames.length; ++i) {
+        require(propertyNames.length == propertyValues.length, "length not equal");
+        for(uint256 i = 0; i < propertyNames.length; i++) {
             setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
         }
     }
