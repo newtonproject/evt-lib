@@ -80,8 +80,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         address licensee
     ) public view virtual override returns (bool) {
         require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        return _authorize.contains(licensee);
+        return _permissions[tokenId][encryptedKeyID].contains(licensee);
     }
 
     /**
@@ -94,7 +93,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
         // require(hasPermission(tokenId, encryptedKeyID, msg.sender), "Have no permission");
         EnumerableSet.AddressSet storage _permission = _permissions[tokenId][encryptedKeyID];
         address[] memory licensee = new address[](_permission.length());
-        for(uint256 i = 0; i < _permission.length(); i++) {
+        for(uint256 i = 0; i < _permission.length(); ++i) {
             licensee[i] = _permission.at(i);
         }
         return licensee;

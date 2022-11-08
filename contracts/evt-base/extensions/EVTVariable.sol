@@ -27,15 +27,19 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     }
 
     function hashCompareString(string memory a, string memory b) internal pure returns (bool) {
-        return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+        if (bytes(a).length != bytes(b).length) {
+            return false;
+        } else {
+            return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
+        }
     }
 
     /**
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
     function addDynamicProperty(string memory propertyName) public payable virtual override {
-        require(bytes(propertyName).length > 0, "Empty property!");
-        require(!supportsProperty(propertyName), "PropertyName already exists!");
+        require(bytes(propertyName).length > 0, "Empty property");
+        require(!supportsProperty(propertyName), "PropertyName exist");
         _allPropertyNames.push(propertyName);
 
         emit DynamicPropertyAdded(propertyName);
@@ -51,8 +55,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
     ) public virtual override payable {
         // require(supportsProperty(propertyId), "EVTVariable: Not supported propertyId");
         // require(_propertyIds[tokenId].contains(propertyId), "EVTVariable: propertyId not exist");
-        require(supportsProperty(property_name), "Not supported property!");
-        if(!tokenHasProperty(tokenId, property_name) == true) {
+        require(supportsProperty(property_name), "Not supported property");
+        if(!tokenHasProperty(tokenId, property_name)) {
             _propertyNames[tokenId].push(property_name);
         }
         // _properties[tokenId].name = property_name;
@@ -70,8 +74,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string[] memory propertyNames, 
         string[] memory propertyValues
     ) public virtual override payable {
-        require(propertyNames.length == propertyValues.length, "length not equal");
-        for(uint256 i = 0; i < propertyNames.length; i++) {
+        require(propertyNames.length == propertyValues.length, "length err");
+        for(uint256 i = 0; i < propertyNames.length; ++i) {
             setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
         }
     }
@@ -95,7 +99,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         uint256 len = _propertyNames[tokenId].length;
         string[] memory property_names = new string[](len);
         string[] memory properties = new string[](len);
-        for (uint256 i = 0; i < len; i++) {
+        for (uint256 i = 0; i < len; ++i) {
             property_names[i] = _propertyNames[tokenId][i];
             properties[i] = _propertyValue[tokenId][property_names[i]];
         }
@@ -117,7 +121,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string memory propertyName
     ) public view virtual override returns (bool) {
         bool res = false;
-        for(uint8 i = 0; i < _allPropertyNames.length; i++) {
+        for(uint8 i = 0; i < _allPropertyNames.length; ++i) {
             if(hashCompareString(propertyName, _allPropertyNames[i])) {
                 res = true;
                 break;
@@ -131,7 +135,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string memory propertyName
     ) public view virtual returns (bool) {
         bool res = false;
-        for(uint8 i = 0; i < _propertyNames[tokenId].length; i++) {
+        for(uint8 i = 0; i < _propertyNames[tokenId].length; ++i) {
             if(hashCompareString(propertyName, _propertyNames[tokenId][i])) {
                 res = true;
                 break;
