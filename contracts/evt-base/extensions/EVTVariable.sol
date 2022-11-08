@@ -38,8 +38,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
      * @dev See {IEVTVariable-addDynamicProperty}.
      */
     function addDynamicProperty(string memory propertyName) public payable virtual override {
-        require(bytes(propertyName).length > 0, "Empty property!");
-        require(!supportsProperty(propertyName), "PropertyName already exists!");
+        require(bytes(propertyName).length > 0, "Empty property");
+        require(!supportsProperty(propertyName), "PropertyName exist");
         _allPropertyNames.push(propertyName);
 
         emit DynamicPropertyAdded(propertyName);
@@ -53,7 +53,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string memory propertyName, 
         string memory property_value
     ) public virtual override payable {
-        require(supportsProperty(propertyName), "Not supported property!");
+        require(supportsProperty(propertyName), "Not supported property");
         if(!hasProperty(tokenId, propertyName)) {
             _propertyNames[tokenId].push(propertyName);
         }
@@ -70,8 +70,8 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         string[] memory propertyNames, 
         string[] memory propertyValues
     ) public virtual override payable {
-        require(propertyNames.length == propertyValues.length, "length not equal");
-        for(uint256 i = 0; i < propertyNames.length; i++) {
+        require(propertyNames.length == propertyValues.length, "length err");
+        for(uint256 i = 0; i < propertyNames.length; ++i) {
             setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
         }
     }
@@ -126,7 +126,7 @@ abstract contract EVTVariable is ERC165, IEVTVariable {
         return res;
     }
 
-    function tokenHasProperty(
+    function hasProperty(
         uint256 tokenId, 
         string memory propertyName
     ) public view virtual returns (bool) {
