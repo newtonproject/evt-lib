@@ -18,6 +18,11 @@ interface IEVTEncryption {
     event PermissionRemoved(uint256 indexed tokenId, bytes32 encryptedKeyID, address indexed licensee);
 
     /**
+     * @dev Emitted when add `encryptedKeyID` to `tokenId` token.
+     */
+    event EncryptionKeyIDAdded(uint256 indexed tokenId, bytes32 encryptedKeyID);
+    
+    /**
      * @dev registerEncryptedKey to `tokenId` token
      * Requirements:
      *
@@ -25,6 +30,15 @@ interface IEVTEncryption {
      *
      */
     function registerEncryptedKey(bytes32 encryptedKeyID) external payable;
+
+    /**
+     * @dev Add all encryptionKeyIDs to `tokenId` token
+     * Requirements:
+     *
+     * - `tokenId` token must exist.
+     *
+     */
+    function addEncryptionKeyID(uint256 tokenId) external payable;
 	
     /**
      * @dev Add `tokenId` token Permission to `licensee` width `encryptedKeyID`

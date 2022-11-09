@@ -6,17 +6,6 @@ import "./interfaces/IEVTVariable.sol";
 import "./interfaces/IEVTEncryption.sol";
 
 interface IEVT is IERC721, IEVTVariable, IEVTEncryption  {
-    
-    /**
-     * @dev Add new property besides properties passed in constructor function 
-     * when Contract initiated.
-     *
-     * Requirements:
-     *
-     * - `msg.sender` must be the owner of the contract.
-     * - PropertyName must not be empty.
-     */
-    function addDynamicProperty(string memory propertyName) external payable;
 
     /**
      * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.

@@ -12,8 +12,7 @@ interface IEVTVariable {
      */
     event DynamicPropertyUpdated(uint256 tokenId, string propertyName, string propertyValue);
 
-
-     /**
+    /**
      * @dev Add the `propertyId`.
      *
      * Requirements:
@@ -22,7 +21,7 @@ interface IEVTVariable {
      */
     function addDynamicProperty(string memory propertyName) external payable;
     
-     /**
+    /**
      * @dev Set the `propertyValue` by `tokenId` and `propertyId`.
      *
      * Requirements:
