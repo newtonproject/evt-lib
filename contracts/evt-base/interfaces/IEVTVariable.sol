@@ -10,7 +10,7 @@ interface IEVTVariable {
     /**
      * @dev Emitted when dynamic property updated.
      */
-    event DynamicPropertyUpdated(uint256 tokenId, string propertyName, string propertyValue);
+    event DynamicPropertyUpdated(uint256 indexed tokenId, string propertyName, string propertyValue);
 
     /**
      * @dev Add the `propertyName`.

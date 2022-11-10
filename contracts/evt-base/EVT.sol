@@ -122,7 +122,9 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
                         Base64.encode(
                             abi.encodePacked(
                                 '{"external_uri":',
+                                '"',
                                 _external_uri,
+                                '"',
                                 ',"properties":',
                                 getDynamicPropertiesAsString(tokenId),
                                 ','
@@ -351,12 +353,15 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
             bytes32 encryptionKeyId = _tokenKeyIDs[tokenId].at(i);
             address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
             string memory args = string(abi.encodePacked('{"encryptionKeyId":',
+                                                            '"',
                                                             GetString.toString(abi.encodePacked(encryptionKeyId)),
+                                                            '"',
                                                             ',"license":'
                                                           ));
             string[] memory stringLicense = new string[](license.length);
             for(uint256 j = 0; j < license.length; ++j) {
                 stringLicense[j] = GetString.toString(abi.encodePacked(license[j]));
+                stringLicense[j] = string(abi.encodePacked('"', stringLicense[j], '"'));
             }
             string memory data = GetString.getStringData(stringLicense);
             args = string(abi.encodePacked(args, data));
