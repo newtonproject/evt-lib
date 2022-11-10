@@ -6,6 +6,11 @@ interface IEVTEncryption {
      * @dev Emitted when register `encryptedKeyID` encryptedKey.
      */
     event EncryptedKeyRegistered(bytes32 encryptedKeyID);
+
+    /**
+     * @dev Emitted when add `encryptedKeyID` to `tokenId` token.
+     */
+    event EncryptedKeyIDAdded(uint256 indexed tokenId, bytes32 encryptedKeyID);
     
     /**
      * @dev Emitted when add `tokenId` token permission to `licensee`.
@@ -16,11 +21,6 @@ interface IEVTEncryption {
      * @dev Emitted when remove `tokenId` token permission from `licensee`.
      */
     event PermissionRemoved(uint256 indexed tokenId, bytes32 encryptedKeyID, address indexed licensee);
-
-    /**
-     * @dev Emitted when add `encryptedKeyID` to `tokenId` token.
-     */
-    event EncryptionKeyIDAdded(uint256 indexed tokenId, bytes32 encryptedKeyID);
     
     /**
      * @dev registerEncryptedKey to the contract.
@@ -29,14 +29,6 @@ interface IEVTEncryption {
      * - `msg.sender` must be the owner of the contract.
      */
     function registerEncryptedKey(bytes32 encryptedKeyID) external;
-
-    /**
-     * @dev Add all encryptionKeyIDs to `tokenId` token
-     * Requirements:
-     *
-     * - `tokenId` token must exist.
-     */
-    function addEncryptionKeyID(uint256 tokenId) external payable;
 	
     /**
      * @dev Add `tokenId` token Permission to `licensee` width `encryptedKeyID`

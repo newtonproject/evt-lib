@@ -317,7 +317,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         bytes32 encryptedKeyID,
         address licensee
     ) public view virtual override(IEVTEncryption, EVTEncryption) returns (bool) {
-        if(msg.sender == ownerOf(tokenId)) {
+        if(msg.sender == ownerOf(tokenId) && msg.sender == licensee) {
             return true;
         }
         return EVTEncryption.hasPermission(tokenId, encryptedKeyID, licensee);
@@ -370,5 +370,13 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
             permissions[i] = args;
         }
         return permissions;
+    }
+
+    /**
+     * @dev Add all encryption keys to the token when the new token is minted.
+     */
+    function mint(address to, uint256 tokenId) public {
+        _mint(to, tokenId);
+        addEncryptedKeyID(tokenId);
     }
 }

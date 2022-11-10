@@ -41,12 +41,12 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-addEncryptionKeyID}.
      */
-    function addEncryptionKeyID(uint256 tokenId) public payable virtual override {
+    function addEncryptedKeyID(uint256 tokenId) internal virtual {
         for(uint i = 0; i < _encryptedKeyIDs.length(); ++i) {
             bytes32 keyID = _encryptedKeyIDs.at(i);
             _tokenKeyIDs[tokenId].add(keyID);
 
-            emit EncryptionKeyIDAdded(tokenId, keyID);
+            emit EncryptedKeyIDAdded(tokenId, keyID);
         }       
     }
 

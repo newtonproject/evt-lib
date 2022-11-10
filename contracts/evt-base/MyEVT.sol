@@ -56,24 +56,13 @@ contract MyEVT is EVT {
     }
 
     /**
-     * @dev After the _encryptedKeyIDs is determined, mint a new token.
-     * Add all encryption keys to the token when the new token is minted.
-     */
-    function mint(address to) public {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _mint(to, tokenId);
-        addEncryptionKeyID(tokenId);
-    }
-
-    /**
      * @dev Safely mints `tokenId` and transfers it to `to`.
      */
     function safeMint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-        addEncryptionKeyID(tokenId);
+        addEncryptedKeyID(tokenId);
     }
 
     /**
@@ -86,7 +75,7 @@ contract MyEVT is EVT {
         bytes memory _data
     ) public {
         _safeMint(to, tokenId, _data);
-        addEncryptionKeyID(tokenId);
+        addEncryptedKeyID(tokenId);
     }
 
     /**
