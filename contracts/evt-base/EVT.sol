@@ -201,7 +201,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */  
     function addDynamicProperty(
         string memory propertyName
-    ) public payable virtual onlyOwner override(IEVTVariable, EVTVariable) {
+    ) public virtual onlyOwner override(IEVTVariable, EVTVariable) {
         EVTVariable.addDynamicProperty(propertyName);
     }
 
@@ -279,7 +279,7 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
      */
     function registerEncryptedKey(
         bytes32 encryptedKeyID
-    ) public payable virtual override(IEVTEncryption, EVTEncryption) onlyOwner {
+    ) public virtual override(IEVTEncryption, EVTEncryption) onlyOwner {
         EVTEncryption.registerEncryptedKey(encryptedKeyID);
     }
 

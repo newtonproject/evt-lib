@@ -3,7 +3,7 @@ pragma solidity ^0.8.3;
 
 interface IEVTEncryption {
     /**
-     * @dev Emitted when register `encryptedKeyID` encryptedKey for `tokenId` token.
+     * @dev Emitted when register `encryptedKeyID` encryptedKey.
      */
     event EncryptedKeyRegistered(bytes32 encryptedKeyID);
     
@@ -23,20 +23,18 @@ interface IEVTEncryption {
     event EncryptionKeyIDAdded(uint256 indexed tokenId, bytes32 encryptedKeyID);
     
     /**
-     * @dev registerEncryptedKey to `tokenId` token
+     * @dev registerEncryptedKey to the contract.
      * Requirements:
      *
-     * - `tokenId` token must exist and be owned by `from`.
-     *
+     * - `msg.sender` must be the owner of the contract.
      */
-    function registerEncryptedKey(bytes32 encryptedKeyID) external payable;
+    function registerEncryptedKey(bytes32 encryptedKeyID) external;
 
     /**
      * @dev Add all encryptionKeyIDs to `tokenId` token
      * Requirements:
      *
      * - `tokenId` token must exist.
-     *
      */
     function addEncryptionKeyID(uint256 tokenId) external payable;
 	

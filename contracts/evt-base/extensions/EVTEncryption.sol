@@ -31,7 +31,7 @@ abstract contract EVTEncryption is ERC165, IEVTEncryption {
     /**
      * @dev See {IEVTEncryption-registerEncryptedKey}.
      */
-    function registerEncryptedKey(bytes32 encryptedKeyID) public payable virtual override {
+    function registerEncryptedKey(bytes32 encryptedKeyID) public virtual override {
         require(!_encryptedKeyIDs.contains(encryptedKeyID), "encryptedKeyID exist");
         _encryptedKeyIDs.add(encryptedKeyID);
 
