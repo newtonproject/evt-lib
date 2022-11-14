@@ -86,6 +86,7 @@ describe("MyEvt", function () {
         (await myEvtContract.getAllSupportProperties())
     );
 
+    console.log("\n");
     console.log("variableURI: " + (await myEvtContract.variableURI(tokenId)));
 
     //##############################EVTEncryption##############################
@@ -113,11 +114,14 @@ describe("MyEvt", function () {
       await myEvtContract.hasPermission(tokenId, encryptedKeyID, errLicensee)
     ).to.equal(false);
 
+    console.log("\n");
     console.log(
       "encryptionURI: " + (await myEvtContract.encryptionURI(tokenId))
     );
 
+
     //##############################tokenURI##############################
+    console.log("\n");
     console.log("tokenURI: " + (await myEvtContract.tokenURI(tokenId)));
   });
 });
