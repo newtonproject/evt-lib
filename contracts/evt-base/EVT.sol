@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.3;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
 import "./IEVT.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
 import "../libraries/GetString.sol";
 import "./interfaces/IEVTMetadata.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 /**
  * @dev Implementation of https://neps.newtonproject.org/neps/nep-53/[NRC-53 EVT] Encrypted Variable Token Standard.
@@ -372,11 +374,4 @@ contract EVT is IEVT, IEVTMetadata, ERC721, EVTEncryption, EVTVariable, Ownable 
         return permissions;
     }
 
-    /**
-     * @dev Add all encryption keys to the token when the new token is minted.
-     */
-    function mint(address to, uint256 tokenId) public {
-        _mint(to, tokenId);
-        addEncryptedKeyID(tokenId);
-    }
 }

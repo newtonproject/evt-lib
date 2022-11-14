@@ -4,11 +4,11 @@ pragma solidity ^0.8.3;
 import "./IEVTA.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
+import "../libraries/GetString.sol";
 import "./interfaces/IEVTMetadata.sol";
-import "../libraries/toString.sol";
 import "../erc721a/ERC721A.sol";
-import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
@@ -18,30 +18,33 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariable{
 
     using EnumerableSet for EnumerableSet.Bytes32Set;
-    using EnumerableSet for EnumerableSet.AddressSet;
 
     // Point to the EVTA offchain data
-    string private _external_uri;
+    string public _external_uri;
 
     // =============================================================
     //                          CONSTRUCTOR
     // =============================================================
 
     /**
-     * @dev Initializes the contract by setting `name`、`symbol`、`properties` and `baseURI` to the token collection.
+     * @dev Initializes the contract by setting `name`、`symbol`、`properties`、`encryptedKeyIDs`
+     * and `baseURI` to the token collection.
+     * 
+     * For example, 
      */
     constructor(
         string memory name_, 
         string memory symbol_, 
         string[] memory properties,
+        bytes32[] memory encryptedKeyIDs,
         string memory _newBaseURI,
         uint256 maxBatchSize_,
         uint256 collectionSize_
     ) ERC721A(name_, symbol_,maxBatchSize_,collectionSize_) {
         setBaseURI(_newBaseURI);
-        uint256 len = properties.length;
-        for(uint256 i = 0; i < len; i++) {
-            _allPropertyNames.push(properties[i]);
+        _allPropertyNames = properties;
+        for(uint i = 0; i < encryptedKeyIDs.length; ++i) {
+            _encryptedKeyIDs.add(encryptedKeyIDs[i]);
         }
     }
 
@@ -81,15 +84,15 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
      * 
      * - `msg.sender` must be the owner of the contract.
      */
-    function setBaseURI(string memory _newBaseURI) public {
+    function setBaseURI(string memory _newBaseURI) public onlyOwner {
         _external_uri = _newBaseURI;
     }
 
     /**
      * @dev Override _baseURI() in ERC721.sol and return the _external_uri 
-     representing the base URI for all token IDs.
+     * representing the base URI for all token IDs.
      */
-    function baseURI() public view virtual returns (string memory) {
+    function _baseURI() internal view virtual override returns (string memory) {
         return _external_uri;
     }
 
@@ -97,7 +100,6 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
      * @dev See {IEVTMetadata-contractURI}.
      */  
     function contractURI() public view virtual override returns (string memory) {
-        // string memory baseURI = _baseURI();   
         return
             bytes(_external_uri).length > 0
                 ? string(
@@ -116,7 +118,6 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
     function tokenURI(
         uint256 tokenId
     ) public view virtual override(ERC721A, IERC721Metadata, IEVTMetadata) returns (string memory) {
-        // string memory baseURI = _baseURI();   
         return
             bytes(_external_uri).length > 0
                 ? string(
@@ -125,7 +126,9 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
                         Base64.encode(
                             abi.encodePacked(
                                 '{"external_uri":',
-                                _external_uri,
+                                '"',
+                                _external_uri,                                
+                                '"',
                                 ',"properties":',
                                 getDynamicPropertiesAsString(tokenId),
                                 ','
@@ -204,7 +207,7 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
      */  
     function addDynamicProperty(
         string memory propertyName
-    ) public payable virtual onlyOwner override(IEVTVariable, EVTVariable) {
+    ) public virtual onlyOwner override(IEVTVariable, EVTVariable) {
         EVTVariable.addDynamicProperty(propertyName);
     }
 
@@ -229,10 +232,7 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
         string[] memory propertyValues
     ) public virtual override(IEVTVariable, EVTVariable) payable {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        require(propertyNames.length == propertyValues.length, "length not equal");
-        for(uint256 i = 0; i < propertyNames.length; i++) {
-            setDynamicProperty(tokenId, propertyNames[i], propertyValues[i]);
-        }
+        EVTVariable.setDynamicProperties(tokenId, propertyNames, propertyValues);
     }
 
     /**
@@ -241,7 +241,6 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
     function getDynamicPropertiesAsString(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        require(!_exists(tokenId), "ERC721A: token already minted");
         string[] memory args = _getDynamicPropertiesArray(tokenId);
         string memory res = GetString.getStringData(args);
         return res;
@@ -258,12 +257,12 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
      */
     function _getDynamicPropertiesArray(
         uint256 tokenId
-    ) internal view virtual returns (string[] memory) {
+    ) private view returns (string[] memory) {
         require(!_exists(tokenId), "ERC721A: token already minted");
         (string[] memory property_names, string[] memory values) = EVTVariable.getDynamicProperties(tokenId);
         require(property_names.length == values.length, "length error");
         string[] memory properties = new string[](property_names.length);
-        for (uint256 i = 0; i < property_names.length; i++) {
+        for (uint256 i = 0; i < property_names.length; ++i) {
             string memory trait_name = property_names[i];
             string memory args = string(abi.encodePacked('{"property_name":"',
                                                           trait_name,
@@ -286,7 +285,7 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
      */
     function registerEncryptedKey(
         bytes32 encryptedKeyID
-    ) public payable virtual override(IEVTEncryption, EVTEncryption) onlyOwner {
+    ) public virtual override(IEVTEncryption, EVTEncryption) onlyOwner {
         EVTEncryption.registerEncryptedKey(encryptedKeyID);
     }
 
@@ -299,14 +298,7 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
         address licensee
     ) public payable virtual override(IEVTEncryption, EVTEncryption) {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        // EVTEncryption.addPermission(tokenId, encryptedKeyID, licensee);
-        require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        require(!_permissions[tokenId][encryptedKeyID].contains(licensee), "licensee has been added");
-        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        _authorize.add(licensee);
-        _tokenKeyIDs[tokenId].add(encryptedKeyID);
-
-        emit PermissionAdded(tokenId, encryptedKeyID, licensee);
+        EVTEncryption.addPermission(tokenId, encryptedKeyID, licensee);
     }
 
     /**
@@ -318,13 +310,21 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
         address licensee
     ) public virtual override(IEVTEncryption, EVTEncryption) {
         require(msg.sender == ownerOf(tokenId), "not token owner");
-        // EVTEncryption.removePermission(tokenId, encryptedKeyID, licensee);
-        require(_encryptedKeyIDs.contains(encryptedKeyID), "EVTEncrytion: invalid encryptedKeyID");
-        EnumerableSet.AddressSet storage _authorize = _permissions[tokenId][encryptedKeyID];
-        _authorize.remove(licensee);
-        _tokenKeyIDs[tokenId].remove(encryptedKeyID);
+        EVTEncryption.removePermission(tokenId, encryptedKeyID, licensee);
+    }
 
-        emit PermissionRemoved(tokenId, encryptedKeyID, licensee);
+        /**
+     * @dev See {IEVTEncryption-hasPermission}.
+     */
+    function hasPermission(
+        uint256 tokenId, 
+        bytes32 encryptedKeyID,
+        address licensee
+    ) public view virtual override(IEVTEncryption, EVTEncryption) returns (bool) {
+        if(msg.sender == ownerOf(tokenId) && msg.sender == licensee) {
+            return true;
+        }
+        return EVTEncryption.hasPermission(tokenId, encryptedKeyID, licensee);
     }
 
     /**
@@ -333,7 +333,6 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
     function getPermissionsAsString(
         uint256 tokenId
     ) public view virtual override returns (string memory) {
-        require(!_exists(tokenId), "ERC721A: token already minted");
         string[] memory args = _getPermissionsArray(tokenId);
         string memory res = GetString.getStringData(args);
         return res;
@@ -350,20 +349,23 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
      */
     function _getPermissionsArray(
         uint256 tokenId
-    ) public view virtual returns (string[] memory) {
+    ) private view returns (string[] memory) {
         require(!_exists(tokenId), "ERC721A: token already minted");
         uint256 len = _tokenKeyIDs[tokenId].length();
         string[] memory permissions = new string[](len);
-        for (uint256 i = 0; i < len; i++) {
+        for (uint256 i = 0; i < len; ++i) {
             bytes32 encryptionKeyId = _tokenKeyIDs[tokenId].at(i);
             address[] memory license = EVTEncryption.getPermissions(tokenId, encryptionKeyId);
             string memory args = string(abi.encodePacked('{"encryptionKeyId":',
+                                                            '"',
                                                             GetString.toString(abi.encodePacked(encryptionKeyId)),
+                                                            '"',
                                                             ',"license":'
                                                           ));
             string[] memory stringLicense = new string[](license.length);
             for(uint256 j = 0; j < license.length; ++j) {
                 stringLicense[j] = GetString.toString(abi.encodePacked(license[j]));
+                stringLicense[j] = string(abi.encodePacked('"', stringLicense[j], '"'));
             }
             string memory data = GetString.getStringData(stringLicense);
             args = string(abi.encodePacked(args, data));
@@ -373,4 +375,5 @@ contract EVTA is IEVTA, IEVTMetadata, Ownable, ERC721A, EVTEncryption, EVTVariab
         }
         return permissions;
     }
+    
 }
