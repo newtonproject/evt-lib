@@ -2,21 +2,15 @@
 pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../../evt-base/EVT.sol";
 import "./ISecureMovie.sol";
 
-contract SecureMovie is ISecureMovie, EVT {
+contract SecureMovie is ISecureMovie, EVT, ERC721Enumerable {
     using Counters for Counters.Counter;
-    using EnumerableSet for EnumerableSet.AddressSet;
 
     Counters.Counter private _movieIdCounter;
-
-    // movieId ==> owner
-    mapping(uint256 => address) private _movieIdToAddr;
 
     constructor(
         string memory name_,
@@ -32,19 +26,16 @@ contract SecureMovie is ISecureMovie, EVT {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 movieId,
+        uint256 tokenId,
         uint256 batchSize
-    ) internal override {
-        super._beforeTokenTransfer(from, to, movieId, batchSize);
-
-        //Maintain _movieIdToAddr
-        _movieIdToAddr[movieId] = to;
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
     //onlyOwner
     //onlyOwner
     //onlyOwner
-    function safeMint(address to, uint256 amount) public onlyOwner {
+    function safeMint(address to, uint256 amount) public override onlyOwner {
         for (uint256 i = 0; i < amount; ++i) {
             uint256 movieId = _movieIdCounter.current();
             _movieIdCounter.increment();
@@ -54,8 +45,9 @@ contract SecureMovie is ISecureMovie, EVT {
         }
     }
 
-    function updateDefaultURI(string memory _uri) public onlyOwner {
+    function updateDefaultURI(string memory _uri) public override onlyOwner {
         setBaseURI(_uri);
+
         emit DefaultURIUpdate(_uri);
     }
 
@@ -70,10 +62,23 @@ contract SecureMovie is ISecureMovie, EVT {
         public
         view
         virtual
-        override(IERC165, EVT)
+        override(IERC165, EVT, ERC721Enumerable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @dev See {IEVTMetadata-tokenURI}.
+     */
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override(ERC721, EVT)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
     }
 
     function isOwnerMovie(uint256 movieId, address addr)
@@ -82,6 +87,6 @@ contract SecureMovie is ISecureMovie, EVT {
         override
         returns (bool)
     {
-        return _movieIdToAddr[movieId] == addr;
+        return ownerOf(movieId) == addr;
     }
 }

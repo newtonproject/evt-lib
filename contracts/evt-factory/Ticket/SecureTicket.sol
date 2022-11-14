@@ -1,125 +1,169 @@
-// // SPDX-License-Identifier: GPL-3.0
-// pragma solidity ^0.8.3;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.3;
 
-// import "@openzeppelin/contracts/utils/Counters.sol";
-// import "@openzeppelin/contracts/utils/Strings.sol";
-// import "../../evt-base/EVT.sol";
-// import "./ISecureTicket.sol";
-// import "../Movie/ISecureMovie.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "../../evt-base/EVT.sol";
+import "./ISecureTicket.sol";
+import "../Movie/ISecureMovie.sol";
 
-// contract SecurTicket is ISecureTicket, EVT {
-//     using Counters for Counters.Counter;
-//     using Strings for uint256;
-//     using EnumerableSet for EnumerableSet.UintSet;
+contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
+    using Counters for Counters.Counter;
 
-//     Counters.Counter private _ticketIdCounter;
+    Counters.Counter private _ticketIdCounter;
+    address private payee;
+    // TicketId => TicketInfo
+    mapping(uint256 => TicketInfo) private ticketInfoMap;
 
-//     // Mapping from owner to set of TicketId
-//     mapping(address => EnumerableSet.UintSet) private _ownerToTicketId;
+    ISecureMovie public movieContract;
+    uint256 public movieDuration;
+    uint256 public ticketDuration;
+    uint256 public startTime;
+    string public uri;
 
-//     ISecureMovie public movieContract;
-//     uint256 public movieDuration;
-//     uint256 public tichketDuration;
-//     uint256 startTime;
-//     string public uri;
-//     address public payee;
+    struct TicketInfo {
+        uint256 movieId;
+        uint256 checkingTime;
+    }
 
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        string[] memory properties,
+        bytes32[] memory encryptedKeyIDs,
+        string memory uri_,
+        address movieAddr,
+        uint256 startTime_,
+        uint256 movieDuration_,
+        uint256 ticketDuration_
+    ) EVT(name_, symbol_, properties, encryptedKeyIDs, uri_) {
+        movieContract = ISecureMovie(movieAddr);
+        uri = uri_;
+        movieDuration = movieDuration_;
+        ticketDuration = ticketDuration_;
+        startTime = startTime_;
+        payee = owner();
+    }
 
-//     constructor(
-//         string memory name_,
-//         string memory symbol_,
-//         string[] memory properties,
-//         bytes32[] memory encryptedKeyIDs,
-//         string memory uri_,
-//         address movieAddr,
-//         uint256 startTime_,
-//         uint256 duration_,
-//         uint256 checkDuration_
-//     ) EVT(name_, symbol_, properties, encryptedKeyIDs, uri_) {
-//         movieContract = ISecureMovie(movieAddr);
-//         uri = uri_;
-//         duration = duration_;
-//         checkDuration = checkDuration_;
-//         startTime = startTime_;
-//         payee = owner();
-//     }
+    modifier onlyMovieOwner(uint256 movieId) {
+        require(
+            movieContract.isOwnerMovie(movieId, msg.sender),
+            "not movie owner"
+        );
+        _;
+    }
 
-//     modifier onlyMovieOwner(uint256 movieId) {
-//         require(
-//             movieContract.isOwnerMovie(movieId, msg.sender),
-//             "not movie owner"
-//         );
-//         _;
-//     }
+    //internal
+    //internal
+    //internal
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId,
+        uint256 batchSize
+    ) internal override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    }
 
-//     //onlyOwner
-//     //onlyOwner
-//     //onlyOwner
-//     function updateDefaultURI(string memory _uri) public onlyOwner {
-//         uri = _uri;
+    //onlyOwner
+    //onlyOwner
+    //onlyOwner
+    function updateDefaultURI(string memory _uri) public override onlyOwner {
+        uri = _uri;
 
-//         emit DefaultURIUpdate(_uri);
-//     }
+        emit DefaultURIUpdate(_uri);
+    }
 
-//     function updateDuration(uint256 _duration) public onlyOwner {
-//         duration = _duration;
+    function updateMovieDuration(uint256 _movieDuration)
+        public
+        override
+        onlyOwner
+    {
+        movieDuration = _movieDuration;
 
-//         emit DurationUpdate(_duration);
-//     }
+        emit MovieDurationUpdate(_movieDuration);
+    }
 
-//     function updateCheckDuration(uint256 _checkDuration) public onlyOwner {
-//         checkDuration = _checkDuration;
+    function updateTicketDuration(uint256 _ticketDuration)
+        public
+        override
+        onlyOwner
+    {
+        ticketDuration = _ticketDuration;
 
-//         emit CheckDurationUpdate(_checkDuration);
-//     }
+        emit TicketDurationUpdate(_ticketDuration);
+    }
 
-//     function updatePayee(address _payee) public onlyOwner {
-//         require(_payee != address(0), "Invalid address");
-//         payee = _payee;
+    function updatePayee(address _payee) public override onlyOwner {
+        require(_payee != address(0), "Invalid address");
+        payee = _payee;
 
-//         emit PayeeUpdate(_payee);
-//     }
+        emit PayeeUpdate(_payee);
+    }
 
-//     //onlyMovieOwner
-//     //onlyMovieOwner
-//     //onlyMovieOwner
-//     function safeMint(
-//         address to,
-//         uint256 amount,
-//         uint256 movieId
-//     ) public payable onlyMovieOwner(movieId) {
-//         for (uint256 i = 0; i < amount; ++i) {
-//             uint256 ticketId = _ticketIdCounter.current();
-//             _ticketIdCounter.increment();
-//             _safeMint(to, ticketId);
-//             setDynamicProperty(ticketId, "movieId", movieId.toString());
-//         }
-//     }
+    //onlyMovieOwner
+    //onlyMovieOwner
+    //onlyMovieOwner
+    function safeMint(
+        address to,
+        uint256 amount,
+        uint256 movieId
+    ) public payable override onlyMovieOwner(movieId) {
+        for (uint256 i = 0; i < amount; ++i) {
+            uint256 ticketId = _ticketIdCounter.current();
+            _ticketIdCounter.increment();
+            _safeMint(to, ticketId);
+            ticketInfoMap[ticketId].movieId = movieId;
 
-//     //onlyTicketOwner
-//     //onlyTicketOwner
-//     //onlyTicketOwner
-//     function watch(uint256 ticketId) public view returns (bool) {
-//         require(msg.sender == ownerOf(ticketId), "not ticket owner");
-//         require(block.timestamp > startTime && block.timestamp < startTime+duration);
-//         if(getDynamicProperty(ticketId,"checkStartTime"));
-//         return true;
-//     }
+            emit EventCreateTicket(ticketId);
+        }
+    }
 
-//     //public
-//     //public
-//     //public
-//     function withdraw() public {
-//         Address.sendValue(payable(payee), address(this).balance);
-//     }
+    //onlyTicketOwner
+    //onlyTicketOwner
+    //onlyTicketOwner
+    function checkTicket(uint256 ticketId) public override returns (bool) {
+        require(msg.sender == ownerOf(ticketId), "not ticket owner");
+        require(startTime < block.timestamp, "time is not up yet");
+        require(startTime + ticketDuration > block.timestamp, "timeout");
+        uint256 checkingTime_ = ticketInfoMap[ticketId].checkingTime;
+        if (checkingTime_ == 0) {
+            ticketInfoMap[ticketId].checkingTime = block.timestamp;
 
-//     function supportsInterface(bytes4 interfaceId)
-//         public
-//         view
-//         virtual
-//         override(IERC165, EVT)
-//         returns (bool)
-//     {
-//         return super.supportsInterface(interfaceId);
-//     }
-// }
+            emit EventTicketCheck(ticketId, block.timestamp);
+            return true;
+        } else {
+            return checkingTime_ + ticketDuration < block.timestamp;
+        }
+    }
+
+    //public
+    //public
+    //public
+    function withdraw() public {
+        Address.sendValue(payable(payee), address(this).balance);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(IERC165, EVT, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @dev See {IEVTMetadata-tokenURI}.
+     */
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override(ERC721, EVT)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+}
