@@ -18,7 +18,9 @@ contract SecureMovie is ISecureMovie, EVT, ERC721Enumerable {
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
         string memory _uri
-    ) EVT(name_, symbol_, properties, encryptedKeyIDs, _uri) {}
+    ) EVT(name_, symbol_, properties, encryptedKeyIDs, _uri) {
+        
+    }
 
     //internal
     //internal
@@ -45,10 +47,10 @@ contract SecureMovie is ISecureMovie, EVT, ERC721Enumerable {
         }
     }
 
-    function updateDefaultURI(string memory _uri) public override onlyOwner {
+    function updateBaseURI(string memory _uri) public override onlyOwner {
         setBaseURI(_uri);
 
-        emit DefaultURIUpdate(_uri);
+        emit BaseURIUpdate(_uri);
     }
 
     function withdraw() public onlyOwner {

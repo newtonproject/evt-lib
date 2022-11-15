@@ -138,7 +138,7 @@ contract EVT is
                         "data:application/json;base64,",
                         Base64.encode(
                             abi.encodePacked(
-                                '{"external_uri":',
+                                '{"baseURI":',
                                 '"',
                                 baseURI,
                                 '"',

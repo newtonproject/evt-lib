@@ -9,18 +9,35 @@ interface ISecureTicket is IEVT {
 
     event MovieDurationUpdate(uint256 movieDuration);
     event TicketDurationUpdate(uint256 ticketDuration);
-    event DefaultURIUpdate(string uri);
+    event BaseURIUpdate(string uri);
     event PayeeUpdate(address payee);
 
     // function commonInfo() external view returns(
     //     address movie, uint256 movieId, uint256 duration, uint256 checkDuration, string memory defaultUri
     // );
 
-    // function ticketInfo(uint256 ticketId)  external view returns(
-    //     uint256 inspectStartTime, uint256 inspectEndTime, bool inspected, uint256 startTime, uint256 endTime
-    // );
+    function commonInfo()
+        external
+        view
+        returns (
+            address,
+            uint256,
+            uint256,
+            uint256,
+            string memory
+        );
 
-    // function isValidTicket(uint256 tokenId) external view returns (bool);
+    function ticketInfo(uint256 tokenId)
+        external
+        view
+        returns (
+            address,
+            uint256,
+            uint256,
+            uint256,
+            string memory,
+            uint256
+        );
 
     // function isValidWatcher(address watcher) external view returns (bool);
 
@@ -32,7 +49,7 @@ interface ISecureTicket is IEVT {
 
     function checkTicket(uint256 tokenId) external returns (bool);
 
-    function updateDefaultURI(string memory style) external;
+    function updateBaseURI(string memory style) external;
 
     function updatePayee(address payee) external;
 

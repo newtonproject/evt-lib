@@ -7,17 +7,16 @@ import "../../evt-base/EVT.sol";
 import "./ISecureTicket.sol";
 import "../Movie/ISecureMovie.sol";
 
-contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
+contract SecureTicket is ISecureTicket, EVT, ERC721Enumerable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _ticketIdCounter;
 
     address private payee;
+    address public movieAddr;
+    uint256 public startTime;
     uint256 public movieDuration;
     uint256 public ticketDuration;
-    uint256 public startTime;
-    string public uri;
-    ISecureMovie public movieContract;
 
     // TicketId => TicketInfo
     mapping(uint256 => TicketInfo) private ticketInfoMap;
@@ -33,13 +32,12 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
         string memory uri_,
-        address movieAddr,
+        address movieAddr_,
         uint256 startTime_,
         uint256 movieDuration_,
         uint256 ticketDuration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, uri_) {
-        movieContract = ISecureMovie(movieAddr);
-        uri = uri_;
+        movieAddr = movieAddr_;
         movieDuration = movieDuration_;
         ticketDuration = ticketDuration_;
         startTime = startTime_;
@@ -48,7 +46,7 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
 
     modifier onlyMovieOwner(uint256 movieId) {
         require(
-            movieContract.isOwnerMovie(movieId, msg.sender),
+            ISecureMovie(movieAddr).isOwnerMovie(movieId, msg.sender),
             "not movie owner"
         );
         _;
@@ -69,10 +67,10 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
     //onlyOwner
     //onlyOwner
     //onlyOwner
-    function updateDefaultURI(string memory _uri) public override onlyOwner {
-        uri = _uri;
+    function updateBaseURI(string memory _uri) public override onlyOwner {
+        setBaseURI(_uri);
 
-        emit DefaultURIUpdate(_uri);
+        emit BaseURIUpdate(_uri);
     }
 
     function updateMovieDuration(uint256 _movieDuration)
@@ -108,7 +106,7 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
 
     //payee or owner
     function withdraw() public {
-        require(msg.sender == payee || msg.sender == owner(),"no access");
+        require(msg.sender == payee || msg.sender == owner(), "no access");
         Address.sendValue(payable(payee), address(this).balance);
     }
 
@@ -164,13 +162,52 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
     /**
      * @dev See {IEVTMetadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId)
+    function tokenURI(uint256 ticketId)
         public
         view
         virtual
         override(ERC721, EVT)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return super.tokenURI(ticketId);
+    }
+
+    function commonInfo()
+        public
+        view
+        override
+        returns (
+            address,
+            uint256,
+            uint256,
+            uint256,
+            string memory
+        )
+    {
+        return (movieAddr, startTime, movieDuration, ticketDuration, baseURI);
+    }
+
+    function ticketInfo(uint256 ticketId)
+        external
+        view
+        override
+        returns (
+            address,
+            uint256,
+            uint256,
+            uint256,
+            string memory,
+            uint256
+        )
+    {
+        require(ERC721._exists(ticketId), "not exist");
+        return (
+            movieAddr,
+            startTime,
+            movieDuration,
+            ticketDuration,
+            baseURI,
+            ticketInfoMap[ticketId].checkingTime
+        );
     }
 }
