@@ -27,7 +27,7 @@ contract EVTA is
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
     // Point to the EVTA offchain data
-    string public _external_uri;
+    string public baseURI;
 
     // =============================================================
     //                          CONSTRUCTOR
@@ -44,11 +44,11 @@ contract EVTA is
         string memory symbol_,
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
-        string memory _newBaseURI,
+        string memory baseURI_,
         uint256 maxBatchSize_,
         uint256 collectionSize_
     ) ERC721A(name_, symbol_, maxBatchSize_, collectionSize_) {
-        setBaseURI(_newBaseURI);
+        setBaseURI(baseURI_);
         _allPropertyNames = properties;
         for (uint256 i = 0; i < encryptedKeyIDs.length; ++i) {
             _encryptedKeyIDs.add(encryptedKeyIDs[i]);
@@ -91,14 +91,14 @@ contract EVTA is
     }
 
     /**
-     * @dev Set the _external_uri.
+     * @dev Set the baseURI.
      *
      * Requirements:
      *
      * - `msg.sender` must be the owner of the contract.
      */
-    function setBaseURI(string memory _newBaseURI) public onlyOwner {
-        _external_uri = _newBaseURI;
+    function setBaseURI(string memory _baseURI) public onlyOwner {
+        baseURI = _baseURI;
     }
 
     /**
@@ -112,10 +112,10 @@ contract EVTA is
         returns (string memory)
     {
         return
-            bytes(_external_uri).length > 0
+            bytes(baseURI).length > 0
                 ? string(
                     abi.encodePacked(
-                        _external_uri,
+                        baseURI,
                         "contract/",
                         Strings.toHexString(uint256(uint160(address(this))))
                     )
@@ -134,7 +134,7 @@ contract EVTA is
         returns (string memory)
     {
         return
-            bytes(_external_uri).length > 0
+            bytes(baseURI).length > 0
                 ? string(
                     abi.encodePacked(
                         "data:application/json;base64,",
@@ -142,7 +142,7 @@ contract EVTA is
                             abi.encodePacked(
                                 '{"external_uri":',
                                 '"',
-                                _external_uri,
+                                baseURI,
                                 '"',
                                 ',"properties":',
                                 getDynamicPropertiesAsString(tokenId),
