@@ -45,8 +45,8 @@ beforeEach(async () => {
   await myEvtContract["safeMint(address)"](addr);
 });
 
-describe("MyEvt", function () {
-  it("MyEvt Test", async function () {
+describe("MyEvt:", function () {
+  it("MyEvt Test: ", async function () {
     const from = await myEvtContract.from();
     console.log("from: " + from);
     const baseUri = "https://www.newtonproject.org/en/";
