@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -11,15 +11,16 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _ticketIdCounter;
-    address private payee;
-    // TicketId => TicketInfo
-    mapping(uint256 => TicketInfo) private ticketInfoMap;
 
-    ISecureMovie public movieContract;
+    address private payee;
     uint256 public movieDuration;
     uint256 public ticketDuration;
     uint256 public startTime;
     string public uri;
+    ISecureMovie public movieContract;
+
+    // TicketId => TicketInfo
+    mapping(uint256 => TicketInfo) private ticketInfoMap;
 
     struct TicketInfo {
         uint256 movieId;
@@ -101,6 +102,16 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
         emit PayeeUpdate(_payee);
     }
 
+    function getPayee() public view onlyOwner returns (address) {
+        return payee;
+    }
+
+    //payee or owner
+    function withdraw() public {
+        require(msg.sender == payee || msg.sender == owner(),"no access");
+        Address.sendValue(payable(payee), address(this).balance);
+    }
+
     //onlyMovieOwner
     //onlyMovieOwner
     //onlyMovieOwner
@@ -140,10 +151,6 @@ contract SecurTicket is ISecureTicket, EVT, ERC721Enumerable {
     //public
     //public
     //public
-    function withdraw() public {
-        Address.sendValue(payable(payee), address(this).balance);
-    }
-
     function supportsInterface(bytes4 interfaceId)
         public
         view
