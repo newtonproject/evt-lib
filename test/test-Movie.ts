@@ -50,10 +50,10 @@ describe("Movie", function () {
       const uri = "https://www.newtonproject.org";
       await movieContract.updateBaseURI(uri);
       expect(await movieContract.baseURI()).to.equal(uri);
-      expect(await movieContract.isOwnerMovie(0, ownerAddr)).to.equal(
+      expect(await movieContract.isOwnMovie(0, ownerAddr)).to.equal(
         true
       );
-      expect(await movieContract.isOwnerMovie(0, pubAddr)).to.equal(
+      expect(await movieContract.isOwnMovie(0, pubAddr)).to.equal(
         false
       );
       console.log("\n");

@@ -16,7 +16,7 @@ interface IMovie is IEVT {
     // function tickets2movie(address tickets) external view returns(uint256 movieId);
     // function registerTicketContract(uint256 movieId, address tickets) external;
 
-    function isOwnerMovie(uint256 movieId, address addr)
+    function isOwnMovie(uint256 movieId, address addr)
         external
         view
         returns (bool);

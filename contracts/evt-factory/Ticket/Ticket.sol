@@ -46,7 +46,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
 
     modifier onlyMovieOwner(uint256 movieId) {
         require(
-            IMovie(movieAddr).isOwnerMovie(movieId, msg.sender),
+            IMovie(movieAddr).isOwnMovie(movieId, msg.sender),
             "not movie owner"
         );
         _;

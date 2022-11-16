@@ -83,7 +83,7 @@ contract Movie is IMovie, EVT, ERC721Enumerable {
         return super.tokenURI(movieId);
     }
 
-    function isOwnerMovie(uint256 movieId, address addr)
+    function isOwnMovie(uint256 movieId, address addr)
         public
         view
         override

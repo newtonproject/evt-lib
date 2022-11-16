@@ -19,9 +19,9 @@
 ## Functions
 
 ```
-safeMint(to, amount)
+safeMintto, amount)
 updateBaseURI(baseURI_)
-isOwnerMovie(movieId, addr)
+isOwnMovie(movieId, addr)
 ```
 
 ## Events
@@ -49,7 +49,7 @@ Requirements:
 
 - onlyOwner
 
-### isOwnerMovie(uint256 movieId, address addr) -> bool
+### isOwnMovie(uint256 movieId, address addr) -> bool
 
 Returns whether `addr` own `movieId`.
 
