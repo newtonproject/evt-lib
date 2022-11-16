@@ -12,10 +12,6 @@ interface ITicket is IEVT {
     event BaseURIUpdate(string uri);
     event PayeeUpdate(address payee);
 
-    // function commonInfo() external view returns(
-    //     address movie, uint256 movieId, uint256 duration, uint256 checkDuration, string memory defaultUri
-    // );
-
     function commonInfo()
         external
         view
@@ -47,7 +43,7 @@ interface ITicket is IEVT {
         uint256 movieId
     ) external payable;
 
-    function checkTicket(uint256 tokenId) external returns (bool);
+    function checkTicket(uint256 tokenId) external;
 
     function updateBaseURI(string memory style) external;
 

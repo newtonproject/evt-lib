@@ -1,13 +1,15 @@
 import { expect } from "chai";
+import { Signer } from "ethers";
 import { ethers } from "hardhat";
+import { string } from "hardhat/internal/core/params/argumentTypes";
 import { Movie } from "../typechain-types/contracts/evt-factory/Movie/Movie";
 import { Ticket } from "../typechain-types/contracts/evt-factory/Ticket/Ticket";
 
-var owner;
-var movieOwner;
-var ticketOwner;
-var payee;
-var pub;
+var owner: Signer;
+var movieOwner: Signer;
+var ticketOwner: Signer;
+var payee: Signer;
+var pub: Signer;
 var ownerAddr: string;
 var movieOwnerAddr: string;
 var ticketOwnerAddr: string;
@@ -16,8 +18,10 @@ var pubAddr: string;
 var movieContract: Movie;
 var ticketContract: Ticket;
 var baseUri = "https://www.newtonproject.org/en/";
-var tokenId = 0;
-var tokenId1 = 1;
+var errExp = new Error("No expected error occurred");
+var startTime = Date.parse(new Date().toString()) / 1000;
+var movieDuration = 31 * 24 * 60 * 60;
+var ticketDuration = 24 * 60 * 60;
 
 describe("Ticket", function () {
   beforeEach(async () => {
@@ -42,13 +46,7 @@ describe("Ticket", function () {
         GetString: libGetString.address,
       },
     });
-    movieContract = await Movie.deploy(
-      "name_",
-      "symbol_",
-      [],
-      [],
-      baseUri
-    );
+    movieContract = await Movie.deploy("name_", "symbol_", [], [], baseUri);
     await movieContract.deployed();
     console.log("MovieContract deployed success");
 
@@ -64,9 +62,9 @@ describe("Ticket", function () {
       [],
       baseUri,
       movieContract.address,
-      1668492557,
-      31 * 24 * 60 * 60,
-      24 * 60 * 60
+      startTime,
+      movieDuration,
+      ticketDuration
     );
     await ticketContract.deployed();
     console.log("TicketContract deployed success");
@@ -74,8 +72,6 @@ describe("Ticket", function () {
 
   describe("Ticket:", function () {
     it("Ticket Test: ", async function () {
-      await movieContract.safeMint(movieOwnerAddr, 5);
-
       const uri = "https://www.newtonproject.org";
       await ticketContract.updateBaseURI(uri);
       expect(await ticketContract.baseURI()).to.equal(uri);
@@ -87,17 +83,197 @@ describe("Ticket", function () {
       const time2Ticket = 3 * 24 * 60 * 60;
       await ticketContract.updateTicketDuration(time2Ticket);
       expect(await ticketContract.ticketDuration()).to.equal(time2Ticket);
+    });
 
-      // expect(await ticketContract.getPayee()).to.equal(addr);
-      // await ticketContract.updatePayee(addr1);
-      // expect(await ticketContract.getPayee()).to.equal(addr1);
+    it("Ticket Payee: ", async function () {
+      await ticketContract.updatePayee(payeeAddr);
+      expect(await ticketContract.getPayee()).to.equal(payeeAddr);
 
-      // await ticketContract.safeMint(addr, 5, 0);
-      // await ticketContract.safeMint(addr, 5, 5).catch((error) => {
-      //   expect(error.message).to.include("not movie owner");
-      // });
+      await ticketContract.connect(owner).withdraw();
+      await ticketContract.connect(payee).withdraw();
+      await ticketContract
+        .connect(pub)
+        .withdraw()
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => {
+          expect(error.message).to.include("no access");
+        });
+    });
 
-      // await ticketContract.connect().checkTicket(tokenId);
+    it("Ticket safeMint: ", async function () {
+      await movieContract.safeMint(movieOwnerAddr, 5);
+      await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
+      await ticketContract
+        .connect(owner)
+        .safeMint(ticketOwnerAddr, 5, 0)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => {
+          expect(error.message).to.include("not movie owner");
+        });
+      await ticketContract
+        .connect(movieOwner)
+        .safeMint(ticketOwnerAddr, 5, 5)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => {
+          expect(error.message).to.include("ERC721: invalid token ID");
+        });
+      await ticketContract
+        .connect(ticketOwner)
+        .safeMint(ticketOwnerAddr, 5, 0)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => {
+          expect(error.message).to.include("not movie owner");
+        });
+      await ticketContract
+        .connect(pub)
+        .safeMint(ticketOwnerAddr, 5, 0)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => {
+          expect(error.message).to.include("not movie owner");
+        });
+    });
+
+    it("Ticket checkTicket: ", async function () {
+      await movieContract.safeMint(movieOwnerAddr, 5);
+      await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
+      await ticketContract.connect(ticketOwner).checkTicket(0);
+      await ticketContract.connect(ticketOwner).checkTicket(0);
+
+      await ticketContract.connect(ticketOwner).checkTicket(1);
+      await ticketContract.connect(ticketOwner).checkTicket(1);
+
+      await ticketContract
+        .connect(ticketOwner)
+        .checkTicket(5)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) =>
+          expect(error.message).to.include("ERC721: invalid token ID")
+        );
+
+      await ticketContract
+        .connect(owner)
+        .checkTicket(0)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => expect(error.message).to.include("not ticket owner"));
+
+      // await ticketContract
+      //   .connect(ticketOwner)
+      //   .checkTicket(0)
+      //   .then(() => {
+      //     throw errExp;
+      //   })
+      //   .catch((error) => expect(error.message).to.include("not ticket owner"));
+    });
+
+    it("Ticket commonInfo: ", async function () {
+      const [
+        movieAddr_,
+        startTime_,
+        movieDuration_,
+        ticketDuration_,
+        baseUri_,
+      ] = await ticketContract.commonInfo();
+
+      expect([
+        movieAddr_,
+        startTime_.toNumber(),
+        movieDuration_.toNumber(),
+        ticketDuration_.toNumber(),
+        baseUri_,
+      ]).to.eql([
+        movieContract.address,
+        startTime,
+        movieDuration,
+        ticketDuration,
+        baseUri,
+      ]);
+    });
+    it("Ticket ticketInfo: ", async function () {
+      await movieContract.safeMint(movieOwnerAddr, 5);
+      await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
+
+      await ticketContract
+        .ticketInfo(5)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) => expect(error.message).to.include("not exist"));
+
+      let [
+        movieAddr_,
+        startTime_,
+        movieDuration_,
+        ticketDuration_,
+        baseUri_,
+        checkingTime_,
+      ] = await ticketContract.ticketInfo(0);
+
+      expect([
+        movieAddr_,
+        startTime_.toNumber(),
+        movieDuration_.toNumber(),
+        ticketDuration_.toNumber(),
+        baseUri_,
+        checkingTime_.toNumber(),
+      ]).to.eql([
+        movieContract.address,
+        startTime,
+        movieDuration,
+        ticketDuration,
+        baseUri,
+        0,
+      ]);
+
+      await ticketContract.connect(ticketOwner).checkTicket(0);
+
+      [
+        movieAddr_,
+        startTime_,
+        movieDuration_,
+        ticketDuration_,
+        baseUri_,
+        checkingTime_,
+      ] = await ticketContract.ticketInfo(0);
+      expect([
+        movieAddr_,
+        startTime_.toNumber(),
+        movieDuration_.toNumber(),
+        ticketDuration_.toNumber(),
+        baseUri_,
+      ]).to.eql([
+        movieContract.address,
+        startTime,
+        movieDuration,
+        ticketDuration,
+        baseUri,
+      ]);
+
+      expect(checkingTime_.toNumber()).to.not.equal(0);
+      const date = new Date(checkingTime_.toNumber() * 1000); // have to multiply by 1000
+      const Y = date.getFullYear() + "-";
+      const M =
+        (date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) + "-";
+      const D = date.getDate() + " ";
+      const h = date.getHours() + ":";
+      const m = date.getMinutes() + ":";
+      const s = date.getSeconds();
+      console.log("checkingTime: " + Y + M + D + h + m + s);
     });
   });
 });

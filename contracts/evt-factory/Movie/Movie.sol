@@ -53,9 +53,9 @@ contract Movie is IMovie, EVT, ERC721Enumerable {
         emit BaseURIUpdate(_uri);
     }
 
-    function withdraw() public onlyOwner {
-        Address.sendValue(payable(owner()), address(this).balance);
-    }
+    // function withdraw() public onlyOwner {
+    //     Address.sendValue(payable(owner()), address(this).balance);
+    // }
 
     //public
     //public
@@ -73,14 +73,14 @@ contract Movie is IMovie, EVT, ERC721Enumerable {
     /**
      * @dev See {IEVTMetadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId)
+    function tokenURI(uint256 movieId)
         public
         view
         virtual
         override(ERC721, EVT)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return super.tokenURI(movieId);
     }
 
     function isOwnerMovie(uint256 movieId, address addr)

@@ -131,18 +131,17 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
     //onlyTicketOwner
     //onlyTicketOwner
     //onlyTicketOwner
-    function checkTicket(uint256 ticketId) public override returns (bool) {
+    function checkTicket(uint256 ticketId) public override {
         require(msg.sender == ownerOf(ticketId), "not ticket owner");
-        require(startTime < block.timestamp, "time is not up yet");
-        require(startTime + ticketDuration > block.timestamp, "timeout");
+        require(block.timestamp > startTime, "time is not up yet");
+        require(block.timestamp < startTime + ticketDuration, "timeout");
         uint256 checkingTime_ = ticketInfoMap[ticketId].checkingTime;
         if (checkingTime_ == 0) {
             ticketInfoMap[ticketId].checkingTime = block.timestamp;
 
             emit EventTicketCheck(ticketId, block.timestamp);
-            return true;
         } else {
-            return checkingTime_ + ticketDuration < block.timestamp;
+            require(block.timestamp < checkingTime_ + ticketDuration , "Expired ticket");
         }
     }
 
