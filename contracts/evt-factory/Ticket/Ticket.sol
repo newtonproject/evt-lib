@@ -31,12 +31,12 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
         string memory symbol_,
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
-        string memory uri_,
+        string memory baseURI_,
         address movieAddr_,
         uint256 startTime_,
         uint256 movieDuration_,
         uint256 ticketDuration_
-    ) EVT(name_, symbol_, properties, encryptedKeyIDs, uri_) {
+    ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
         movieAddr = movieAddr_;
         movieDuration = movieDuration_;
         ticketDuration = ticketDuration_;
@@ -67,10 +67,10 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
     //onlyOwner
     //onlyOwner
     //onlyOwner
-    function updateBaseURI(string memory _uri) public override onlyOwner {
-        setBaseURI(_uri);
+    function updateBaseURI(string memory baseURI_) public override onlyOwner {
+        setBaseURI(baseURI_);
 
-        emit BaseURIUpdate(_uri);
+        emit BaseURIUpdate(baseURI_);
     }
 
     function updateMovieDuration(uint256 _movieDuration)

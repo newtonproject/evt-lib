@@ -97,8 +97,8 @@ contract EVTA is
      *
      * - `msg.sender` must be the owner of the contract.
      */
-    function setBaseURI(string memory _baseURI) public onlyOwner {
-        baseURI = _baseURI;
+    function setBaseURI(string memory baseURI_) public onlyOwner {
+        baseURI = baseURI_;
     }
 
     /**

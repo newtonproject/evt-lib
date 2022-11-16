@@ -17,8 +17,8 @@ contract Movie is IMovie, EVT, ERC721Enumerable {
         string memory symbol_,
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
-        string memory _uri
-    ) EVT(name_, symbol_, properties, encryptedKeyIDs, _uri) {
+        string memory baseURI_
+    ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
         
     }
 
@@ -47,10 +47,10 @@ contract Movie is IMovie, EVT, ERC721Enumerable {
         }
     }
 
-    function updateBaseURI(string memory _uri) public override onlyOwner {
-        setBaseURI(_uri);
+    function updateBaseURI(string memory baseURI_) public override onlyOwner {
+        setBaseURI(baseURI_);
 
-        emit BaseURIUpdate(_uri);
+        emit BaseURIUpdate(baseURI_);
     }
 
     // function withdraw() public onlyOwner {
