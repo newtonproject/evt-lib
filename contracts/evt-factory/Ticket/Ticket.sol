@@ -4,10 +4,10 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
-import "./ISecureTicket.sol";
-import "../Movie/ISecureMovie.sol";
+import "./ITicket.sol";
+import "../Movie/IMovie.sol";
 
-contract SecureTicket is ISecureTicket, EVT, ERC721Enumerable {
+contract Ticket is ITicket, EVT, ERC721Enumerable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _ticketIdCounter;
@@ -46,7 +46,7 @@ contract SecureTicket is ISecureTicket, EVT, ERC721Enumerable {
 
     modifier onlyMovieOwner(uint256 movieId) {
         require(
-            ISecureMovie(movieAddr).isOwnerMovie(movieId, msg.sender),
+            IMovie(movieAddr).isOwnerMovie(movieId, msg.sender),
             "not movie owner"
         );
         _;

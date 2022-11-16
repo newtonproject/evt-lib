@@ -5,9 +5,9 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
-import "./ISecureMovie.sol";
+import "./IMovie.sol";
 
-contract SecureMovie is ISecureMovie, EVT, ERC721Enumerable {
+contract Movie is IMovie, EVT, ERC721Enumerable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _movieIdCounter;

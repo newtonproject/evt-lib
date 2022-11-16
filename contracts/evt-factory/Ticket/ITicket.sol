@@ -3,7 +3,7 @@ pragma solidity ^0.8.9;
 
 import "../../evt-base/IEVT.sol";
 
-interface ISecureTicket is IEVT {
+interface ITicket is IEVT {
     event EventCreateTicket(uint256 indexed ticketId);
     event EventTicketCheck(uint256 indexed ticketId, uint256 startTime);
 

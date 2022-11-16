@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { SecureMovie } from "../typechain-types/contracts/evt-factory/Movie/SecureMovie";
+import { Movie } from "../typechain-types/contracts/evt-factory/Movie/Movie";
 
 var owner;
 var movieOwner;
@@ -9,12 +9,12 @@ var ownerAddr: string;
 var movieOwnerAddr: string;
 var pubAddr: string;
 
-var secureMovieContract: SecureMovie;
+var movieContract: Movie;
 var baseUri = "https://www.newtonproject.org/en/";
 var tokenId = 0;
 var tokenId1 = 1;
 
-describe("SecureMovie", function () {
+describe("Movie", function () {
   beforeEach(async () => {
     owner = (await ethers.getSigners())[0];
     movieOwner = (await ethers.getSigners())[1];
@@ -28,36 +28,36 @@ describe("SecureMovie", function () {
     await libGetString.deployed();
     console.log("LibGetString deployed success");
 
-    const SecureMovie = await ethers.getContractFactory("SecureMovie", {
+    const Movie = await ethers.getContractFactory("Movie", {
       libraries: {
         GetString: libGetString.address,
       },
     });
-    secureMovieContract = await SecureMovie.deploy(
+    movieContract = await Movie.deploy(
       "name_",
       "symbol_",
       [],
       [],
       baseUri
     );
-    await secureMovieContract.deployed();
-    console.log("SecureMovieContract deployed success");
+    await movieContract.deployed();
+    console.log("MovieContract deployed success");
   });
 
-  describe("SecureMovie:", function () {
-    it("SecureMovie Test: ", async function () {
-      await secureMovieContract.safeMint(ownerAddr, 2);
+  describe("Movie:", function () {
+    it("Movie Test: ", async function () {
+      await movieContract.safeMint(ownerAddr, 2);
       const uri = "https://www.newtonproject.org";
-      await secureMovieContract.updateBaseURI(uri);
-      expect(await secureMovieContract.baseURI()).to.equal(uri);
-      expect(await secureMovieContract.isOwnerMovie(0, ownerAddr)).to.equal(
+      await movieContract.updateBaseURI(uri);
+      expect(await movieContract.baseURI()).to.equal(uri);
+      expect(await movieContract.isOwnerMovie(0, ownerAddr)).to.equal(
         true
       );
-      expect(await secureMovieContract.isOwnerMovie(0, pubAddr)).to.equal(
+      expect(await movieContract.isOwnerMovie(0, pubAddr)).to.equal(
         false
       );
       console.log("\n");
-      console.log(await secureMovieContract.tokenURI(tokenId));
+      console.log(await movieContract.tokenURI(tokenId));
     });
   });
 });

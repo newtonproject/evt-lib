@@ -3,7 +3,7 @@ pragma solidity ^0.8.9;
 
 import "../../evt-base/IEVT.sol";
 
-interface ISecureMovie is IEVT {
+interface IMovie is IEVT {
     event MovieCopyCreate(uint256 indexed movieId);
     // event TicketBind(uint256 indexed movieId, address indexed tickets);
     event BaseURIUpdate(string uri);
