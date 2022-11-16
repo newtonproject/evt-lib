@@ -19,9 +19,9 @@
 ## Functions
 
 ```
-safeMint to, amount)
+safeMint(to, amount)
 updateBaseURI(baseURI_)
-function isOwnerMovie(movieId, addr)
+isOwnerMovie(movieId, addr)
 ```
 
 ## Events
