@@ -82,11 +82,13 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         emit BaseURIUpdate(baseURI_);
     }
 
-    function updateEndTime(uint256 endTime_)
-        public
-        override
-        onlyOwner
-    {
+    function updateStartTime(uint256 startTime_) public override onlyOwner {
+        startTime = startTime_;
+
+        emit StartTimeUpdate(startTime_);
+    }
+
+    function updateEndTime(uint256 endTime_) public override onlyOwner {
         endTime = endTime_;
 
         emit EndTimeUpdate(endTime_);
@@ -143,7 +145,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     function checkTicket(uint256 ticketId) public override whenNotPaused {
         require(msg.sender == ownerOf(ticketId), "not ticket owner");
         require(block.timestamp > startTime, "time is not up yet");
-        require(block.timestamp < startTime + ticketDuration, "timeout");
+        require(block.timestamp < endTime, "timeout");
         uint256 checkingTime_ = ticketInfoMap[ticketId].checkingTime;
         if (checkingTime_ == 0) {
             ticketInfoMap[ticketId].checkingTime = block.timestamp;

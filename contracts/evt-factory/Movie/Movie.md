@@ -37,15 +37,15 @@ event BaseURIUpdate(baseURI)
 
 ### pause()
 
-pause contract
+Pause contract.
 
-Requirements:
+Requirements: 
 
 - onlyOwner
 
 ### unpause()
 
-restart contract
+Restart contract.
 
 Requirements:
 
@@ -53,7 +53,7 @@ Requirements:
 
 ### safeMint(address to, uint256 amount)
 
-batch mints movie EVT.
+Batch mints movie EVT.
 
 Requirements:
 
@@ -61,7 +61,7 @@ Requirements:
 
 ### updateBaseURI(string baseURI\_)
 
-update `baseURI`.
+Update `baseURI`.
 
 Requirements:
 
