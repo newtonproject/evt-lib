@@ -36,6 +36,14 @@ contract Movie is IMovie, EVT, ERC721Enumerable, Pausable {
     //onlyOwner
     //onlyOwner
     //onlyOwner
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
     function safeMint(address to, uint256 amount) public override onlyOwner {
         for (uint256 i = 0; i < amount; ++i) {
             uint256 movieId = _movieIdCounter.current();
@@ -50,14 +58,6 @@ contract Movie is IMovie, EVT, ERC721Enumerable, Pausable {
         setBaseURI(baseURI_);
 
         emit BaseURIUpdate(baseURI_);
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
     }
 
     // function withdraw() public onlyOwner {

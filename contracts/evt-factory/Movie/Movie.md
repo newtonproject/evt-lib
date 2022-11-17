@@ -1,10 +1,11 @@
-# Name of Contract：Movie
+# Movie
 
 ## Base
 
 1. IMovie
 2. EVT
 3. ERC721Enumerable
+4. Pausable
 
 ## Deploy
 
@@ -19,7 +20,9 @@
 ## Functions
 
 ```
-safeMintto, amount)
+pause()
+unpause()
+safeMint(to, amount)
 updateBaseURI(baseURI_)
 isOwnMovie(movieId, addr)
 ```
@@ -32,6 +35,22 @@ event BaseURIUpdate(baseURI)
 ```
 
 ## Function
+
+### pause()
+
+pause contract
+
+Requirements:
+
+- onlyOwner
+
+### unpause()
+
+restart contract
+
+Requirements:
+
+- onlyOwner
 
 ### safeMint(address to, uint256 amount)
 
