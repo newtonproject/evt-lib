@@ -9,17 +9,17 @@
 
 ## Deploy
 
-| param            | type      | note                              |
-| ---------------- | --------- | --------------------------------- |
-| name\_           | string    | token collection name             |
-| symbol\_         | string    | token collection symbol           |
-| properties       | string[]  | EVT property Names                |
-| encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID               |
-| baseURI\_        | string    | point to the EVT offchain data    |
-| movieAddr\_      | address   | movie contract address            |
-| startTime\_      | uint256   | film release date (second)        |
-| endTime\_        | uint256   | film off the screen date (second) |
-| ticketDuration\_ | uint256   | valid duration of the ticket      |
+| param            | type      | note                                  |
+| ---------------- | --------- | ------------------------------------- |
+| name\_           | string    | token collection name                 |
+| symbol\_         | string    | token collection symbol               |
+| properties       | string[]  | EVT property Names                    |
+| encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
+| baseURI\_        | string    | point to the EVT offchain data        |
+| movieAddr\_      | address   | movie contract address                |
+| startTime\_      | uint256   | film release date (second)            |
+| endTime\_        | uint256   | film off the screen date (second)     |
+| ticketDuration\_ | uint256   | valid duration of the ticket (second) |
 
 ## Functions
 
@@ -148,11 +148,59 @@ Requirements:
 - ticket has not expired
 
 ### commonInfo() -> address, uint256, uint256, uint256, string
+
 Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
 
 ### ticketInfo(uint256 ticketId) -> address, uint256, uint256, uint256, string, uint256
+
 Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
 
 Requirements:
 
 - if there is no check-in, the `checkingTime` is 0.
+
+### movieAddr() -> address
+
+Returns `movieAddr`,movie contract address.
+
+### startTime() -> uint256,
+
+Returns `startTime`,film release date (second).
+
+### endTime() -> uint256
+
+Returns `endTime`,film off the screen date (second).
+
+### ticketDuration() -> uint256
+
+Returns `ticketDuration`,valid duration of the ticket (second).
+
+## Event
+
+### BaseURIUpdate(string baseURI)
+
+Emitted when `baseURI` is updated.
+
+### StartTimeUpdate(uint256 startTime)
+
+Emitted when `startTime` is updated.
+
+### EndTimeUpdate(uint256 endTime)
+
+Emitted when `endTime` is updated.
+
+### TicketDurationUpdate(uint256 ticketDuration)
+
+Emitted when `ticketDuration` is updated.
+
+### PayeeUpdate(address payee)
+
+Emitted when `payee` is updated.
+
+### EventCreateTicket(uint256 indexed ticketId)
+
+Emitted when `ticketId` EVT is created.
+
+### EventTicketCheck(uint256 indexed ticketId, uint256 checkingTime)
+
+Emitted when `ticketId` have checked for the first time.
