@@ -144,8 +144,8 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     //onlyTicketOwner
     function checkTicket(uint256 ticketId) public override whenNotPaused {
         require(msg.sender == ownerOf(ticketId), "not ticket owner");
-        require(block.timestamp > startTime, "time is not up yet");
-        require(block.timestamp < endTime, "timeout");
+        require(block.timestamp > startTime, "not on the screen");
+        require(block.timestamp < endTime, "already off the screen");
         uint256 checkingTime_ = ticketInfoMap[ticketId].checkingTime;
         if (checkingTime_ == 0) {
             ticketInfoMap[ticketId].checkingTime = block.timestamp;

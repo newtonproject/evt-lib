@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { Signer } from "ethers";
 import { ethers } from "hardhat";
-import { string } from "hardhat/internal/core/params/argumentTypes";
 import { Movie } from "../typechain-types/contracts/evt-factory/Movie/Movie";
 import { Ticket } from "../typechain-types/contracts/evt-factory/Ticket/Ticket";
 
@@ -20,7 +19,7 @@ var ticketContract: Ticket;
 var baseUri = "https://www.newtonproject.org/en/";
 var errExp = new Error("No expected error occurred");
 var startTime = Date.parse(new Date().toString()) / 1000;
-var endTime = 31 * 24 * 60 * 60;
+var endTime = startTime + 31 * 24 * 60 * 60;
 var ticketDuration = 24 * 60 * 60;
 
 describe("Ticket", function () {
@@ -76,13 +75,18 @@ describe("Ticket", function () {
       await ticketContract.updateBaseURI(uri);
       expect(await ticketContract.baseURI()).to.equal(uri);
 
-      const time1Movie = 30 * 24 * 60 * 60;
-      await ticketContract.updateendTime(time1Movie);
-      expect(await ticketContract.endTime()).to.equal(time1Movie);
+      const startTime = Date.parse(new Date().toString()) / 1000 + 24 * 60 * 60;
+      await ticketContract.updateStartTime(startTime);
+      expect(await ticketContract.startTime()).to.equal(startTime);
 
-      const time2Ticket = 3 * 24 * 60 * 60;
-      await ticketContract.updateTicketDuration(time2Ticket);
-      expect(await ticketContract.ticketDuration()).to.equal(time2Ticket);
+      const endTime =
+        Date.parse(new Date().toString()) / 1000 + 7 * 24 * 60 * 60;
+      await ticketContract.updateEndTime(endTime);
+      expect(await ticketContract.endTime()).to.equal(endTime);
+
+      const ticketDuration = 3 * 24 * 60 * 60;
+      await ticketContract.updateTicketDuration(ticketDuration);
+      expect(await ticketContract.ticketDuration()).to.equal(ticketDuration);
     });
 
     it("Ticket Payee: ", async function () {
@@ -169,16 +173,37 @@ describe("Ticket", function () {
           throw errExp;
         })
         .catch((error) => expect(error.message).to.include("not ticket owner"));
+
+      const endTime = Date.parse(new Date().toString()) / 1000 - 60;
+      await ticketContract.updateEndTime(endTime);
+
+      await ticketContract
+        .connect(ticketOwner)
+        .checkTicket(0)
+        .then(() => {
+          throw errExp;
+        })
+        .catch((error) =>
+          expect(error.message).to.include("already off the screen")
+        );
+
+      const startTime = Date.parse(new Date().toString()) / 1000 + 24 * 60 * 60;
+      await ticketContract.updateStartTime(startTime);
+
+      await ticketContract
+      .connect(ticketOwner)
+      .checkTicket(0)
+      .then(() => {
+        throw errExp;
+      })
+      .catch((error) =>
+        expect(error.message).to.include("not on the screen")
+      );
     });
 
     it("Ticket commonInfo: ", async function () {
-      const [
-        movieAddr_,
-        startTime_,
-        endTime_,
-        ticketDuration_,
-        baseUri_,
-      ] = await ticketContract.commonInfo();
+      const [movieAddr_, startTime_, endTime_, ticketDuration_, baseUri_] =
+        await ticketContract.commonInfo();
 
       expect([
         movieAddr_,
