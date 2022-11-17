@@ -141,7 +141,7 @@ Have tickets checked and write the check-in time.
 
 Requirements:
 
-- `movieId` must exist
+- `ticketId` must exist
 - must own `ticketId` EVT
 - timestamp greater than `startTime`
 - timestamp less than `endTime`
