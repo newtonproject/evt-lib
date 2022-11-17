@@ -16,7 +16,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     address private payee;
     address public movieAddr;
     uint256 public startTime;
-    uint256 public movieDuration;
+    uint256 public endTime;
     uint256 public ticketDuration;
 
     // TicketId => TicketInfo
@@ -35,11 +35,11 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         string memory baseURI_,
         address movieAddr_,
         uint256 startTime_,
-        uint256 movieDuration_,
+        uint256 endTime_,
         uint256 ticketDuration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
         movieAddr = movieAddr_;
-        movieDuration = movieDuration_;
+        endTime = endTime_;
         ticketDuration = ticketDuration_;
         startTime = startTime_;
         payee = owner();
@@ -82,31 +82,31 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         emit BaseURIUpdate(baseURI_);
     }
 
-    function updateMovieDuration(uint256 _movieDuration)
+    function updateEndTime(uint256 endTime_)
         public
         override
         onlyOwner
     {
-        movieDuration = _movieDuration;
+        endTime = endTime_;
 
-        emit MovieDurationUpdate(_movieDuration);
+        emit EndTimeUpdate(endTime_);
     }
 
-    function updateTicketDuration(uint256 _ticketDuration)
+    function updateTicketDuration(uint256 ticketDuration_)
         public
         override
         onlyOwner
     {
-        ticketDuration = _ticketDuration;
+        ticketDuration = ticketDuration_;
 
-        emit TicketDurationUpdate(_ticketDuration);
+        emit TicketDurationUpdate(ticketDuration_);
     }
 
-    function updatePayee(address _payee) public override onlyOwner {
-        require(_payee != address(0), "Invalid address");
-        payee = _payee;
+    function updatePayee(address payee_) public override onlyOwner {
+        require(payee_ != address(0), "Invalid address");
+        payee = payee_;
 
-        emit PayeeUpdate(_payee);
+        emit PayeeUpdate(payee_);
     }
 
     function getPayee() public view onlyOwner returns (address) {
@@ -195,7 +195,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             string memory
         )
     {
-        return (movieAddr, startTime, movieDuration, ticketDuration, baseURI);
+        return (movieAddr, startTime, endTime, ticketDuration, baseURI);
     }
 
     function ticketInfo(uint256 ticketId)
@@ -215,7 +215,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         return (
             movieAddr,
             startTime,
-            movieDuration,
+            endTime,
             ticketDuration,
             baseURI,
             ticketInfoMap[ticketId].checkingTime

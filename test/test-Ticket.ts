@@ -20,7 +20,7 @@ var ticketContract: Ticket;
 var baseUri = "https://www.newtonproject.org/en/";
 var errExp = new Error("No expected error occurred");
 var startTime = Date.parse(new Date().toString()) / 1000;
-var movieDuration = 31 * 24 * 60 * 60;
+var endTime = 31 * 24 * 60 * 60;
 var ticketDuration = 24 * 60 * 60;
 
 describe("Ticket", function () {
@@ -63,7 +63,7 @@ describe("Ticket", function () {
       baseUri,
       movieContract.address,
       startTime,
-      movieDuration,
+      endTime,
       ticketDuration
     );
     await ticketContract.deployed();
@@ -77,8 +77,8 @@ describe("Ticket", function () {
       expect(await ticketContract.baseURI()).to.equal(uri);
 
       const time1Movie = 30 * 24 * 60 * 60;
-      await ticketContract.updateMovieDuration(time1Movie);
-      expect(await ticketContract.movieDuration()).to.equal(time1Movie);
+      await ticketContract.updateendTime(time1Movie);
+      expect(await ticketContract.endTime()).to.equal(time1Movie);
 
       const time2Ticket = 3 * 24 * 60 * 60;
       await ticketContract.updateTicketDuration(time2Ticket);
@@ -169,21 +169,13 @@ describe("Ticket", function () {
           throw errExp;
         })
         .catch((error) => expect(error.message).to.include("not ticket owner"));
-
-      // await ticketContract
-      //   .connect(ticketOwner)
-      //   .checkTicket(0)
-      //   .then(() => {
-      //     throw errExp;
-      //   })
-      //   .catch((error) => expect(error.message).to.include("not ticket owner"));
     });
 
     it("Ticket commonInfo: ", async function () {
       const [
         movieAddr_,
         startTime_,
-        movieDuration_,
+        endTime_,
         ticketDuration_,
         baseUri_,
       ] = await ticketContract.commonInfo();
@@ -191,13 +183,13 @@ describe("Ticket", function () {
       expect([
         movieAddr_,
         startTime_.toNumber(),
-        movieDuration_.toNumber(),
+        endTime_.toNumber(),
         ticketDuration_.toNumber(),
         baseUri_,
       ]).to.eql([
         movieContract.address,
         startTime,
-        movieDuration,
+        endTime,
         ticketDuration,
         baseUri,
       ]);
@@ -216,7 +208,7 @@ describe("Ticket", function () {
       let [
         movieAddr_,
         startTime_,
-        movieDuration_,
+        endTime_,
         ticketDuration_,
         baseUri_,
         checkingTime_,
@@ -225,14 +217,14 @@ describe("Ticket", function () {
       expect([
         movieAddr_,
         startTime_.toNumber(),
-        movieDuration_.toNumber(),
+        endTime_.toNumber(),
         ticketDuration_.toNumber(),
         baseUri_,
         checkingTime_.toNumber(),
       ]).to.eql([
         movieContract.address,
         startTime,
-        movieDuration,
+        endTime,
         ticketDuration,
         baseUri,
         0,
@@ -243,7 +235,7 @@ describe("Ticket", function () {
       [
         movieAddr_,
         startTime_,
-        movieDuration_,
+        endTime_,
         ticketDuration_,
         baseUri_,
         checkingTime_,
@@ -251,13 +243,13 @@ describe("Ticket", function () {
       expect([
         movieAddr_,
         startTime_.toNumber(),
-        movieDuration_.toNumber(),
+        endTime_.toNumber(),
         ticketDuration_.toNumber(),
         baseUri_,
       ]).to.eql([
         movieContract.address,
         startTime,
-        movieDuration,
+        endTime,
         ticketDuration,
         baseUri,
       ]);

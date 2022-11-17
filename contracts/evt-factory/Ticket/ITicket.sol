@@ -7,7 +7,7 @@ interface ITicket is IEVT {
     event EventCreateTicket(uint256 indexed ticketId);
     event EventTicketCheck(uint256 indexed ticketId, uint256 startTime);
 
-    event MovieDurationUpdate(uint256 movieDuration);
+    event EndTimeUpdate(uint256 endTime);
     event TicketDurationUpdate(uint256 ticketDuration);
     event BaseURIUpdate(string baseURI);
     event PayeeUpdate(address payee);
@@ -49,7 +49,7 @@ interface ITicket is IEVT {
 
     function updatePayee(address payee) external;
 
-    function updateMovieDuration(uint256 duration) external;
+    function updateEndTime(uint256 duration) external;
 
     function updateTicketDuration(uint256 checkDuration) external;
 }
