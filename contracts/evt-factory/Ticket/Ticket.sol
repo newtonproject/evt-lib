@@ -2,12 +2,13 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
 import "./ITicket.sol";
 import "../Movie/IMovie.sol";
 
-contract Ticket is ITicket, EVT, ERC721Enumerable {
+contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _ticketIdCounter;
@@ -60,13 +61,21 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
         address to,
         uint256 tokenId,
         uint256 batchSize
-    ) internal override(ERC721, ERC721Enumerable) {
+    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
     //onlyOwner
     //onlyOwner
     //onlyOwner
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
     function updateBaseURI(string memory baseURI_) public override onlyOwner {
         setBaseURI(baseURI_);
 
@@ -131,7 +140,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
     //onlyTicketOwner
     //onlyTicketOwner
     //onlyTicketOwner
-    function checkTicket(uint256 ticketId) public override {
+    function checkTicket(uint256 ticketId) public override whenNotPaused {
         require(msg.sender == ownerOf(ticketId), "not ticket owner");
         require(block.timestamp > startTime, "time is not up yet");
         require(block.timestamp < startTime + ticketDuration, "timeout");
@@ -141,7 +150,10 @@ contract Ticket is ITicket, EVT, ERC721Enumerable {
 
             emit EventTicketCheck(ticketId, block.timestamp);
         } else {
-            require(block.timestamp < checkingTime_ + ticketDuration , "Expired ticket");
+            require(
+                block.timestamp < checkingTime_ + ticketDuration,
+                "Expired ticket"
+            );
         }
     }
 

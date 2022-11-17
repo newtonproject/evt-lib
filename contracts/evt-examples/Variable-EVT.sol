@@ -51,7 +51,7 @@
 //         (bytes32[] memory ids, bytes[] memory values) = EVTVariable.getDynamicProperties(tokenId);
 //         require(ids.length == values.length, "length error");
 //         properties = new string[](ids.length);
-//         for (uint256 i = 0; i < ids.length; i++) {
+//         for (uint256 i = 0; i < ids.length; ++i) {
 //             bytes32 id = ids[i];
 //             string memory args = string(abi.encodePacked('{"trait_type":"', _properties[id], '","value":'));
             
@@ -66,7 +66,7 @@
 //     function getDynamicPropertiesAsString(uint256 tokenId) public view virtual returns(string memory properties) {
 //         string[] memory args = getDynamicPropertiesArray(tokenId);
 //         properties = '[';
-//         for (uint256 i = 0; i < args.length; i++) {
+//         for (uint256 i = 0; i < args.length; ++i) {
 //             if (i + 1 == args.length) {
 //                 properties = string(abi.encodePacked(properties, args[i]));
 //             } else {
