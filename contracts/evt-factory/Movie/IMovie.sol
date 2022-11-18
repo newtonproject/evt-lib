@@ -15,9 +15,4 @@ interface IMovie is IEVT {
 
     event MovieCopyCreate(uint256 indexed movieId);
     event BaseURIUpdate(string baseURI);
-
-    // function getMovieTicketContracts(uint256 movieId) external view returns(address[] memory ticketsSet);
-    // function tickets2movie(address tickets) external view returns(uint256 movieId);
-    // function registerTicketContract(uint256 movieId, address tickets) external;
-    // event TicketBind(uint256 indexed movieId, address indexed tickets);
 }

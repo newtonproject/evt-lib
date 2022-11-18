@@ -45,8 +45,6 @@ interface ITicket is IEVT {
             uint256
         );
 
-    // function isValidWatcher(address watcher) external view returns (bool);
-
     event BaseURIUpdate(string baseURI);
     event StartTimeUpdate(uint256 startTime);
     event EndTimeUpdate(uint256 endTime);

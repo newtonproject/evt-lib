@@ -60,10 +60,6 @@ contract Movie is IMovie, EVT, ERC721Enumerable, Pausable {
         emit BaseURIUpdate(baseURI_);
     }
 
-    // function withdraw() public onlyOwner {
-    //     Address.sendValue(payable(owner()), address(this).balance);
-    // }
-
     //public
     //public
     //public
