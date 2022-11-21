@@ -107,7 +107,7 @@ describe("Ticket", function () {
     });
 
     it("Ticket safeMint: ", async function () {
-      await collectionContract.safeMint(collectionOwnerAddr, 5);
+      await collectionContract["safeMint(address,uint256)"](collectionOwnerAddr, 5);
       await ticketContract.connect(collectionOwner).safeMint(ticketOwnerAddr, 5, 0);
       await ticketContract
         .connect(owner)
@@ -148,7 +148,7 @@ describe("Ticket", function () {
     });
 
     it("Ticket checkTicket: ", async function () {
-      await collectionContract.safeMint(collectionOwnerAddr, 5);
+      await collectionContract["safeMint(address,uint256)"](collectionOwnerAddr, 5);
       await ticketContract.connect(collectionOwner).safeMint(ticketOwnerAddr, 5, 0);
       await ticketContract.connect(ticketOwner).checkTicket(0);
       await ticketContract.connect(ticketOwner).checkTicket(0);
@@ -220,7 +220,7 @@ describe("Ticket", function () {
       ]);
     });
     it("Ticket ticketInfo: ", async function () {
-      await collectionContract.safeMint(collectionOwnerAddr, 5);
+      await collectionContract["safeMint(address,uint256)"](collectionOwnerAddr, 5);
       await ticketContract.connect(collectionOwner).safeMint(ticketOwnerAddr, 5, 0);
 
       await ticketContract

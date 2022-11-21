@@ -16,7 +16,7 @@
 | properties       | string[]  | EVT property Names                    |
 | encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
 | baseURI\_        | string    | point to the EVT offchain data        |
-| collectionAddr\_      | address   | collection contract address                |
+| collectionAddr\_ | address   | collection contract address           |
 | startTime\_      | uint256   | film release date (second)            |
 | endTime\_        | uint256   | film off the screen date (second)     |
 | ticketDuration\_ | uint256   | valid duration of the ticket (second) |
@@ -129,7 +129,7 @@ Requirements:
 
 ### safeMint(address to, uint256 amount, uint256 collectionId)
 
-Batch mints ticket EVT.
+Batch mint ticket EVT.
 
 Requirements:
 

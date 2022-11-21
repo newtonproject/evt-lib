@@ -47,7 +47,10 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
 
     modifier onlyCollectionOwner(uint256 collectionId) {
         require(
-            ICollection(collectionAddr).isOwnCollection(collectionId, msg.sender),
+            ICollection(collectionAddr).isOwnCollection(
+                collectionId,
+                msg.sender
+            ),
             "not collection owner"
         );
         _;

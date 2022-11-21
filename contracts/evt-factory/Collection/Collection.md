@@ -5,7 +5,9 @@
 1. ICollection
 2. EVT
 3. ERC721Enumerable
-4. Pausable
+4. ERC721URIStorage
+5. Pausable
+6. ERC721Burnable
 
 ## Deploy
 
@@ -17,12 +19,14 @@
 | encryptedKeyIDs | bytes32[] | EVT encryptionKeyID            |
 | baseURI\_       | string    | point to the EVT offchain data |
 
-
 ```
 pause()
 unpause()
 safeMint(to, amount)
+safeMint(address to, string[] uris)
+updateTokenURIStorage(uint256 tokenId, string memory uri)
 updateBaseURI(baseURI_)
+tokenURIStorage(uint256 collectionId)
 isOwnCollection(collectionId, addr)
 ```
 
@@ -39,7 +43,7 @@ event BaseURIUpdate(baseURI)
 
 Pause contract.
 
-Requirements: 
+Requirements:
 
 - onlyOwner
 
@@ -53,7 +57,23 @@ Requirements:
 
 ### safeMint(address to, uint256 amount)
 
-Batch mints collection EVT.
+Batch mint collections.
+
+Requirements:
+
+- onlyOwner
+
+### safeMint(address to, string[] uris)
+
+Batch mint collections and set tokenURI.
+
+Requirements:
+
+- onlyOwner
+
+### updateTokenURIStorage(uint256 tokenId, string uri)
+
+Update Token URIStorage.See {IERC721Metadata-tokenURI}.
 
 Requirements:
 
@@ -66,6 +86,14 @@ Update `baseURI`.
 Requirements:
 
 - onlyOwner
+
+### tokenURIStorage(uint256 collectionId) -> string
+
+Returns token URIStorage.See {IERC721Metadata-tokenURI}.
+
+Requirements:
+
+- `collectionId` must exist.
 
 ### isOwnCollection(uint256 collectionId, address addr) -> bool
 
