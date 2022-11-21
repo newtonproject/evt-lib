@@ -1,8 +1,8 @@
-# Movie
+# Collection
 
 ## Base
 
-1. IMovie
+1. ICollection
 2. EVT
 3. ERC721Enumerable
 4. Pausable
@@ -23,13 +23,13 @@ pause()
 unpause()
 safeMint(to, amount)
 updateBaseURI(baseURI_)
-isOwnMovie(movieId, addr)
+isOwnCollection(collectionId, addr)
 ```
 
 ## Events
 
 ```
-event MovieCopyCreate(movieId)
+event CreateCollection(collectionId)
 event BaseURIUpdate(baseURI)
 ```
 
@@ -53,7 +53,7 @@ Requirements:
 
 ### safeMint(address to, uint256 amount)
 
-Batch mints movie EVT.
+Batch mints collection EVT.
 
 Requirements:
 
@@ -67,19 +67,19 @@ Requirements:
 
 - onlyOwner
 
-### isOwnMovie(uint256 movieId, address addr) -> bool
+### isOwnCollection(uint256 collectionId, address addr) -> bool
 
-Returns whether `addr` own `movieId`.
+Returns whether `addr` own `collectionId`.
 
 Requirements:
 
-- `movieId` must exist.
+- `collectionId` must exist.
 
 ## Event
 
-### MovieCopyCreate(uint256 indexed movieId)
+### CreateCollection(uint256 indexed collectionId)
 
-Emitted when `movieId` EVT is created.
+Emitted when `collectionId` EVT is created.
 
 ### BaseURIUpdate(string baseURI)
 

@@ -1,20 +1,20 @@
 import { expect } from "chai";
 import { Signer } from "ethers";
 import { ethers } from "hardhat";
-import { Movie } from "../typechain-types/contracts/evt-factory/Movie/Movie";
+import { Collection } from "../typechain-types/contracts/evt-factory/Collection/Collection";
 import { Ticket } from "../typechain-types/contracts/evt-factory/Ticket/Ticket";
 
 var owner: Signer;
-var movieOwner: Signer;
+var collectionOwner: Signer;
 var ticketOwner: Signer;
 var payee: Signer;
 var pub: Signer;
 var ownerAddr: string;
-var movieOwnerAddr: string;
+var collectionOwnerAddr: string;
 var ticketOwnerAddr: string;
 var payeeAddr: string;
 var pubAddr: string;
-var movieContract: Movie;
+var collectionContract: Collection;
 var ticketContract: Ticket;
 var baseUri = "https://www.newtonproject.org/en/";
 var errExp = new Error("No expected error occurred");
@@ -25,12 +25,12 @@ var ticketDuration = 24 * 60 * 60;
 describe("Ticket", function () {
   beforeEach(async () => {
     owner = (await ethers.getSigners())[0];
-    movieOwner = (await ethers.getSigners())[1];
+    collectionOwner = (await ethers.getSigners())[1];
     ticketOwner = (await ethers.getSigners())[2];
     payee = (await ethers.getSigners())[3];
     pub = (await ethers.getSigners())[4];
     ownerAddr = await owner.getAddress();
-    movieOwnerAddr = await movieOwner.getAddress();
+    collectionOwnerAddr = await collectionOwner.getAddress();
     ticketOwnerAddr = await ticketOwner.getAddress();
     payeeAddr = await payee.getAddress();
     pubAddr = await pub.getAddress();
@@ -40,14 +40,14 @@ describe("Ticket", function () {
     await libGetString.deployed();
     console.log("LibGetString deployed success");
 
-    const Movie = await ethers.getContractFactory("Movie", {
+    const Collection = await ethers.getContractFactory("Collection", {
       libraries: {
         GetString: libGetString.address,
       },
     });
-    movieContract = await Movie.deploy("name_", "symbol_", [], [], baseUri);
-    await movieContract.deployed();
-    console.log("MovieContract deployed success");
+    collectionContract = await Collection.deploy("name_", "symbol_", [], [], baseUri);
+    await collectionContract.deployed();
+    console.log("CollectionContract deployed success");
 
     const Ticket = await ethers.getContractFactory("Ticket", {
       libraries: {
@@ -60,7 +60,7 @@ describe("Ticket", function () {
       [],
       [],
       baseUri,
-      movieContract.address,
+      collectionContract.address,
       startTime,
       endTime,
       ticketDuration
@@ -107,8 +107,8 @@ describe("Ticket", function () {
     });
 
     it("Ticket safeMint: ", async function () {
-      await movieContract.safeMint(movieOwnerAddr, 5);
-      await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
+      await collectionContract.safeMint(collectionOwnerAddr, 5);
+      await ticketContract.connect(collectionOwner).safeMint(ticketOwnerAddr, 5, 0);
       await ticketContract
         .connect(owner)
         .safeMint(ticketOwnerAddr, 5, 0)
@@ -116,10 +116,10 @@ describe("Ticket", function () {
           throw errExp;
         })
         .catch((error) => {
-          expect(error.message).to.include("not movie owner");
+          expect(error.message).to.include("not collection owner");
         });
       await ticketContract
-        .connect(movieOwner)
+        .connect(collectionOwner)
         .safeMint(ticketOwnerAddr, 5, 5)
         .then(() => {
           throw errExp;
@@ -134,7 +134,7 @@ describe("Ticket", function () {
           throw errExp;
         })
         .catch((error) => {
-          expect(error.message).to.include("not movie owner");
+          expect(error.message).to.include("not collection owner");
         });
       await ticketContract
         .connect(pub)
@@ -143,13 +143,13 @@ describe("Ticket", function () {
           throw errExp;
         })
         .catch((error) => {
-          expect(error.message).to.include("not movie owner");
+          expect(error.message).to.include("not collection owner");
         });
     });
 
     it("Ticket checkTicket: ", async function () {
-      await movieContract.safeMint(movieOwnerAddr, 5);
-      await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
+      await collectionContract.safeMint(collectionOwnerAddr, 5);
+      await ticketContract.connect(collectionOwner).safeMint(ticketOwnerAddr, 5, 0);
       await ticketContract.connect(ticketOwner).checkTicket(0);
       await ticketContract.connect(ticketOwner).checkTicket(0);
 
@@ -202,17 +202,17 @@ describe("Ticket", function () {
     });
 
     it("Ticket commonInfo: ", async function () {
-      const [movieAddr_, startTime_, endTime_, ticketDuration_, baseUri_] =
+      const [collectionAddr_, startTime_, endTime_, ticketDuration_, baseUri_] =
         await ticketContract.commonInfo();
 
       expect([
-        movieAddr_,
+        collectionAddr_,
         startTime_.toNumber(),
         endTime_.toNumber(),
         ticketDuration_.toNumber(),
         baseUri_,
       ]).to.eql([
-        movieContract.address,
+        collectionContract.address,
         startTime,
         endTime,
         ticketDuration,
@@ -220,8 +220,8 @@ describe("Ticket", function () {
       ]);
     });
     it("Ticket ticketInfo: ", async function () {
-      await movieContract.safeMint(movieOwnerAddr, 5);
-      await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
+      await collectionContract.safeMint(collectionOwnerAddr, 5);
+      await ticketContract.connect(collectionOwner).safeMint(ticketOwnerAddr, 5, 0);
 
       await ticketContract
         .ticketInfo(5)
@@ -231,7 +231,7 @@ describe("Ticket", function () {
         .catch((error) => expect(error.message).to.include("not exist"));
 
       let [
-        movieAddr_,
+        collectionAddr_,
         startTime_,
         endTime_,
         ticketDuration_,
@@ -240,14 +240,14 @@ describe("Ticket", function () {
       ] = await ticketContract.ticketInfo(0);
 
       expect([
-        movieAddr_,
+        collectionAddr_,
         startTime_.toNumber(),
         endTime_.toNumber(),
         ticketDuration_.toNumber(),
         baseUri_,
         checkingTime_.toNumber(),
       ]).to.eql([
-        movieContract.address,
+        collectionContract.address,
         startTime,
         endTime,
         ticketDuration,
@@ -258,7 +258,7 @@ describe("Ticket", function () {
       await ticketContract.connect(ticketOwner).checkTicket(0);
 
       [
-        movieAddr_,
+        collectionAddr_,
         startTime_,
         endTime_,
         ticketDuration_,
@@ -266,13 +266,13 @@ describe("Ticket", function () {
         checkingTime_,
       ] = await ticketContract.ticketInfo(0);
       expect([
-        movieAddr_,
+        collectionAddr_,
         startTime_.toNumber(),
         endTime_.toNumber(),
         ticketDuration_.toNumber(),
         baseUri_,
       ]).to.eql([
-        movieContract.address,
+        collectionContract.address,
         startTime,
         endTime,
         ticketDuration,

@@ -6,12 +6,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
-import "./IMovie.sol";
+import "./ICollection.sol";
 
-contract Movie is IMovie, EVT, ERC721Enumerable, Pausable {
+contract Collection is ICollection, EVT, ERC721Enumerable, Pausable {
     using Counters for Counters.Counter;
 
-    Counters.Counter private _movieIdCounter;
+    Counters.Counter private _collectionIdCounter;
 
     constructor(
         string memory name_,
@@ -46,11 +46,11 @@ contract Movie is IMovie, EVT, ERC721Enumerable, Pausable {
 
     function safeMint(address to, uint256 amount) public override onlyOwner {
         for (uint256 i = 0; i < amount; ++i) {
-            uint256 movieId = _movieIdCounter.current();
-            _movieIdCounter.increment();
-            _safeMint(to, movieId);
+            uint256 collectionId = _collectionIdCounter.current();
+            _collectionIdCounter.increment();
+            _safeMint(to, collectionId);
 
-            emit MovieCopyCreate(movieId);
+            emit CreateCollection(collectionId);
         }
     }
 
@@ -76,22 +76,22 @@ contract Movie is IMovie, EVT, ERC721Enumerable, Pausable {
     /**
      * @dev See {IEVTMetadata-tokenURI}.
      */
-    function tokenURI(uint256 movieId)
+    function tokenURI(uint256 collectionId)
         public
         view
         virtual
         override(ERC721, EVT)
         returns (string memory)
     {
-        return super.tokenURI(movieId);
+        return super.tokenURI(collectionId);
     }
 
-    function isOwnMovie(uint256 movieId, address addr)
+    function isOwnCollection(uint256 collectionId, address addr)
         public
         view
         override
         returns (bool)
     {
-        return ownerOf(movieId) == addr;
+        return ownerOf(collectionId) == addr;
     }
 }

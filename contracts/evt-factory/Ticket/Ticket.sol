@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
 import "./ITicket.sol";
-import "../Movie/IMovie.sol";
+import "../Collection/ICollection.sol";
 
 contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     using Counters for Counters.Counter;
@@ -14,7 +14,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     Counters.Counter private _ticketIdCounter;
 
     address private payee;
-    address public movieAddr;
+    address public collectionAddr;
     uint256 public startTime;
     uint256 public endTime;
     uint256 public ticketDuration;
@@ -23,7 +23,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     mapping(uint256 => TicketInfo) private ticketInfoMap;
 
     struct TicketInfo {
-        uint256 movieId;
+        uint256 collectionId;
         uint256 checkingTime;
     }
 
@@ -33,22 +33,22 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
         string memory baseURI_,
-        address movieAddr_,
+        address collectionAddr_,
         uint256 startTime_,
         uint256 endTime_,
         uint256 ticketDuration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
-        movieAddr = movieAddr_;
+        collectionAddr = collectionAddr_;
         endTime = endTime_;
         ticketDuration = ticketDuration_;
         startTime = startTime_;
         payee = owner();
     }
 
-    modifier onlyMovieOwner(uint256 movieId) {
+    modifier onlyCollectionOwner(uint256 collectionId) {
         require(
-            IMovie(movieAddr).isOwnMovie(movieId, msg.sender),
-            "not movie owner"
+            ICollection(collectionAddr).isOwnCollection(collectionId, msg.sender),
+            "not collection owner"
         );
         _;
     }
@@ -121,19 +121,19 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         Address.sendValue(payable(payee), address(this).balance);
     }
 
-    //onlyMovieOwner
-    //onlyMovieOwner
-    //onlyMovieOwner
+    //onlyCollectionOwner
+    //onlyCollectionOwner
+    //onlyCollectionOwner
     function safeMint(
         address to,
         uint256 amount,
-        uint256 movieId
-    ) public payable override onlyMovieOwner(movieId) {
+        uint256 collectionId
+    ) public payable override onlyCollectionOwner(collectionId) {
         for (uint256 i = 0; i < amount; ++i) {
             uint256 ticketId = _ticketIdCounter.current();
             _ticketIdCounter.increment();
             _safeMint(to, ticketId);
-            ticketInfoMap[ticketId].movieId = movieId;
+            ticketInfoMap[ticketId].collectionId = collectionId;
 
             emit EventCreateTicket(ticketId);
         }
@@ -197,7 +197,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             string memory
         )
     {
-        return (movieAddr, startTime, endTime, ticketDuration, baseURI);
+        return (collectionAddr, startTime, endTime, ticketDuration, baseURI);
     }
 
     function ticketInfo(uint256 ticketId)
@@ -215,7 +215,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     {
         require(ERC721._exists(ticketId), "not exist");
         return (
-            movieAddr,
+            collectionAddr,
             startTime,
             endTime,
             ticketDuration,

@@ -16,7 +16,7 @@
 | properties       | string[]  | EVT property Names                    |
 | encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
 | baseURI\_        | string    | point to the EVT offchain data        |
-| movieAddr\_      | address   | movie contract address                |
+| collectionAddr\_      | address   | collection contract address                |
 | startTime\_      | uint256   | film release date (second)            |
 | endTime\_        | uint256   | film off the screen date (second)     |
 | ticketDuration\_ | uint256   | valid duration of the ticket (second) |
@@ -33,11 +33,11 @@ updateTicketDuration(uint256 ticketDuration_)
 updatePayee(address payee_)
 getPayee()
 withdraw()
-safeMint(address to, uint256 amount, uint256 movieId)
+safeMint(address to, uint256 amount, uint256 collectionId)
 checkTicket(uint256 ticketId)
 commonInfo()
 ticketInfo(uint256 ticketId)
-movieAddr()
+collectionAddr()
 startTime()
 endTime()
 ticketDuration()
@@ -127,13 +127,13 @@ Requirements:
 
 - owner or payee
 
-### safeMint(address to, uint256 amount, uint256 movieId)
+### safeMint(address to, uint256 amount, uint256 collectionId)
 
 Batch mints ticket EVT.
 
 Requirements:
 
-- must own `movieId` EVT
+- must own `collectionId` EVT
 
 ### checkTicket(uint256 ticketId)
 
@@ -149,19 +149,19 @@ Requirements:
 
 ### commonInfo() -> address, uint256, uint256, uint256, string
 
-Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+Returns `collectionAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
 
 ### ticketInfo(uint256 ticketId) -> address, uint256, uint256, uint256, string, uint256
 
-Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+Returns `collectionAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
 
 Requirements:
 
 - if there is no check-in, the `checkingTime` is 0.
 
-### movieAddr() -> address
+### collectionAddr() -> address
 
-Returns `movieAddr`,movie contract address.
+Returns `collectionAddr`,collection contract address.
 
 ### startTime() -> uint256,
 
