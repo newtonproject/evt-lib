@@ -56,7 +56,17 @@ contract MyEVT is EVT {
     }
 
     /**
-     * @dev Safely mints `tokenId` and transfers it to `to`.
+     * @dev Unsafely mints token and transfers it to `to`.
+     */
+    function mint(address to) public {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _mint(to, tokenId);
+        addEncryptedKeyID(tokenId);
+    }
+
+    /**
+     * @dev Safely mints token and transfers it to `to`.
      */
     function safeMint(address to) public {
         uint256 tokenId = _tokenIdCounter.current();
