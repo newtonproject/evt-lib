@@ -1,8 +1,8 @@
-# Collection
+# Multimedia
 
 ## Base
 
-1. ICollection
+1. IMultimedia
 2. EVT
 3. ERC721Enumerable
 4. ERC721URIStorage
@@ -13,8 +13,8 @@
 
 | param           | type      | note                           |
 | --------------- | --------- | ------------------------------ |
-| name\_          | string    | token collection name          |
-| symbol\_        | string    | token collection symbol        |
+| name\_          | string    | token multimedia name          |
+| symbol\_        | string    | token multimedia symbol        |
 | properties      | string[]  | EVT property Names             |
 | encryptedKeyIDs | bytes32[] | EVT encryptionKeyID            |
 | baseURI\_       | string    | point to the EVT offchain data |
@@ -26,14 +26,14 @@ safeMint(to, amount)
 safeMint(address to, string[] uris)
 updateTokenURIStorage(uint256 tokenId, string memory uri)
 updateBaseURI(baseURI_)
-tokenURIStorage(uint256 collectionId)
-isOwnCollection(collectionId, addr)
+tokenURIStorage(uint256 multimediaId)
+isOwnMultimedia(multimediaId, addr)
 ```
 
 ## Events
 
 ```
-event CreateCollection(collectionId)
+event CreateMultimedia(multimediaId)
 event BaseURIUpdate(baseURI)
 ```
 
@@ -57,7 +57,7 @@ Requirements:
 
 ### safeMint(address to, uint256 amount)
 
-Batch mint collections.
+Batch mint multimedias.
 
 Requirements:
 
@@ -65,7 +65,7 @@ Requirements:
 
 ### safeMint(address to, string[] uris)
 
-Batch mint collections and set tokenURI.
+Batch mint multimedias and set tokenURI.
 
 Requirements:
 
@@ -87,27 +87,27 @@ Requirements:
 
 - onlyOwner
 
-### tokenURIStorage(uint256 collectionId) -> string
+### tokenURIStorage(uint256 multimediaId) -> string
 
 Returns token URIStorage.See {IERC721Metadata-tokenURI}.
 
 Requirements:
 
-- `collectionId` must exist.
+- `multimediaId` must exist.
 
-### isOwnCollection(uint256 collectionId, address addr) -> bool
+### isOwnMultimedia(uint256 multimediaId, address addr) -> bool
 
-Returns whether `addr` own `collectionId`.
+Returns whether `addr` own `multimediaId`.
 
 Requirements:
 
-- `collectionId` must exist.
+- `multimediaId` must exist.
 
 ## Event
 
-### CreateCollection(uint256 indexed collectionId)
+### CreateMultimedia(uint256 indexed multimediaId)
 
-Emitted when `collectionId` EVT is created.
+Emitted when `multimediaId` EVT is created.
 
 ### BaseURIUpdate(string baseURI)
 

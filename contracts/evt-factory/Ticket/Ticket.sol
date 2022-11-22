@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
 import "./ITicket.sol";
-import "../Collection/ICollection.sol";
+import "../Multimedia/IMultimedia.sol";
 
 contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     using Counters for Counters.Counter;
@@ -14,7 +14,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     Counters.Counter private _ticketIdCounter;
 
     address private payee;
-    address public collectionAddr;
+    address public multimediaAddr;
     uint256 public startTime;
     uint256 public endTime;
     uint256 public ticketDuration;
@@ -23,7 +23,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     mapping(uint256 => TicketInfo) private ticketInfoMap;
 
     struct TicketInfo {
-        uint256 collectionId;
+        uint256 multimediaId;
         uint256 checkingTime;
     }
 
@@ -33,25 +33,25 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
         string memory baseURI_,
-        address collectionAddr_,
+        address multimediaAddr_,
         uint256 startTime_,
         uint256 endTime_,
         uint256 ticketDuration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
-        collectionAddr = collectionAddr_;
+        multimediaAddr = multimediaAddr_;
         endTime = endTime_;
         ticketDuration = ticketDuration_;
         startTime = startTime_;
         payee = owner();
     }
 
-    modifier onlyCollectionOwner(uint256 collectionId) {
+    modifier onlyMultimediaOwner(uint256 multimediaId) {
         require(
-            ICollection(collectionAddr).isOwnCollection(
-                collectionId,
+            IMultimedia(multimediaAddr).isOwnMultimedia(
+                multimediaId,
                 msg.sender
             ),
-            "not collection owner"
+            "not multimedia owner"
         );
         _;
     }
@@ -124,19 +124,19 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         Address.sendValue(payable(payee), address(this).balance);
     }
 
-    //onlyCollectionOwner
-    //onlyCollectionOwner
-    //onlyCollectionOwner
+    //onlyMultimediaOwner
+    //onlyMultimediaOwner
+    //onlyMultimediaOwner
     function safeMint(
         address to,
         uint256 amount,
-        uint256 collectionId
-    ) public payable override onlyCollectionOwner(collectionId) {
+        uint256 multimediaId
+    ) public payable override onlyMultimediaOwner(multimediaId) {
         for (uint256 i = 0; i < amount; ++i) {
             uint256 ticketId = _ticketIdCounter.current();
             _ticketIdCounter.increment();
             _safeMint(to, ticketId);
-            ticketInfoMap[ticketId].collectionId = collectionId;
+            ticketInfoMap[ticketId].multimediaId = multimediaId;
 
             emit EventCreateTicket(ticketId);
         }
@@ -200,7 +200,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             string memory
         )
     {
-        return (collectionAddr, startTime, endTime, ticketDuration, baseURI);
+        return (multimediaAddr, startTime, endTime, ticketDuration, baseURI);
     }
 
     function ticketInfo(uint256 ticketId)
@@ -218,7 +218,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     {
         require(ERC721._exists(ticketId), "not exist");
         return (
-            collectionAddr,
+            multimediaAddr,
             startTime,
             endTime,
             ticketDuration,

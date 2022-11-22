@@ -8,10 +8,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
-import "./ICollection.sol";
+import "./IMultimedia.sol";
 
-contract Collection is
-    ICollection,
+contract Multimedia is
+    IMultimedia,
     EVT,
     ERC721Enumerable,
     ERC721URIStorage,
@@ -20,7 +20,7 @@ contract Collection is
 {
     using Counters for Counters.Counter;
 
-    Counters.Counter private _collectionIdCounter;
+    Counters.Counter private _multimediaIdCounter;
 
     constructor(
         string memory name_,
@@ -62,22 +62,22 @@ contract Collection is
 
     function safeMint(address to, uint256 amount) public onlyOwner {
         for (uint256 i = 0; i < amount; ++i) {
-            uint256 collectionId = _collectionIdCounter.current();
-            _collectionIdCounter.increment();
-            _safeMint(to, collectionId);
+            uint256 multimediaId = _multimediaIdCounter.current();
+            _multimediaIdCounter.increment();
+            _safeMint(to, multimediaId);
 
-            emit CreateCollection(collectionId);
+            emit CreateMultimedia(multimediaId);
         }
     }
 
     function safeMint(address to, string[] memory uris) public onlyOwner {
         for (uint256 i = 0; i < uris.length; ++i) {
-            uint256 collectionId = _collectionIdCounter.current();
-            _collectionIdCounter.increment();
-            _safeMint(to, collectionId);
-            _setTokenURI(collectionId, uris[i]);
+            uint256 multimediaId = _multimediaIdCounter.current();
+            _multimediaIdCounter.increment();
+            _safeMint(to, multimediaId);
+            _setTokenURI(multimediaId, uris[i]);
 
-            emit CreateCollection(collectionId);
+            emit CreateMultimedia(multimediaId);
         }
     }
 
@@ -111,30 +111,30 @@ contract Collection is
     /**
      * @dev See {IEVTMetadata-tokenURI}.
      */
-    function tokenURI(uint256 collectionId)
+    function tokenURI(uint256 multimediaId)
         public
         view
         virtual
         override(ERC721, ERC721URIStorage, EVT)
         returns (string memory)
     {
-        return super.tokenURI(collectionId);
+        return super.tokenURI(multimediaId);
     }
 
-    function tokenURIStorage(uint256 collectionId)
+    function tokenURIStorage(uint256 multimediaId)
         public
         view
         returns (string memory)
     {
-        return ERC721URIStorage.tokenURI(collectionId);
+        return ERC721URIStorage.tokenURI(multimediaId);
     }
 
-    function isOwnCollection(uint256 collectionId, address addr)
+    function isOwnMultimedia(uint256 multimediaId, address addr)
         public
         view
         override
         returns (bool)
     {
-        return ownerOf(collectionId) == addr;
+        return ownerOf(multimediaId) == addr;
     }
 }

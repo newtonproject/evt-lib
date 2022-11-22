@@ -17,7 +17,7 @@ interface ITicket is IEVT {
     function safeMint(
         address to,
         uint256 amount,
-        uint256 collectionId
+        uint256 multimediaId
     ) external payable;
 
     function checkTicket(uint256 tokenId) external;

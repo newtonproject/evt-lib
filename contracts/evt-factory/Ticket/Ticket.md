@@ -11,12 +11,12 @@
 
 | param            | type      | note                                  |
 | ---------------- | --------- | ------------------------------------- |
-| name\_           | string    | token collection name                 |
-| symbol\_         | string    | token collection symbol               |
+| name\_           | string    | token multimedia name                 |
+| symbol\_         | string    | token multimedia symbol               |
 | properties       | string[]  | EVT property Names                    |
 | encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
 | baseURI\_        | string    | point to the EVT offchain data        |
-| collectionAddr\_ | address   | collection contract address           |
+| multimediaAddr\_ | address   | multimedia contract address           |
 | startTime\_      | uint256   | film release date (second)            |
 | endTime\_        | uint256   | film off the screen date (second)     |
 | ticketDuration\_ | uint256   | valid duration of the ticket (second) |
@@ -33,11 +33,11 @@ updateTicketDuration(uint256 ticketDuration_)
 updatePayee(address payee_)
 getPayee()
 withdraw()
-safeMint(address to, uint256 amount, uint256 collectionId)
+safeMint(address to, uint256 amount, uint256 multimediaId)
 checkTicket(uint256 ticketId)
 commonInfo()
 ticketInfo(uint256 ticketId)
-collectionAddr()
+multimediaAddr()
 startTime()
 endTime()
 ticketDuration()
@@ -127,13 +127,13 @@ Requirements:
 
 - owner or payee
 
-### safeMint(address to, uint256 amount, uint256 collectionId)
+### safeMint(address to, uint256 amount, uint256 multimediaId)
 
 Batch mint ticket EVT.
 
 Requirements:
 
-- must own `collectionId` EVT
+- must own `multimediaId` EVT
 
 ### checkTicket(uint256 ticketId)
 
@@ -149,19 +149,19 @@ Requirements:
 
 ### commonInfo() -> address, uint256, uint256, uint256, string
 
-Returns `collectionAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
 
 ### ticketInfo(uint256 ticketId) -> address, uint256, uint256, uint256, string, uint256
 
-Returns `collectionAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
 
 Requirements:
 
 - if there is no check-in, the `checkingTime` is 0.
 
-### collectionAddr() -> address
+### multimediaAddr() -> address
 
-Returns `collectionAddr`,collection contract address.
+Returns `multimediaAddr`,multimedia contract address.
 
 ### startTime() -> uint256,
 
