@@ -129,7 +129,7 @@ Requirements:
 
 ### safeMint(address to, uint256 amount, uint256 multimediaId)
 
-Batch mint ticket EVT.
+Batch mint ticket EVT by `multimediaId`.
 
 Requirements:
 
