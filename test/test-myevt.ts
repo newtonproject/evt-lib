@@ -123,5 +123,27 @@ describe("MyEVT", function () {
       console.log("\n");
       console.log("tokenURI: " + (await myEvtContract.tokenURI(tokenId)));
     });
+
+    it("MyEvt supportsInterface: ", async function () {
+      //IERC721
+      expect(await myEvtContract.supportsInterface("0x80ac58cd")).to.equal(
+        true
+      );
+
+      //IEVTMetadata
+      expect(await myEvtContract.supportsInterface("0x02ba7d9a")).to.equal(
+        true
+      );
+
+      //IEVTEncryption
+      expect(await myEvtContract.supportsInterface("0x254ee5e2")).to.equal(
+        true
+      );
+
+      //IEVTVariable
+      expect(await myEvtContract.supportsInterface("0xa6bdcdff")).to.equal(
+        true
+      );
+    });
   });
 });
