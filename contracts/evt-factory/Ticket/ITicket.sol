@@ -5,6 +5,41 @@ import "../../evt-base/interfaces/IEVT.sol";
 
 interface ITicket is IEVT {
     /**
+     * @dev Emitted when `baseURI` is updated.
+     */
+    event BaseURIUpdate(string baseURI);
+
+    /**
+     * @dev Emitted when `startTime` is updated.
+     */
+    event StartTimeUpdate(uint256 startTime);
+
+    /**
+     * @dev Emitted when `endTime` is updated.
+     */
+    event EndTimeUpdate(uint256 endTime);
+
+    /**
+     * @dev Emitted when `ticketDuration` is updated.
+     */
+    event TicketDurationUpdate(uint256 ticketDuration);
+
+    /**
+     * @dev Emitted when `payee` is updated.
+     */
+    event PayeeUpdate(address payee);
+
+    /**
+     * @dev Emitted when `ticketId` EVT is created.
+     */
+    event EventCreateTicket(uint256 indexed ticketId);
+
+    /**
+     * @dev Emitted when `ticketId` have checked for the first time.
+     */
+    event EventTicketCheck(uint256 indexed ticketId, uint256 checkingTime);
+
+    /**
      * @dev Update `baseURI`.
      */
     function updateBaseURI(string memory baseURI) external;
@@ -79,39 +114,4 @@ interface ITicket is IEVT {
             string memory,
             uint256
         );
-
-    /**
-     * @dev Emitted when `baseURI` is updated.
-     */
-    event BaseURIUpdate(string baseURI);
-
-    /**
-     * @dev Emitted when `startTime` is updated.
-     */
-    event StartTimeUpdate(uint256 startTime);
-
-    /**
-     * @dev Emitted when `endTime` is updated.
-     */
-    event EndTimeUpdate(uint256 endTime);
-
-    /**
-     * @dev Emitted when `ticketDuration` is updated.
-     */
-    event TicketDurationUpdate(uint256 ticketDuration);
-
-    /**
-     * @dev Emitted when `payee` is updated.
-     */
-    event PayeeUpdate(address payee);
-
-    /**
-     * @dev Emitted when `ticketId` EVT is created.
-     */
-    event EventCreateTicket(uint256 indexed ticketId);
-
-    /**
-     * @dev Emitted when `ticketId` have checked for the first time.
-     */
-    event EventTicketCheck(uint256 indexed ticketId, uint256 checkingTime);
 }

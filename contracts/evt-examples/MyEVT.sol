@@ -6,12 +6,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @dev This implements an simple EVT example.
- * You need to pass some parameters to the constructor. 
- * Empty array is Ok for properties and encryptedKeyIDs because they can be changed in 
+ * You need to pass some parameters to the constructor.
+ * Empty array is Ok for properties and encryptedKeyIDs because they can be changed in
  * functions of addDynamicProperty and registerEncryptedKeyID.
  */
 contract MyEVT is EVT {
-
     using Counters for Counters.Counter;
 
     // TokenId auto increment
@@ -25,8 +24,8 @@ contract MyEVT is EVT {
 
     /**
      * @dev Constructor function.
-     * You need to pass some parameters to the constructor. 
-     * Empty array is Ok for properties and encryptedKeyIDs because they can be changed in 
+     * You need to pass some parameters to the constructor.
+     * Empty array is Ok for properties and encryptedKeyIDs because they can be changed in
      * functions of addDynamicProperty and registerEncryptedKeyID.
      */
     constructor(
@@ -91,9 +90,12 @@ contract MyEVT is EVT {
     /**
      * @dev You can use this function to get some encryptedKeyIDs for testing.
      */
-    function getEncryptedKeyID(
-        string memory propertyName
-    ) public view virtual returns (bytes32 encryptedKeyID) {
+    function getEncryptedKeyID(string memory propertyName)
+        public
+        view
+        virtual
+        returns (bytes32 encryptedKeyID)
+    {
         return keccak256(abi.encode(propertyName));
     }
 }

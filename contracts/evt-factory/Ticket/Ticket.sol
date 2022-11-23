@@ -105,7 +105,6 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         _unpause();
     }
 
-
     /**
      * @dev Update `baseURI`.
      */
@@ -165,9 +164,9 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
 
     /**
      * @dev Withdraw the balance to the payee.
-     * 
+     *
      * Requirements:
-     * 
+     *
      * - owner or payee
      */
     function withdraw() public {

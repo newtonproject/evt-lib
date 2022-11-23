@@ -166,7 +166,6 @@ contract Multimedia is
         return super.tokenURI(multimediaId);
     }
 
-
     /**
      * @dev Returns token URIStorage.See {IERC721Metadata-tokenURI}.
      */
@@ -177,7 +176,6 @@ contract Multimedia is
     {
         return ERC721URIStorage.tokenURI(multimediaId);
     }
-
 
     /**
      * @dev Returns whether `addr` own `multimediaId`.
