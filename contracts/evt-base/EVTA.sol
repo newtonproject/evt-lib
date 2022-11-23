@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.9;
 
-import "./IEVTA.sol";
+import "./interfaces/IEVTA.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
 import "../libraries/GetString.sol";
@@ -74,7 +74,7 @@ contract EVTA is
         returns (bool)
     {
         return
-            interfaceId == type(IEVT).interfaceId ||
+            interfaceId == type(IEVTA).interfaceId ||
             interfaceId == type(IEVTMetadata).interfaceId ||
             super.supportsInterface(interfaceId);
     }

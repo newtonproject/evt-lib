@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.9;
 
-import "./IEVT.sol";
+import "./interfaces/IEVT.sol";
 import "./extensions/EVTVariable.sol";
 import "./extensions/EVTEncryption.sol";
 import "../libraries/GetString.sol";

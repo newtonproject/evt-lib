@@ -68,4 +68,15 @@ interface IEVTEncryption {
      * - `encryptedKeyID` must exist.
      */
     function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) external view returns (address[] memory);
+
+    /**
+     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
+     * 
+     * The result is a string in a JSON formatted array.
+     * 
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function getPermissionsAsString(uint256 tokenId) external view returns (string memory);
 }

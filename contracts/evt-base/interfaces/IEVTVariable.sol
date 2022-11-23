@@ -29,7 +29,7 @@ interface IEVTVariable {
      * - `tokenId` must exist.
      * - `propertyName` must exist.
      */
-	function setDynamicProperty(uint256 tokenId, string memory propertyName, string memory propertyValue) external payable;
+	function setDynamicProperty(uint256 tokenId, string memory propertyNames, string memory propertyValue) external payable;
 	
     /**
      * @dev Set the `propertyValue` by `tokenId` and `propertyName` in quantity.
@@ -70,4 +70,15 @@ interface IEVTVariable {
      * @dev Returns whether the `propertyName` exists.
      */
 	function supportsProperty(string memory propertyName) external view returns (bool);
+
+    /**
+     * @dev Get tokenId's dynamic properties.
+     * 
+     * The result is a string in a JSON formatted array.
+     * 
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function getDynamicPropertiesAsString(uint256 tokenId) external view returns (string memory);
 }
