@@ -33,7 +33,7 @@ updateTicketDuration(uint256 ticketDuration_)
 updatePayee(address payee_)
 getPayee()
 withdraw()
-safeMint(address to, uint256 amount, uint256 multimediaId)
+safeMint(address to, uint256 amount, uint256 tokenId)
 checkTicket(uint256 ticketId)
 commonInfo()
 ticketInfo(uint256 ticketId)
@@ -127,13 +127,13 @@ Requirements:
 
 - owner or payee
 
-### safeMint(address to, uint256 amount, uint256 multimediaId)
+### safeMint(address to, uint256 amount, uint256 tokenId)
 
-Batch mint ticket EVT by `multimediaId`.
+Batch mint ticket EVT by `tokenId`.
 
 Requirements:
 
-- must own `multimediaId` EVT
+- must own `tokenId` EVT
 
 ### checkTicket(uint256 ticketId)
 

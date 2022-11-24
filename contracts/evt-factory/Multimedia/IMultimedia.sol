@@ -5,9 +5,9 @@ import "../../evt-base/interfaces/IEVT.sol";
 
 interface IMultimedia is IEVT {
     /**
-     * @dev Emitted when `multimediaId` EVT is created.
+     * @dev Emitted when `tokenId` EVT is created.
      */
-    event CreateMultimedia(uint256 indexed multimediaId);
+    event CreateMultimedia(uint256 indexed tokenId);
 
     /**
      * @dev Emitted when `baseURI` is updated.
@@ -25,9 +25,9 @@ interface IMultimedia is IEVT {
     function updateTokenURIStorage(uint256 tokenId, string memory uri) external;
 
     /**
-     * @dev Returns whether `addr` own `multimediaId`.
+     * @dev Returns whether `addr` own `tokenId`.
      */
-    function isOwnMultimedia(uint256 multimediaId, address addr)
+    function isOwn(uint256 tokenId, address addr)
         external
         view
         returns (bool);

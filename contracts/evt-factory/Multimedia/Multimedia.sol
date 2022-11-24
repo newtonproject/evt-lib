@@ -19,7 +19,7 @@ contract Multimedia is
 {
     using Counters for Counters.Counter;
 
-    Counters.Counter private _multimediaIdCounter;
+    Counters.Counter private _tokenIdCounter;
 
     constructor(
         string memory name_,
@@ -97,11 +97,11 @@ contract Multimedia is
      */
     function safeMint(address to, uint256 amount) public onlyOwner {
         for (uint256 i = 0; i < amount; ++i) {
-            uint256 multimediaId = _multimediaIdCounter.current();
-            _multimediaIdCounter.increment();
-            _safeMint(to, multimediaId);
+            uint256 tokenId = _tokenIdCounter.current();
+            _tokenIdCounter.increment();
+            _safeMint(to, tokenId);
 
-            emit CreateMultimedia(multimediaId);
+            emit CreateMultimedia(tokenId);
         }
     }
 
@@ -110,12 +110,12 @@ contract Multimedia is
      */
     function safeMint(address to, string[] memory uris) public onlyOwner {
         for (uint256 i = 0; i < uris.length; ++i) {
-            uint256 multimediaId = _multimediaIdCounter.current();
-            _multimediaIdCounter.increment();
-            _safeMint(to, multimediaId);
-            _setTokenURI(multimediaId, uris[i]);
+            uint256 tokenId = _tokenIdCounter.current();
+            _tokenIdCounter.increment();
+            _safeMint(to, tokenId);
+            _setTokenURI(tokenId, uris[i]);
 
-            emit CreateMultimedia(multimediaId);
+            emit CreateMultimedia(tokenId);
         }
     }
 
@@ -155,36 +155,36 @@ contract Multimedia is
     /**
      * @dev See {IEVTMetadata-tokenURI}.
      */
-    function tokenURI(uint256 multimediaId)
+    function tokenURI(uint256 tokenId)
         public
         view
         virtual
         override(ERC721, ERC721URIStorage, EVT)
         returns (string memory)
     {
-        return super.tokenURI(multimediaId);
+        return super.tokenURI(tokenId);
     }
 
     /**
      * @dev Returns token URIStorage.See {IERC721Metadata-tokenURI}.
      */
-    function tokenURIStorage(uint256 multimediaId)
+    function tokenURIStorage(uint256 tokenId)
         public
         view
         returns (string memory)
     {
-        return ERC721URIStorage.tokenURI(multimediaId);
+        return ERC721URIStorage.tokenURI(tokenId);
     }
 
     /**
-     * @dev Returns whether `addr` own `multimediaId`.
+     * @dev Returns whether `addr` own `tokenId`.
      */
-    function isOwnMultimedia(uint256 multimediaId, address addr)
+    function isOwn(uint256 tokenId, address addr)
         public
         view
         override
         returns (bool)
     {
-        return ownerOf(multimediaId) == addr;
+        return ownerOf(tokenId) == addr;
     }
 }

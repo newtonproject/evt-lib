@@ -50,10 +50,10 @@ describe("Multimedia", function () {
       const baseUri = "https://www.newtonproject.org";
       await multimediaContract.updateBaseURI(baseUri);
       expect(await multimediaContract.baseURI()).to.equal(baseUri);
-      expect(await multimediaContract.isOwnMultimedia(0, ownerAddr)).to.equal(
+      expect(await multimediaContract.isOwn(0, ownerAddr)).to.equal(
         true
       );
-      expect(await multimediaContract.isOwnMultimedia(0, pubAddr)).to.equal(
+      expect(await multimediaContract.isOwn(0, pubAddr)).to.equal(
         false
       );
 

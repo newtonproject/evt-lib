@@ -23,7 +23,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     mapping(uint256 => TicketInfo) private ticketInfoMap;
 
     struct TicketInfo {
-        uint256 multimediaId;
+        uint256 tokenId;
         uint256 checkingTime;
     }
 
@@ -45,10 +45,10 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         payee = owner();
     }
 
-    modifier onlyMultimediaOwner(uint256 multimediaId) {
+    modifier onlyMultimediaOwner(uint256 tokenId) {
         require(
-            IMultimedia(multimediaAddr).isOwnMultimedia(
-                multimediaId,
+            IMultimedia(multimediaAddr).isOwn(
+                tokenId,
                 msg.sender
             ),
             "not multimedia owner"
@@ -175,18 +175,18 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     }
 
     /**
-     * @dev Batch mint ticket EVT by `multimediaId`.
+     * @dev Batch mint ticket EVT by `tokenId`.
      */
     function safeMint(
         address to,
         uint256 amount,
-        uint256 multimediaId
-    ) public payable override onlyMultimediaOwner(multimediaId) {
+        uint256 tokenId
+    ) public payable override onlyMultimediaOwner(tokenId) {
         for (uint256 i = 0; i < amount; ++i) {
             uint256 ticketId = _ticketIdCounter.current();
             _ticketIdCounter.increment();
             _safeMint(to, ticketId);
-            ticketInfoMap[ticketId].multimediaId = multimediaId;
+            ticketInfoMap[ticketId].tokenId = tokenId;
 
             emit EventCreateTicket(ticketId);
         }

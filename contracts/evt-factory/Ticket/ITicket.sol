@@ -65,12 +65,12 @@ interface ITicket is IEVT {
     function updatePayee(address payee) external;
 
     /**
-     * @dev Batch mint ticket EVT by `multimediaId`.
+     * @dev Batch mint ticket EVT by `tokenId`.
      */
     function safeMint(
         address to,
         uint256 amount,
-        uint256 multimediaId
+        uint256 tokenId
     ) external payable;
 
     /**

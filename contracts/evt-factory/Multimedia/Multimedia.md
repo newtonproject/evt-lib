@@ -28,14 +28,14 @@ safeMint(to, amount)
 safeMint(address to, string[] uris)
 updateTokenURIStorage(uint256 tokenId, string memory uri)
 updateBaseURI(baseURI_)
-tokenURIStorage(uint256 multimediaId)
-isOwnMultimedia(multimediaId, addr)
+tokenURIStorage(uint256 tokenId)
+isOwn(tokenId, addr)
 ```
 
 ## Events
 
 ```
-event CreateMultimedia(multimediaId)
+event CreateMultimedia(tokenId)
 event BaseURIUpdate(baseURI)
 ```
 
@@ -89,27 +89,27 @@ Requirements:
 
 - onlyOwner
 
-### tokenURIStorage(uint256 multimediaId) -> string
+### tokenURIStorage(uint256 tokenId) -> string
 
 Returns token URIStorage.See {IERC721Metadata-tokenURI}.
 
 Requirements:
 
-- `multimediaId` must exist.
+- `tokenId` must exist.
 
-### isOwnMultimedia(uint256 multimediaId, address addr) -> bool
+### isOwn(uint256 tokenId, address addr) -> bool
 
-Returns whether `addr` own `multimediaId`.
+Returns whether `addr` own `tokenId`.
 
 Requirements:
 
-- `multimediaId` must exist.
+- `tokenId` must exist.
 
 ## Event
 
-### CreateMultimedia(uint256 indexed multimediaId)
+### CreateMultimedia(uint256 indexed tokenId)
 
-Emitted when `multimediaId` EVT is created.
+Emitted when `tokenId` EVT is created.
 
 ### BaseURIUpdate(string baseURI)
 
