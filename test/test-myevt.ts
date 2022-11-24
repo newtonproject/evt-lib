@@ -130,11 +130,6 @@ describe("MyEVT", function () {
         true
       );
 
-      //IEVTMetadata
-      expect(await myEvtContract.supportsInterface("0x02ba7d9a")).to.equal(
-        true
-      );
-
       //IEVTEncryption
       expect(await myEvtContract.supportsInterface("0x254ee5e2")).to.equal(
         true
@@ -142,6 +137,11 @@ describe("MyEVT", function () {
 
       //IEVTVariable
       expect(await myEvtContract.supportsInterface("0xa6bdcdff")).to.equal(
+        true
+      );
+
+      //IEVTMetadata
+      expect(await myEvtContract.supportsInterface("0x02ba7d9a")).to.equal(
         true
       );
     });
