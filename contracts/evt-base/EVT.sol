@@ -60,9 +60,9 @@ contract EVT is
     /**
      * @dev See {IERC165-supportsInterface}
      * IERC721        : 0x80ac58cd
-     * IEVTMetadata   : 0x02ba7d9a
      * IEVTEncryption : 0x254ee5e2
      * IEVTVariable   : 0xa6bdcdff
+     * IEVTMetadata   : 0x02ba7d9a
      */
     function supportsInterface(bytes4 interfaceId)
         public
