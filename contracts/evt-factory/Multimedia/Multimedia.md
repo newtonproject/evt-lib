@@ -19,6 +19,8 @@
 | encryptedKeyIDs | bytes32[] | EVT encryptionKeyID            |
 | baseURI\_       | string    | point to the EVT offchain data |
 
+## Functions
+
 ```
 pause()
 unpause()
