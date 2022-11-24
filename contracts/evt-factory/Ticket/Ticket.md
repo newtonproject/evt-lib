@@ -11,12 +11,12 @@
 
 | param            | type      | note                                  |
 | ---------------- | --------- | ------------------------------------- |
-| name\_           | string    | token multimedia name                 |
-| symbol\_         | string    | token multimedia symbol               |
+| name\_           | string    | token ticket name                 |
+| symbol\_         | string    | token ticket symbol               |
 | properties       | string[]  | EVT property Names                    |
 | encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
 | baseURI\_        | string    | point to the EVT offchain data        |
-| multimediaAddr\_ | address   | multimedia contract address           |
+| movieAddr\_ | address   | movie contract address           |
 | startTime\_      | uint256   | film release date (second)            |
 | endTime\_        | uint256   | film off the screen date (second)     |
 | ticketDuration\_ | uint256   | valid duration of the ticket (second) |
@@ -37,7 +37,7 @@ safeMint(address to, uint256 amount, uint256 tokenId)
 checkTicket(uint256 ticketId)
 commonInfo()
 ticketInfo(uint256 ticketId)
-multimediaAddr()
+movieAddr()
 startTime()
 endTime()
 ticketDuration()
@@ -149,19 +149,19 @@ Requirements:
 
 ### commonInfo() -> address, uint256, uint256, uint256, string
 
-Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
 
 ### ticketInfo(uint256 ticketId) -> address, uint256, uint256, uint256, string, uint256
 
-Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
 
 Requirements:
 
 - if there is no check-in, the `checkingTime` is 0.
 
-### multimediaAddr() -> address
+### movieAddr() -> address
 
-Returns `multimediaAddr`,multimedia contract address.
+Returns `movieAddr`,movie contract address.
 
 ### startTime() -> uint256,
 

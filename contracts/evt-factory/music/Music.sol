@@ -7,10 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
-import "./IMultimedia.sol";
+import "./IMusic.sol";
 
-contract Multimedia is
-    IMultimedia,
+contract Music is
+    IMusic,
     EVT,
     ERC721Enumerable,
     ERC721URIStorage,
@@ -93,7 +93,7 @@ contract Multimedia is
     }
 
     /**
-     * @dev Batch mint multimedias.
+     * @dev Batch mint music.
      */
     function safeMint(address to, uint256 amount) public onlyOwner {
         for (uint256 i = 0; i < amount; ++i) {
@@ -101,12 +101,12 @@ contract Multimedia is
             _tokenIdCounter.increment();
             _safeMint(to, tokenId);
 
-            emit CreateMultimedia(tokenId);
+            emit CreateMusic(tokenId);
         }
     }
 
     /**
-     * @dev Batch mint multimedias and set tokenURI.
+     * @dev Batch mint music and set tokenURI.
      */
     function safeMint(address to, string[] memory uris) public onlyOwner {
         for (uint256 i = 0; i < uris.length; ++i) {
@@ -115,7 +115,7 @@ contract Multimedia is
             _safeMint(to, tokenId);
             _setTokenURI(tokenId, uris[i]);
 
-            emit CreateMultimedia(tokenId);
+            emit CreateMusic(tokenId);
         }
     }
 

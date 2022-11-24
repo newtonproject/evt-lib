@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../../evt-base/EVT.sol";
 import "./ITicket.sol";
-import "../Multimedia/IMultimedia.sol";
+import "../movie/IMovie.sol";
 
 contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     using Counters for Counters.Counter;
@@ -14,7 +14,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     Counters.Counter private _ticketIdCounter;
 
     address private payee;
-    address public multimediaAddr;
+    address public movieAddr;
     uint256 public startTime;
     uint256 public endTime;
     uint256 public ticketDuration;
@@ -33,25 +33,25 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         string[] memory properties,
         bytes32[] memory encryptedKeyIDs,
         string memory baseURI_,
-        address multimediaAddr_,
+        address movieAddr_,
         uint256 startTime_,
         uint256 endTime_,
         uint256 ticketDuration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
-        multimediaAddr = multimediaAddr_;
+        movieAddr = movieAddr_;
         endTime = endTime_;
         ticketDuration = ticketDuration_;
         startTime = startTime_;
         payee = owner();
     }
 
-    modifier onlyMultimediaOwner(uint256 tokenId) {
+    modifier onlyMovieOwner(uint256 tokenId) {
         require(
-            IMultimedia(multimediaAddr).isOwn(
+            IMovie(movieAddr).isOwn(
                 tokenId,
                 msg.sender
             ),
-            "not multimedia owner"
+            "not movie owner"
         );
         _;
     }
@@ -181,7 +181,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         address to,
         uint256 amount,
         uint256 tokenId
-    ) public payable override onlyMultimediaOwner(tokenId) {
+    ) public payable override onlyMovieOwner(tokenId) {
         for (uint256 i = 0; i < amount; ++i) {
             uint256 ticketId = _ticketIdCounter.current();
             _ticketIdCounter.increment();
@@ -247,7 +247,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     }
 
     /**
-     * @dev Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
      */
     function commonInfo()
         public
@@ -261,11 +261,11 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             string memory
         )
     {
-        return (multimediaAddr, startTime, endTime, ticketDuration, baseURI);
+        return (movieAddr, startTime, endTime, ticketDuration, baseURI);
     }
 
     /**
-     * @dev Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
      */
     function ticketInfo(uint256 ticketId)
         external
@@ -282,7 +282,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     {
         require(ERC721._exists(ticketId), "not exist");
         return (
-            multimediaAddr,
+            movieAddr,
             startTime,
             endTime,
             ticketDuration,

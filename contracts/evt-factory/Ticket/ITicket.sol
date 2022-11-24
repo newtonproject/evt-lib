@@ -87,7 +87,7 @@ interface ITicket is IEVT {
     function checkTicket(uint256 tokenId) external;
 
     /**
-     * @dev Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
      */
     function commonInfo()
         external
@@ -101,7 +101,7 @@ interface ITicket is IEVT {
         );
 
     /**
-     * @dev Returns `multimediaAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
      */
     function ticketInfo(uint256 tokenId)
         external

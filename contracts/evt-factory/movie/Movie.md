@@ -1,8 +1,8 @@
-# Multimedia
+# Movie
 
 ## Base
 
-1. IMultimedia
+1. IMovie
 2. EVT
 3. ERC721Enumerable
 4. ERC721URIStorage
@@ -13,8 +13,8 @@
 
 | param           | type      | note                           |
 | --------------- | --------- | ------------------------------ |
-| name\_          | string    | token multimedia name          |
-| symbol\_        | string    | token multimedia symbol        |
+| name\_          | string    | token movie name          |
+| symbol\_        | string    | token movie symbol        |
 | properties      | string[]  | EVT property Names             |
 | encryptedKeyIDs | bytes32[] | EVT encryptionKeyID            |
 | baseURI\_       | string    | point to the EVT offchain data |
@@ -35,7 +35,7 @@ isOwn(tokenId, addr)
 ## Events
 
 ```
-event CreateMultimedia(tokenId)
+event CreateMovie(tokenId)
 event BaseURIUpdate(baseURI)
 ```
 
@@ -59,7 +59,7 @@ Requirements:
 
 ### safeMint(address to, uint256 amount)
 
-Batch mint multimedias.
+Batch mint movies.
 
 Requirements:
 
@@ -67,7 +67,7 @@ Requirements:
 
 ### safeMint(address to, string[] uris)
 
-Batch mint multimedias and set tokenURI.
+Batch mint movies and set tokenURI.
 
 Requirements:
 
@@ -107,7 +107,7 @@ Requirements:
 
 ## Event
 
-### CreateMultimedia(uint256 indexed tokenId)
+### CreateMovie(uint256 indexed tokenId)
 
 Emitted when `tokenId` EVT is created.
 

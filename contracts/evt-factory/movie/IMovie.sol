@@ -3,11 +3,11 @@ pragma solidity ^0.8.9;
 
 import "../../evt-base/interfaces/IEVT.sol";
 
-interface IMultimedia is IEVT {
+interface IMovie is IEVT {
     /**
      * @dev Emitted when `tokenId` EVT is created.
      */
-    event CreateMultimedia(uint256 indexed tokenId);
+    event CreateMovie(uint256 indexed tokenId);
 
     /**
      * @dev Emitted when `baseURI` is updated.
