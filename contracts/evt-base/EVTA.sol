@@ -10,7 +10,6 @@ import "../erc721a/ERC721A.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 /**
  * @dev Implementation of Support Of Batch Mint EVT (NRC-61).
