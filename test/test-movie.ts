@@ -87,16 +87,16 @@ describe("Movie", function () {
         .connect(movieOwner)
         .addPermission(tokenId, encryptedKeyID, movieOwnerAddr);
 
-      let copyrightStartTime = Date.parse(new Date().toString()) / 1000;
-      let copyrightEndTime = copyrightStartTime + 31 * 24 * 60 * 60;
+      let startTime = Date.parse(new Date().toString()) / 1000;
+      let endTime = startTime + 31 * 24 * 60 * 60;
 
-      await movieContract.updateCopyrightStartTime(copyrightStartTime);
-      expect(await movieContract.copyrightStartTime()).to.equal(
-        copyrightStartTime
+      await movieContract.updateStartTime(startTime);
+      expect(await movieContract.startTime()).to.equal(
+        startTime
       );
 
-      await movieContract.updateCopyrightEndTime(copyrightEndTime);
-      expect(await movieContract.copyrightEndTime()).to.equal(copyrightEndTime);
+      await movieContract.updateEndTime(endTime);
+      expect(await movieContract.endTime()).to.equal(endTime);
 
       expect(
         await movieContract.hasPermission(tokenId, encryptedKeyID, ownerAddr)

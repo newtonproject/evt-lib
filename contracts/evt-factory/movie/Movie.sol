@@ -22,10 +22,10 @@ contract Movie is
     Counters.Counter private _tokenIdCounter;
 
     //Copyright of movie start time
-    uint256 public copyrightStartTime;
+    uint256 public startTime;
 
     //Copyright of movie end time
-    uint256 public copyrightEndTime;
+    uint256 public endTime;
 
     constructor(
         string memory name_,
@@ -139,23 +139,23 @@ contract Movie is
     }
 
     /**
-     * @dev Update `copyrightStartTime`.
+     * @dev Update `startTime`.
      */
-    function updateCopyrightStartTime(uint256 copyrightStartTime_)
+    function updateStartTime(uint256 startTime_)
         public
         onlyOwner
     {
-        copyrightStartTime = copyrightStartTime_;
+        startTime = startTime_;
     }
 
     /**
-     * @dev Update `copyrightEndTime`.
+     * @dev Update `endTime`.
      */
-    function updateCopyrightEndTime(uint256 copyrightEndTime_)
+    function updateEndTime(uint256 endTime_)
         public
         onlyOwner
     {
-        copyrightEndTime = copyrightEndTime_;
+        endTime = endTime_;
     }
 
     /**
@@ -224,8 +224,8 @@ contract Movie is
         bytes32 encryptedKeyID,
         address licensee
     ) public view override(IEVTEncryption, EVT) returns (bool) {
-        require(block.timestamp > copyrightStartTime,"not started");
-        require(copyrightEndTime == 0 || block.timestamp < copyrightEndTime,"end time");
+        require(block.timestamp > startTime,"not started");
+        require(endTime == 0 || block.timestamp < endTime,"end time");
         return EVT.hasPermission(tokenId, encryptedKeyID, licensee);
     }
 }

@@ -27,14 +27,14 @@ unpause()
 safeMint(to, amount)
 safeMint(address to, string[] uris)
 updateTokenURIStorage(uint256 tokenId, string memory uri)
-updateCopyrightStartTime(uint256 copyrightStartTime_)
-updateCopyrightEndTime(uint256 copyrightEndTime_)
+updateStartTime(uint256 startTime_)
+updateEndTime(uint256 endTime_)
 updateBaseURI(baseURI_)
 tokenURIStorage(uint256 tokenId)
 isOwn(tokenId, addr)
 hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee)
-copyrightStartTime()
-copyrightEndTime()
+startTime()
+endTime()
 ```
 
 ## Events
@@ -86,17 +86,17 @@ Requirements:
 
 - onlyOwner
 
-### updateCopyrightStartTime(uint256 copyrightStartTime\_)
+### updateStartTime(uint256 startTime\_)
 
-Update `copyrightStartTime`.
+Update `startTime`.
 
 Requirements:
 
 - onlyOwner
 
-### updateCopyrightEndTime(uint256 copyrightEndTime\_)
+### updateEndTime(uint256 endTime\_)
 
-Update `copyrightEndTime`.
+Update `endTime`.
 
 Requirements:
 
@@ -136,13 +136,13 @@ Requirements:
 - `tokenId` must exist.
 - current time must be within the copyright period.
 
-### copyrightStartTime() -> uint256
+### startTime() -> uint256
 
-Returns `copyrightStartTime`.
+Returns `startTime`.
 
-### copyrightEndTime() -> uint256
+### endTime() -> uint256
 
-Returns `copyrightEndTime`.
+Returns `endTime`.
 
 ## Event
 
