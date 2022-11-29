@@ -91,9 +91,7 @@ describe("Music", function () {
       let endTime = startTime + 31 * 24 * 60 * 60;
 
       await musicContract.updateStartTime(startTime);
-      expect(await musicContract.startTime()).to.equal(
-        startTime
-      );
+      expect(await musicContract.startTime()).to.equal(startTime);
 
       await musicContract.updateEndTime(endTime);
       expect(await musicContract.endTime()).to.equal(endTime);

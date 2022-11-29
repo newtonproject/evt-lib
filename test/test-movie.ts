@@ -91,9 +91,7 @@ describe("Movie", function () {
       let endTime = startTime + 31 * 24 * 60 * 60;
 
       await movieContract.updateStartTime(startTime);
-      expect(await movieContract.startTime()).to.equal(
-        startTime
-      );
+      expect(await movieContract.startTime()).to.equal(startTime);
 
       await movieContract.updateEndTime(endTime);
       expect(await movieContract.endTime()).to.equal(endTime);
