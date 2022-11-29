@@ -49,6 +49,10 @@ describe("Ticket", function () {
     await movieContract.deployed();
     console.log("MovieContract deployed success");
 
+    await movieContract.updateStartTime(startTime);
+
+    await movieContract.updateEndTime(endTime);
+
     const Ticket = await ethers.getContractFactory("Ticket", {
       libraries: {
         GetString: libGetString.address,
@@ -61,8 +65,6 @@ describe("Ticket", function () {
       [],
       baseUri,
       movieContract.address,
-      startTime,
-      endTime,
       ticketDuration
     );
     await ticketContract.deployed();
@@ -75,14 +77,6 @@ describe("Ticket", function () {
       await ticketContract.updateBaseURI(uri);
       expect(await ticketContract.baseURI()).to.equal(uri);
 
-      const startTime = Date.parse(new Date().toString()) / 1000 + 24 * 60 * 60;
-      await ticketContract.updateStartTime(startTime);
-      expect(await ticketContract.startTime()).to.equal(startTime);
-
-      const endTime =
-        Date.parse(new Date().toString()) / 1000 + 7 * 24 * 60 * 60;
-      await ticketContract.updateEndTime(endTime);
-      expect(await ticketContract.endTime()).to.equal(endTime);
 
       const ticketDuration = 3 * 24 * 60 * 60;
       await ticketContract.updateTicketDuration(ticketDuration);
@@ -175,7 +169,7 @@ describe("Ticket", function () {
         .catch((error) => expect(error.message).to.include("not ticket owner"));
 
       const endTime = Date.parse(new Date().toString()) / 1000 - 60;
-      await ticketContract.updateEndTime(endTime);
+      await movieContract.updateEndTime(endTime);
 
       await ticketContract
         .connect(ticketOwner)
@@ -188,8 +182,8 @@ describe("Ticket", function () {
         );
 
       const startTime = Date.parse(new Date().toString()) / 1000 + 24 * 60 * 60;
-      await ticketContract.updateStartTime(startTime);
-
+      await movieContract.updateStartTime(startTime);
+1
       await ticketContract
       .connect(ticketOwner)
       .checkTicket(0)
@@ -219,6 +213,7 @@ describe("Ticket", function () {
         baseUri,
       ]);
     });
+
     it("Ticket ticketInfo: ", async function () {
       await movieContract["safeMint(address,uint256)"](movieOwnerAddr, 5);
       await ticketContract.connect(movieOwner).safeMint(ticketOwnerAddr, 5, 0);
