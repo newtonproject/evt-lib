@@ -21,6 +21,12 @@ contract Music is
 
     Counters.Counter private _tokenIdCounter;
 
+    //Copyright of music start time
+    uint256 public copyrightStartTime;
+
+    //Copyright of music end time
+    uint256 public copyrightEndTime;
+
     constructor(
         string memory name_,
         string memory symbol_,
@@ -100,6 +106,7 @@ contract Music is
             uint256 tokenId = _tokenIdCounter.current();
             _tokenIdCounter.increment();
             _safeMint(to, tokenId);
+            addEncryptedKeyID(tokenId);
 
             emit CreateMusic(tokenId);
         }
@@ -114,6 +121,7 @@ contract Music is
             _tokenIdCounter.increment();
             _safeMint(to, tokenId);
             _setTokenURI(tokenId, uris[i]);
+            addEncryptedKeyID(tokenId);
 
             emit CreateMusic(tokenId);
         }
@@ -128,6 +136,26 @@ contract Music is
         onlyOwner
     {
         _setTokenURI(tokenId, uri);
+    }
+
+    /**
+     * @dev Update `copyrightStartTime`.
+     */
+    function updateCopyrightStartTime(uint256 copyrightStartTime_)
+        public
+        onlyOwner
+    {
+        copyrightStartTime = copyrightStartTime_;
+    }
+
+    /**
+     * @dev Update `copyrightEndTime`.
+     */
+    function updateCopyrightEndTime(uint256 copyrightEndTime_)
+        public
+        onlyOwner
+    {
+        copyrightEndTime = copyrightEndTime_;
     }
 
     /**
@@ -186,5 +214,18 @@ contract Music is
         returns (bool)
     {
         return ownerOf(tokenId) == addr;
+    }
+
+    /**
+     * @dev See {EVT-hasPermission}.
+     */
+    function hasPermission(
+        uint256 tokenId,
+        bytes32 encryptedKeyID,
+        address licensee
+    ) public view override(IEVTEncryption, EVT) returns (bool) {
+        require(block.timestamp > copyrightStartTime);
+        require(copyrightEndTime == 0 || block.timestamp < copyrightEndTime);
+        return EVT.hasPermission(tokenId, encryptedKeyID, licensee);
     }
 }

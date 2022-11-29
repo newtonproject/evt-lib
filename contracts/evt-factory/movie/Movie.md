@@ -13,8 +13,8 @@
 
 | param           | type      | note                           |
 | --------------- | --------- | ------------------------------ |
-| name\_          | string    | token movie name          |
-| symbol\_        | string    | token movie symbol        |
+| name\_          | string    | token movie name               |
+| symbol\_        | string    | token movie symbol             |
 | properties      | string[]  | EVT property Names             |
 | encryptedKeyIDs | bytes32[] | EVT encryptionKeyID            |
 | baseURI\_       | string    | point to the EVT offchain data |
@@ -27,9 +27,14 @@ unpause()
 safeMint(to, amount)
 safeMint(address to, string[] uris)
 updateTokenURIStorage(uint256 tokenId, string memory uri)
+updateCopyrightStartTime(uint256 copyrightStartTime_)
+updateCopyrightEndTime(uint256 copyrightEndTime_)
 updateBaseURI(baseURI_)
 tokenURIStorage(uint256 tokenId)
 isOwn(tokenId, addr)
+hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee)
+copyrightStartTime()
+copyrightEndTime()
 ```
 
 ## Events
@@ -81,6 +86,22 @@ Requirements:
 
 - onlyOwner
 
+### updateCopyrightStartTime(uint256 copyrightStartTime\_)
+
+Update `copyrightStartTime`.
+
+Requirements:
+
+- onlyOwner
+
+### updateCopyrightEndTime(uint256 copyrightEndTime\_)
+
+Update `copyrightEndTime`.
+
+Requirements:
+
+- onlyOwner
+
 ### updateBaseURI(string baseURI\_)
 
 Update `baseURI`.
@@ -104,6 +125,24 @@ Returns whether `addr` own `tokenId`.
 Requirements:
 
 - `tokenId` must exist.
+
+### hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) -> bool
+
+Returns whether have access to decrypt the music.
+
+Requirements:
+
+- must own this `tokenId`.
+- `tokenId` must exist.
+- current time must be within the copyright period.
+
+### copyrightStartTime() -> uint256
+
+Returns `copyrightStartTime`.
+
+### copyrightEndTime() -> uint256
+
+Returns `copyrightEndTime`.
 
 ## Event
 
