@@ -40,8 +40,10 @@ endTime()
 ## Events
 
 ```
-event CreateMovie(tokenId)
-event BaseURIUpdate(baseURI)
+CreateMovie(tokenId)
+BaseURIUpdate(baseURI)
+StartTimeUpdate(uint256 startTime);
+EndTimeUpdate(uint256 endTime);
 ```
 
 ## Function
@@ -153,3 +155,11 @@ Emitted when `tokenId` EVT is created.
 ### BaseURIUpdate(string baseURI)
 
 Emitted when `baseURI` is updated.
+
+### StartTimeUpdate(uint256 startTime)
+
+Emitted when `startTime` is updated.
+
+### EndTimeUpdate(uint256 endTime)
+
+Emitted when `endTime` is updated.

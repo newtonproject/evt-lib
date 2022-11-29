@@ -11,14 +11,12 @@
 
 | param            | type      | note                                  |
 | ---------------- | --------- | ------------------------------------- |
-| name\_           | string    | token ticket name                 |
-| symbol\_         | string    | token ticket symbol               |
+| name\_           | string    | token ticket name                     |
+| symbol\_         | string    | token ticket symbol                   |
 | properties       | string[]  | EVT property Names                    |
 | encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
 | baseURI\_        | string    | point to the EVT offchain data        |
-| movieAddr\_ | address   | movie contract address           |
-| startTime\_      | uint256   | film release date (second)            |
-| endTime\_        | uint256   | film off the screen date (second)     |
+| movieAddr\_      | address   | movie contract address                |
 | ticketDuration\_ | uint256   | valid duration of the ticket (second) |
 
 ## Functions
@@ -27,8 +25,6 @@
 pause()
 unpause()
 updateBaseURI(string baseURI_)
-updateStartTime(uint256 startTime_)
-updateEndTime(uint256 _endTime)
 updateTicketDuration(uint256 ticketDuration_)
 updatePayee(address payee_)
 getPayee()
@@ -38,8 +34,6 @@ checkTicket(uint256 ticketId)
 commonInfo()
 ticketInfo(uint256 ticketId)
 movieAddr()
-startTime()
-endTime()
 ticketDuration()
 ```
 
@@ -47,8 +41,6 @@ ticketDuration()
 
 ```
 BaseURIUpdate(string baseURI);
-StartTimeUpdate(uint256 startTime);
-EndTimeUpdate(uint256 endTime);
 TicketDurationUpdate(uint256 ticketDuration);
 PayeeUpdate(address payee);
 EventCreateTicket(uint256 indexed ticketId);
@@ -80,24 +72,6 @@ Update `baseURI`.
 Requirements:
 
 - onlyOwner
-
-### updateStartTime(uint256 startTime\_)
-
-Update `startTime`.
-
-Requirements:
-
-- onlyOwner
-- second
-
-### updateEndTime(uint256 endTime\_)
-
-Update `endTime`.
-
-Requirements:
-
-- onlyOwner
-- second
 
 ### updateTicketDuration(uint256 ticketDuration)
 
@@ -163,14 +137,6 @@ Requirements:
 
 Returns `movieAddr`,movie contract address.
 
-### startTime() -> uint256,
-
-Returns `startTime`,film release date (second).
-
-### endTime() -> uint256
-
-Returns `endTime`,film off the screen date (second).
-
 ### ticketDuration() -> uint256
 
 Returns `ticketDuration`,valid duration of the ticket (second).
@@ -180,14 +146,6 @@ Returns `ticketDuration`,valid duration of the ticket (second).
 ### BaseURIUpdate(string baseURI)
 
 Emitted when `baseURI` is updated.
-
-### StartTimeUpdate(uint256 startTime)
-
-Emitted when `startTime` is updated.
-
-### EndTimeUpdate(uint256 endTime)
-
-Emitted when `endTime` is updated.
 
 ### TicketDurationUpdate(uint256 ticketDuration)
 

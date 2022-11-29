@@ -10,16 +10,6 @@ interface ITicket is IEVT {
     event BaseURIUpdate(string baseURI);
 
     /**
-     * @dev Emitted when `startTime` is updated.
-     */
-    event StartTimeUpdate(uint256 startTime);
-
-    /**
-     * @dev Emitted when `endTime` is updated.
-     */
-    event EndTimeUpdate(uint256 endTime);
-
-    /**
      * @dev Emitted when `ticketDuration` is updated.
      */
     event TicketDurationUpdate(uint256 ticketDuration);
@@ -43,16 +33,6 @@ interface ITicket is IEVT {
      * @dev Update `baseURI`.
      */
     function updateBaseURI(string memory baseURI) external;
-
-    /**
-     * @dev Update `startTime`.
-     */
-    function updateStartTime(uint256 startTime) external;
-
-    /**
-     * @dev Update `endTime`.
-     */
-    function updateEndTime(uint256 endTime) external;
 
     /**
      * @dev Update `checkDuration`.

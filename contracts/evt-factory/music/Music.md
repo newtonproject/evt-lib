@@ -40,8 +40,10 @@ endTime()
 ## Events
 
 ```
-event Createmusic(tokenId)
-event BaseURIUpdate(baseURI)
+CreateMusic(tokenId)
+BaseURIUpdate(baseURI)
+StartTimeUpdate(uint256 startTime);
+EndTimeUpdate(uint256 endTime);
 ```
 
 ## Function
@@ -146,10 +148,18 @@ Returns `endTime`.
 
 ## Event
 
-### Createmusic(uint256 indexed tokenId)
+### CreateMusic(uint256 indexed tokenId)
 
 Emitted when `tokenId` EVT is created.
 
 ### BaseURIUpdate(string baseURI)
 
 Emitted when `baseURI` is updated.
+
+### StartTimeUpdate(uint256 startTime)
+
+Emitted when `startTime` is updated.
+
+### EndTimeUpdate(uint256 endTime)
+
+Emitted when `endTime` is updated.

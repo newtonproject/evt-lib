@@ -139,32 +139,30 @@ contract Movie is
     }
 
     /**
-     * @dev Update `startTime`.
-     */
-    function updateStartTime(uint256 startTime_)
-        public
-        onlyOwner
-    {
-        startTime = startTime_;
-    }
-
-    /**
-     * @dev Update `endTime`.
-     */
-    function updateEndTime(uint256 endTime_)
-        public
-        onlyOwner
-    {
-        endTime = endTime_;
-    }
-
-    /**
      * @dev Update `baseURI`.
      */
     function updateBaseURI(string memory baseURI_) public override onlyOwner {
         setBaseURI(baseURI_);
 
         emit BaseURIUpdate(baseURI_);
+    }
+
+    /**
+     * @dev Update `startTime`.
+     */
+    function updateStartTime(uint256 startTime_) public override onlyOwner {
+        startTime = startTime_;
+
+        emit StartTimeUpdate(startTime_);
+    }
+
+    /**
+     * @dev Update `endTime`.
+     */
+    function updateEndTime(uint256 endTime_) public override onlyOwner {
+        endTime = endTime_;
+
+        emit EndTimeUpdate(endTime_);
     }
 
     /**
@@ -224,8 +222,8 @@ contract Movie is
         bytes32 encryptedKeyID,
         address licensee
     ) public view override(IEVTEncryption, EVT) returns (bool) {
-        require(block.timestamp > startTime,"not started");
-        require(endTime == 0 || block.timestamp < endTime,"end time");
+        require(block.timestamp > startTime, "not started");
+        require(endTime == 0 || block.timestamp < endTime, "end time");
         return EVT.hasPermission(tokenId, encryptedKeyID, licensee);
     }
 }

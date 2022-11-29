@@ -15,8 +15,6 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
 
     address private payee;
     address public movieAddr;
-    uint256 public startTime;
-    uint256 public endTime;
     uint256 public ticketDuration;
 
     // TicketId => TicketInfo
@@ -34,23 +32,16 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         bytes32[] memory encryptedKeyIDs,
         string memory baseURI_,
         address movieAddr_,
-        uint256 startTime_,
-        uint256 endTime_,
         uint256 ticketDuration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
         movieAddr = movieAddr_;
-        endTime = endTime_;
         ticketDuration = ticketDuration_;
-        startTime = startTime_;
         payee = owner();
     }
 
     modifier onlyMovieOwner(uint256 tokenId) {
         require(
-            IMovie(movieAddr).isOwn(
-                tokenId,
-                msg.sender
-            ),
+            IMovie(movieAddr).isOwn(tokenId, msg.sender),
             "not movie owner"
         );
         _;
@@ -112,24 +103,6 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         setBaseURI(baseURI_);
 
         emit BaseURIUpdate(baseURI_);
-    }
-
-    /**
-     * @dev Update `startTime`.
-     */
-    function updateStartTime(uint256 startTime_) public override onlyOwner {
-        startTime = startTime_;
-
-        emit StartTimeUpdate(startTime_);
-    }
-
-    /**
-     * @dev Update `endTime`.
-     */
-    function updateEndTime(uint256 endTime_) public override onlyOwner {
-        endTime = endTime_;
-
-        emit EndTimeUpdate(endTime_);
     }
 
     /**
@@ -205,8 +178,15 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
      */
     function checkTicket(uint256 ticketId) public override whenNotPaused {
         require(msg.sender == ownerOf(ticketId), "not ticket owner");
-        require(block.timestamp > startTime, "not on the screen");
-        require(block.timestamp < endTime, "already off the screen");
+        require(
+            block.timestamp > IMovie(movieAddr).startTime(),
+            "not on the screen"
+        );
+        require(
+            block.timestamp < IMovie(movieAddr).endTime() ||
+                IMovie(movieAddr).endTime() == 0,
+            "already off the screen"
+        );
         uint256 checkingTime_ = ticketInfoMap[ticketId].checkingTime;
         if (checkingTime_ == 0) {
             ticketInfoMap[ticketId].checkingTime = block.timestamp;
@@ -261,7 +241,13 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             string memory
         )
     {
-        return (movieAddr, startTime, endTime, ticketDuration, baseURI);
+        return (
+            movieAddr,
+            IMovie(movieAddr).startTime(),
+            IMovie(movieAddr).endTime(),
+            ticketDuration,
+            baseURI
+        );
     }
 
     /**
@@ -283,8 +269,8 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         require(ERC721._exists(ticketId), "not exist");
         return (
             movieAddr,
-            startTime,
-            endTime,
+            IMovie(movieAddr).startTime(),
+            IMovie(movieAddr).endTime(),
             ticketDuration,
             baseURI,
             ticketInfoMap[ticketId].checkingTime
