@@ -15,7 +15,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
 
     address private payee;
     address public movieAddr;
-    uint256 public ticketDuration;
+    uint256 public duration;
 
     // TicketId => TicketInfo
     mapping(uint256 => TicketInfo) private ticketInfoMap;
@@ -32,10 +32,10 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
         bytes32[] memory encryptedKeyIDs,
         string memory baseURI_,
         address movieAddr_,
-        uint256 ticketDuration_
+        uint256 duration_
     ) EVT(name_, symbol_, properties, encryptedKeyIDs, baseURI_) {
         movieAddr = movieAddr_;
-        ticketDuration = ticketDuration_;
+        duration = duration_;
         payee = owner();
     }
 
@@ -108,14 +108,14 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     /**
      * @dev Update `checkDuration`.
      */
-    function updateTicketDuration(uint256 ticketDuration_)
+    function updateDuration(uint256 duration_)
         public
         override
         onlyOwner
     {
-        ticketDuration = ticketDuration_;
+        duration = duration_;
 
-        emit TicketDurationUpdate(ticketDuration_);
+        emit DurationUpdate(duration_);
     }
 
     /**
@@ -194,7 +194,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             emit EventTicketCheck(ticketId, block.timestamp);
         } else {
             require(
-                block.timestamp < checkingTime_ + ticketDuration,
+                block.timestamp < checkingTime_ + duration,
                 "Expired ticket"
             );
         }
@@ -227,7 +227,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
     }
 
     /**
-     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `duration`, `baseURI`.
      */
     function commonInfo()
         public
@@ -245,13 +245,13 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             movieAddr,
             IMovie(movieAddr).startTime(),
             IMovie(movieAddr).endTime(),
-            ticketDuration,
+            duration,
             baseURI
         );
     }
 
     /**
-     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `duration`, `baseURI`, `checkingTime`.
      */
     function ticketInfo(uint256 ticketId)
         external
@@ -271,7 +271,7 @@ contract Ticket is ITicket, EVT, ERC721Enumerable, Pausable {
             movieAddr,
             IMovie(movieAddr).startTime(),
             IMovie(movieAddr).endTime(),
-            ticketDuration,
+            duration,
             baseURI,
             ticketInfoMap[ticketId].checkingTime
         );

@@ -10,9 +10,9 @@ interface ITicket is IEVT {
     event BaseURIUpdate(string baseURI);
 
     /**
-     * @dev Emitted when `ticketDuration` is updated.
+     * @dev Emitted when `duration` is updated.
      */
-    event TicketDurationUpdate(uint256 ticketDuration);
+    event DurationUpdate(uint256 duration);
 
     /**
      * @dev Emitted when `payee` is updated.
@@ -37,7 +37,7 @@ interface ITicket is IEVT {
     /**
      * @dev Update `checkDuration`.
      */
-    function updateTicketDuration(uint256 checkDuration) external;
+    function updateDuration(uint256 checkDuration) external;
 
     /**
      * @dev Update `payee`.
@@ -67,7 +67,7 @@ interface ITicket is IEVT {
     function checkTicket(uint256 tokenId) external;
 
     /**
-     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `duration`, `baseURI`.
      */
     function commonInfo()
         external
@@ -81,7 +81,7 @@ interface ITicket is IEVT {
         );
 
     /**
-     * @dev Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+     * @dev Returns `movieAddr`, `startTime`, `endTime`, `duration`, `baseURI`, `checkingTime`.
      */
     function ticketInfo(uint256 tokenId)
         external

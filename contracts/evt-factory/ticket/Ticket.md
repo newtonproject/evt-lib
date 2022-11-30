@@ -17,7 +17,7 @@
 | encryptedKeyIDs  | bytes32[] | EVT encryptionKeyID                   |
 | baseURI\_        | string    | point to the EVT offchain data        |
 | movieAddr\_      | address   | movie contract address                |
-| ticketDuration\_ | uint256   | valid duration of the ticket (second) |
+| duration\_ | uint256   | valid duration of the ticket (second) |
 
 ## Functions
 
@@ -25,7 +25,7 @@
 pause()
 unpause()
 updateBaseURI(string baseURI_)
-updateTicketDuration(uint256 ticketDuration_)
+updateDuration(uint256 duration_)
 updatePayee(address payee_)
 getPayee()
 withdraw()
@@ -34,14 +34,14 @@ checkTicket(uint256 ticketId)
 commonInfo()
 ticketInfo(uint256 ticketId)
 movieAddr()
-ticketDuration()
+duration()
 ```
 
 ## Events
 
 ```
 BaseURIUpdate(string baseURI);
-TicketDurationUpdate(uint256 ticketDuration);
+DurationUpdate(uint256 duration);
 PayeeUpdate(address payee);
 EventCreateTicket(uint256 indexed ticketId);
 EventTicketCheck(uint256 indexed ticketId, uint256 checkingTime);
@@ -73,9 +73,9 @@ Requirements:
 
 - onlyOwner
 
-### updateTicketDuration(uint256 ticketDuration)
+### updateDuration(uint256 duration)
 
-Update `ticketDuration`.
+Update `duration`.
 
 Requirements:
 
@@ -123,11 +123,11 @@ Requirements:
 
 ### commonInfo() -> address, uint256, uint256, uint256, string
 
-Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`.
+Returns `movieAddr`, `startTime`, `endTime`, `duration`, `baseURI`.
 
 ### ticketInfo(uint256 ticketId) -> address, uint256, uint256, uint256, string, uint256
 
-Returns `movieAddr`, `startTime`, `endTime`, `ticketDuration`, `baseURI`, `checkingTime`.
+Returns `movieAddr`, `startTime`, `endTime`, `duration`, `baseURI`, `checkingTime`.
 
 Requirements:
 
@@ -137,9 +137,9 @@ Requirements:
 
 Returns `movieAddr`,movie contract address.
 
-### ticketDuration() -> uint256
+### duration() -> uint256
 
-Returns `ticketDuration`,valid duration of the ticket (second).
+Returns `duration`,valid duration of the ticket (second).
 
 ## Event
 
@@ -147,9 +147,9 @@ Returns `ticketDuration`,valid duration of the ticket (second).
 
 Emitted when `baseURI` is updated.
 
-### TicketDurationUpdate(uint256 ticketDuration)
+### DurationUpdate(uint256 duration)
 
-Emitted when `ticketDuration` is updated.
+Emitted when `duration` is updated.
 
 ### PayeeUpdate(address payee)
 
