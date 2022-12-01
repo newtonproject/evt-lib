@@ -15,7 +15,7 @@ const newChainApiKey: string = process.env.NEWCHAIN_API_KEY || "";
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.3",
+    version: "0.8.9",
     settings: {
       optimizer: {
         enabled: true,

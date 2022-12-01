@@ -40,15 +40,15 @@ library Base58 {
         bytes memory encodeTable = ALPHABET;
         
         bytes memory retStrBytes = new bytes(prefixZeroes+(capacity-1-outputReverseEnd));
-        for (uint i = 0; i < prefixZeroes; i++) {
+        for (uint i = 0; i < prefixZeroes; ++i) {
           retStrBytes[i] = bytes1(encodeTable[0]);
         }
        
-        for ( (uint i, uint j) = (0, outputReverseEnd+1); j < output.length; j++) {
+        for ( (uint i, uint j) = (0, outputReverseEnd+1); j < output.length; ++j) {
             uint n = uint256(uint8(output[j]));
             retStrBytes[prefixZeroes + i] = bytes1(encodeTable[n]);
             
-            i++;
+            ++i;
         }
         
         return string(retStrBytes);

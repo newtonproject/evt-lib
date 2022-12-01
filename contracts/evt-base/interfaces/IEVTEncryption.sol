@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.9;
 
 interface IEVTEncryption {
     /**
@@ -11,17 +11,25 @@ interface IEVTEncryption {
      * @dev Emitted when add `encryptedKeyID` to `tokenId` token.
      */
     event EncryptedKeyIDAdded(uint256 indexed tokenId, bytes32 encryptedKeyID);
-    
+
     /**
      * @dev Emitted when add `tokenId` token permission to `licensee`.
      */
-    event PermissionAdded(uint256 indexed tokenId, bytes32 encryptedKeyID, address indexed licensee);
+    event PermissionAdded(
+        uint256 indexed tokenId,
+        bytes32 encryptedKeyID,
+        address indexed licensee
+    );
 
     /**
      * @dev Emitted when remove `tokenId` token permission from `licensee`.
      */
-    event PermissionRemoved(uint256 indexed tokenId, bytes32 encryptedKeyID, address indexed licensee);
-    
+    event PermissionRemoved(
+        uint256 indexed tokenId,
+        bytes32 encryptedKeyID,
+        address indexed licensee
+    );
+
     /**
      * @dev registerEncryptedKey to the contract.
      * Requirements:
@@ -29,7 +37,7 @@ interface IEVTEncryption {
      * - `msg.sender` must be the owner of the contract.
      */
     function registerEncryptedKey(bytes32 encryptedKeyID) external;
-	
+
     /**
      * @dev Add `tokenId` token Permission to `licensee` width `encryptedKeyID`
      * Requirements:
@@ -37,8 +45,12 @@ interface IEVTEncryption {
      * - `tokenId` must exist.
      * - `encryptedKeyID` must exist and must registered.
      */
-    function addPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external payable;
-	
+    function addPermission(
+        uint256 tokenId,
+        bytes32 encryptedKeyID,
+        address licensee
+    ) external payable;
+
     /**
      * @dev Remove `tokenId` token Permission to `licensee` width `encryptedKeyID`
      *
@@ -47,7 +59,11 @@ interface IEVTEncryption {
      * - `tokenId` must exist.
      * - `encryptedKeyID` must exist.
      */
-    function removePermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external;
+    function removePermission(
+        uint256 tokenId,
+        bytes32 encryptedKeyID,
+        address licensee
+    ) external;
 
     /**
      * @dev Returns the results - bool
@@ -57,7 +73,11 @@ interface IEVTEncryption {
      * - `tokenId` must exist.
      * - `encryptedKeyID` must exist.
      */
-    function hasPermission(uint256 tokenId, bytes32 encryptedKeyID, address licensee) external view returns (bool);
+    function hasPermission(
+        uint256 tokenId,
+        bytes32 encryptedKeyID,
+        address licensee
+    ) external view returns (bool);
 
     /**
      * @dev Returns the list of licensees
@@ -67,5 +87,22 @@ interface IEVTEncryption {
      * - `tokenId` must exist.
      * - `encryptedKeyID` must exist.
      */
-    function getPermissions(uint256 tokenId, bytes32 encryptedKeyID) external view returns (address[] memory);
+    function getPermissions(uint256 tokenId, bytes32 encryptedKeyID)
+        external
+        view
+        returns (address[] memory);
+
+    /**
+     * @dev Get tokenId's encryptedKeys and licenses for every encryptionKey.
+     *
+     * The result is a string in a JSON formatted array.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function getPermissionsAsString(uint256 tokenId)
+        external
+        view
+        returns (string memory);
 }

@@ -112,7 +112,7 @@ contract ERC721A is
     uint256 numMintedSoFar = totalSupply();
     uint256 tokenIdsIdx = 0;
     address currOwnershipAddr = address(0);
-    for (uint256 i = 0; i < numMintedSoFar; i++) {
+    for (uint256 i = 0; i < numMintedSoFar; ++i) {
       TokenOwnership memory ownership = _ownerships[i];
       if (ownership.addr != address(0)) {
         currOwnershipAddr = ownership.addr;
@@ -367,7 +367,7 @@ contract ERC721A is
 
     uint256 updatedIndex = startTokenId;
 
-    for (uint256 i = 0; i < quantity; i++) {
+    for (uint256 i = 0; i < quantity; ++i) {
       emit Transfer(address(0), to, updatedIndex);
       require(
         _checkOnERC721Received(address(0), to, updatedIndex, _data),
@@ -465,7 +465,7 @@ contract ERC721A is
     }
     // We know if the last one in the group exists, all in the group exist, due to serial ordering.
     require(_exists(endIndex), "not enough minted yet for this cleanup");
-    for (uint256 i = oldNextOwnerToSet; i <= endIndex; i++) {
+    for (uint256 i = oldNextOwnerToSet; i <= endIndex; ++i) {
       if (_ownerships[i].addr == address(0)) {
         TokenOwnership memory ownership = ownershipOf(i);
         _ownerships[i] = TokenOwnership(
